@@ -1045,6 +1045,7 @@
     .dark .rich figure[data-img] img:not([src]) { background: rgba(255, 255, 255, 0.05); }
     .rich figure.is-missing img { min-height: 3em; }
     .rich figure.is-missing::before { content: "画像が見つかりません"; display: block; font-size: 0.7em; color: #A3A3A3; padding: 0.3em 0; }
+    body.img-sync-on .rich figure.is-missing::before { content: "画像を Google ドライブから読み込みます…"; }
     .rich figure[data-img] figcaption { font-size: 0.72em; line-height: 1.5; color: #8E8E93; margin-top: 0.35em; }
     .rich figure[data-img] figcaption:empty { display: none; }
     .card-body-scroll figure[data-img] img { cursor: zoom-in; }
@@ -1302,6 +1303,12 @@
     #syncPanel .sp-btns .sp-out { flex: 0 0 auto; padding: 0 12px; color: #8E8E93; }
     #syncPanel .sp-usage { font-size: 11px; color: #636366; margin-top: 10px; line-height: 1.6; font-variant-numeric: tabular-nums; }
     .dark #syncPanel .sp-usage { color: #AEAEB2; }
+    #syncPanel .sp-img { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(0, 0, 0, 0.06); }
+    .dark #syncPanel .sp-img { border-top-color: rgba(255, 255, 255, 0.08); }
+    #syncPanel .sp-img-h { font-size: 11px; font-weight: 600; color: #8E8E93; }
+    #syncPanel .sp-img .sp-msg { margin-top: 4px; }
+    #syncPanel .sp-drive { margin-top: 8px; width: 100%; height: 32px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #fff; background: #007AFF; }
+    #syncPanel .sp-drive:hover { background: #0A6CE0; }
     #syncAsk { position: fixed; inset: 0; z-index: 96; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.32); }
     #syncAsk.open { display: flex; }
     #syncAsk .sa-card { width: 100%; max-width: 400px; border-radius: 18px; background: #fff; padding: 18px; color: #1D1D1F; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.45); }
@@ -2386,6 +2393,11 @@
       async all() {
         if (!(await this.open())) return [...this.mem.values()];
         return this.req(this.db.transaction('images').objectStore('images').getAll());
+      },
+      // 画像のIDだけ（中身は読み込まない）
+      async keys() {
+        if (!(await this.open())) return [...this.mem.keys()];
+        return this.req(this.db.transaction('images').objectStore('images').getAllKeys());
       }
     };
 
@@ -10668,7 +10680,11 @@
     // ============================================================
     const SYNC_FB_VER = '12.19.0';
     const SYNC_LIMITS = { r: 50000, w: 20000, ratio: 0.8 };
-    const SYNC_SCOPES = 'openid email profile https://www.googleapis.com/auth/drive.appdata';
+    const SYNC_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+    const SYNC_SCOPES = 'openid email profile ' + SYNC_DRIVE_SCOPE;
+    const DRIVE_API = 'https://www.googleapis.com/drive/v3/files';
+    const DRIVE_UPLOAD = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,createdTime';
+    const IMG_CLEAN_GRACE = 3 * 86400000; // どのカードも使っていない画像を、ドライブから消すまでの日数（ほかの端末の書きかけを消さないように）
     // 端末をまたいで同じにする設定（外観・ギャラリーの列数・並べ替え・表示中のエリアなどは端末ごと）
     const SYNC_SHARED_KEYS = ['charsPerLine', 'linesCount', 'accentTheme', 'cardHeader', 'statusColors', 'autoArchive', 'autoArchiveDays',
       'copyWithSource', 'mdHardBreak', 'mdLayout', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap', 'flipAnimation', 'loopCards'];
@@ -10789,7 +10805,7 @@
         return {
           uid: s.uid || null, email: s.email || '', init: !!s.init, cursor: s.cursor || null,
           synced: s.synced || {}, pend: s.pend || {}, usage: s.usage || null, lastSync: s.lastSync || 0,
-          tooBig: s.tooBig || {}, deviceId: dev
+          tooBig: s.tooBig || {}, imgUp: s.imgUp || {}, imgClean: s.imgClean || 0, deviceId: dev
         };
       }
       saveState() {
@@ -10798,7 +10814,7 @@
       }
       resetState() {
         const usage = this.state.usage;
-        this.state = { ...this.loadState(), uid: null, email: '', init: false, cursor: null, synced: {}, pend: {}, lastSync: 0, tooBig: {}, usage };
+        this.state = { ...this.loadState(), uid: null, email: '', init: false, cursor: null, synced: {}, pend: {}, lastSync: 0, tooBig: {}, imgUp: {}, imgClean: 0, usage };
         this.saveState();
       }
 
@@ -10907,27 +10923,65 @@
             .catch(() => this.setStatus('error', 'Google のログイン画面を読み込めませんでした。ネットにつながっているか確かめてください'));
           return;
         }
-        if (!this.tokenClient) {
-          this.tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: this.cfg.googleClientId,
-            scope: SYNC_SCOPES,
-            include_granted_scopes: true,
-            callback: (r) => this.onToken(r),
-            error_callback: (e) => {
-              const closed = e && (e.type === 'popup_closed' || e.type === 'popup_failed_to_open');
-              this.setStatus(this.backend ? 'ok' : 'off', closed ? (e.type === 'popup_failed_to_open' ? 'ポップアップが開けませんでした。ブラウザのポップアップの設定を確かめてください' : 'ログインをやめました') : 'ログインできませんでした');
-            }
-          });
-        }
+        this.ensureTokenClient();
+        this.tokenFor = 'login';
         this.setStatus('signing', 'Google の画面でログインしてください…');
         this.loadSdk().catch(() => {});
         this.tokenClient.requestAccessToken(this.state.email ? { login_hint: this.state.email } : {});
       }
 
+      ensureTokenClient() {
+        if (this.tokenClient) return this.tokenClient;
+        this.tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: this.cfg.googleClientId,
+          scope: SYNC_SCOPES,
+          include_granted_scopes: true,
+          callback: (r) => this.onToken(r),
+          error_callback: (e) => {
+            const failed = e && e.type === 'popup_failed_to_open';
+            const closed = e && e.type === 'popup_closed';
+            if (this.tokenFor === 'drive') {
+              this.imgNote = failed ? 'ポップアップが開けませんでした。ブラウザのポップアップの設定を確かめてください' : '';
+              this.renderUi();
+              return;
+            }
+            this.setStatus(this.backend ? 'ok' : 'off', failed ? 'ポップアップが開けませんでした。ブラウザのポップアップの設定を確かめてください' : closed ? 'ログインをやめました' : 'ログインできませんでした');
+          }
+        });
+        return this.tokenClient;
+      }
+
+      // 画像の同期のための Google ドライブの許可を取り直す（1時間ほどで切れるため）。ボタンを押した流れの中で呼ぶ
+      requestDriveToken() {
+        if (this.test) {
+          if (this.test.denyDrive) return;
+          this.onToken({ access_token: 'test-token', expires_in: 3600, scope: SYNC_SCOPES });
+          return;
+        }
+        if (!(window.google && google.accounts && google.accounts.oauth2)) {
+          this.loadGis().then(() => this.app.showToast('準備ができました。もう一度押してください', '許可する', () => this.requestDriveToken(), 10000)).catch(() => {});
+          return;
+        }
+        this.ensureTokenClient();
+        this.tokenFor = 'drive';
+        this.tokenClient.requestAccessToken(this.state.email ? { prompt: '', login_hint: this.state.email } : { prompt: '' });
+      }
+
+      driveTokenOk() { return !!(this.driveToken && this.driveToken.exp > Date.now()); }
+
       async onToken(r) {
-        if (!r || r.error || !r.access_token) { this.setStatus('off', 'ログインできませんでした'); return; }
+        if (!r || r.error || !r.access_token) {
+          if (this.tokenFor === 'drive') { this.imgNote = 'Google ドライブの許可をもらえませんでした'; this.renderUi(); }
+          else this.setStatus('off', 'ログインできませんでした');
+          return;
+        }
         // Drive の許可（画像の同期で使う）。1時間ほどで切れる
-        this.driveToken = { token: r.access_token, exp: Date.now() + ((r.expires_in || 3600) - 120) * 1000 };
+        const driveOk = this.test ? true : google.accounts.oauth2.hasGrantedAllScopes(r, SYNC_DRIVE_SCOPE);
+        this.driveToken = driveOk ? { token: r.access_token, exp: Date.now() + ((r.expires_in || 3600) - 120) * 1000 } : null;
+        this.imgNeedAuth = false;
+        this.imgNote = driveOk ? '' : 'Google ドライブの許可がありません。「画像を同期する」を押して、ドライブの項目にチェックを入れてください';
+        // すでにログイン中なら、画像の同期だけを再開する
+        if (this.backend && this.user) { this.renderUi(); this.syncImages(); return; }
         try {
           const { authM, au } = await this.loadSdk();
           const res = await authM.signInWithCredential(au, authM.GoogleAuthProvider.credential(null, r.access_token));
@@ -10951,6 +11005,9 @@
         this.saveState();
         this.user = user;
         this.backend = this.test ? this.test.backend(user.uid) : new FirestoreBackend(this.sdk.fs, this.sdk.db, user.uid);
+        if (this.test && !this.test.noDriveToken && !this.driveToken) this.driveToken = { token: 'test-token', exp: Date.now() + 3600000 };
+        if (!this.test) this.loadGis().then(() => this.ensureTokenClient()).catch(() => {}); // 画像の許可を取り直すボタンのため
+        document.body.classList.add('img-sync-on');
         this.watch();
         await this.syncNow();
       }
@@ -10963,6 +11020,10 @@
         this.backend = null;
         this.user = null;
         this.driveToken = null;
+        this.imgNeedAuth = false;
+        this.imgNote = '';
+        this.imgCounts = null;
+        document.body.classList.remove('img-sync-on');
         this.resetState();
         this.setStatus('off', 'ログアウトしました。この端末のカードはそのまま残っています');
       }
@@ -11027,6 +11088,7 @@
           if (!opts.pushOnly || sent) this.state.lastSync = Date.now();
           this.saveState();
           if (this.status !== 'paused') this.setStatus('ok');
+          this.syncImages();
         } catch (e) {
           this.handleError(e);
         } finally {
@@ -11322,6 +11384,161 @@
         });
       }
 
+      // ---------- 画像（Google ドライブのアプリ専用フォルダ） ----------
+      // 名前は「画像ID.拡張子」。画像IDは中身から作ったハッシュなので、同じ画像は1つだけになる
+      async driveFetch(url, opts = {}) {
+        const res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + this.driveToken.token } });
+        if (!res.ok) {
+          const err = new Error('drive ' + res.status);
+          err.status = res.status;
+          try { err.detail = await res.text(); } catch (e) {}
+          throw err;
+        }
+        return res;
+      }
+      async driveList() {
+        const map = new Map();
+        const dups = [];
+        let token = '';
+        do {
+          const url = `${DRIVE_API}?spaces=appDataFolder&pageSize=1000&fields=nextPageToken,files(id,name,createdTime,appProperties)` + (token ? '&pageToken=' + encodeURIComponent(token) : '');
+          const data = await (await this.driveFetch(url)).json();
+          (data.files || []).forEach(f => {
+            const id = rtImgId(String(f.name || '').replace(/\.[a-z0-9]+$/i, ''));
+            if (!id) return;
+            if (map.has(id)) dups.push(f.id); // 2台で同時に送ったときの重複
+            else map.set(id, { fileId: f.id, created: Date.parse(f.createdTime) || 0, w: +(f.appProperties && f.appProperties.w) || 0, h: +(f.appProperties && f.appProperties.h) || 0 });
+          });
+          token = data.nextPageToken || '';
+        } while (token);
+        return { map, dups };
+      }
+      async driveUpload(id) {
+        const rec = await IMG_DB.get(id);
+        if (!rec || !rec.blob) return null;
+        const type = rec.type || rec.blob.type || 'image/jpeg';
+        const meta = { name: `${id}.${imgExt(type)}`, parents: ['appDataFolder'], mimeType: type, appProperties: { w: String(rec.w || 0), h: String(rec.h || 0) } };
+        const boundary = 'ic' + Math.random().toString(36).slice(2);
+        const body = new Blob([
+          `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: ${type}\r\n\r\n`,
+          rec.blob,
+          `\r\n--${boundary}--`
+        ]);
+        const data = await (await this.driveFetch(DRIVE_UPLOAD, { method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body })).json();
+        return data.id;
+      }
+      async driveDownload(id, info) {
+        const blob = await (await this.driveFetch(`${DRIVE_API}/${encodeURIComponent(info.fileId)}?alt=media`)).blob();
+        await IMG_DB.put({ id, blob, type: blob.type || 'image/jpeg', w: info.w, h: info.h, bytes: blob.size, createdAt: Date.now() });
+      }
+
+      async syncImages() {
+        if (!this.backend || !this.state.init) return;
+        if (this.imgBusy) { this.imgAgain = true; return; }
+        this.imgBusy = true;
+        try {
+          const used = this.app.usedImageIds();
+          const local = new Set(await IMG_DB.keys());
+          const known = this.state.imgUp;
+          const needUp = [...used].filter(id => local.has(id) && !known[id]);
+          const needDown = [...used].filter(id => !local.has(id));
+          const cleanDue = Date.now() - (this.state.imgClean || 0) > 86400000;
+          this.imgCounts = { total: used.size, up: needUp.length, down: needDown.length, missing: 0 };
+          if (!needUp.length && !needDown.length && !cleanDue) { this.imgNeedAuth = false; this.renderUi(); return; }
+          if (!navigator.onLine) { this.renderUi(); return; }
+          if (!this.driveTokenOk()) {
+            // 送る・受け取る画像があるときだけ、許可を取り直すよう知らせる
+            if (needUp.length || needDown.length) this.askDriveAuth();
+            this.renderUi();
+            return;
+          }
+          this.imgWorking = true;
+          this.renderUi();
+          const { map: remote, dups } = await this.driveList();
+          // ドライブにあるものを覚えておく（次からは、新しい画像があるときだけドライブに問い合わせる）
+          const up = {};
+          remote.forEach((v, id) => { up[id] = 1; });
+          this.state.imgUp = up;
+          this.saveState();
+          let sent = 0, got = 0;
+          for (const id of needUp) {
+            if (remote.has(id)) continue;
+            const fileId = await this.driveUpload(id);
+            if (fileId) { this.state.imgUp[id] = 1; sent++; this.imgCounts.up = Math.max(0, this.imgCounts.up - 1); this.saveState(); this.renderUi(); }
+          }
+          this.imgCounts.up = 0;
+          const downs = needDown.filter(id => remote.has(id));
+          this.imgCounts.missing = needDown.length - downs.length; // ほかの端末がまだ送っていない
+          for (let i = 0; i < downs.length; i += 3) {
+            await Promise.all(downs.slice(i, i + 3).map(async id => {
+              await this.driveDownload(id, remote.get(id));
+              got++;
+              this.imgCounts.down = Math.max(0, downs.length - got);
+            }));
+            this.renderUi();
+          }
+          this.imgCounts.down = this.imgCounts.missing;
+          if (got) {
+            // 「画像が見つかりません」になっていたところに、画像を入れ直す
+            document.querySelectorAll('figure[data-img]').forEach(f => { const img = f.querySelector('img'); if (img && !img.getAttribute('src')) delete img.dataset.for; });
+            hydrateImages(document.body);
+          }
+          // 1日に1回：どのカードも使わなくなって日がたった画像と、重複を消す
+          if (cleanDue) {
+            const now = Date.now();
+            const del = [...dups];
+            remote.forEach((v, id) => { if (!used.has(id) && now - v.created > IMG_CLEAN_GRACE) del.push(v.fileId); });
+            for (const fid of del) {
+              try { await this.driveFetch(`${DRIVE_API}/${encodeURIComponent(fid)}`, { method: 'DELETE' }); } catch (e) { if (e.status !== 404) throw e; }
+            }
+            remote.forEach((v, id) => { if (del.includes(v.fileId)) delete this.state.imgUp[id]; });
+            this.state.imgClean = now;
+            this.saveState();
+          }
+          this.imgNote = '';
+          this.imgLast = Date.now();
+          if (sent || got) this.imgLog = { sent, got };
+        } catch (e) {
+          if (e && (e.status === 401 || e.status === 403 && /insufficient|scope/i.test(e.detail || ''))) {
+            this.driveToken = null;
+            this.askDriveAuth();
+          } else if (e && e.status === 403 && /storageQuota|quota/i.test(e.detail || '')) {
+            this.imgNote = 'Google ドライブの容量がいっぱいです';
+          } else if (e && e.status === 403 && /accessNotConfigured|has not been used|disabled/i.test(e.detail || '')) {
+            this.imgNote = 'Google Drive API が有効になっていません（手順書の手順5-4）';
+          } else {
+            this.imgNote = navigator.onLine ? '画像の同期でエラーが起きました（あとでもう一度試します）' : '';
+          }
+        } finally {
+          this.imgWorking = false;
+          this.imgBusy = false;
+          this.renderUi();
+          if (this.imgAgain) { this.imgAgain = false; setTimeout(() => this.syncImages(), 300); }
+        }
+      }
+
+      // 許可が切れていて、送る・受け取る画像があるとき：トーストで知らせる（10分に1回まで）
+      askDriveAuth() {
+        this.imgNeedAuth = true;
+        const now = Date.now();
+        if (now - (this.imgAskedAt || 0) < 600000) return;
+        this.imgAskedAt = now;
+        this.app.showToast('画像を同期するには、Google の許可が必要です', '許可する', () => this.requestDriveToken(), 12000);
+      }
+
+      imgStatusHtml() {
+        const c = this.imgCounts;
+        const esc = (s) => rtEscape(String(s || ''));
+        let line;
+        if (this.imgNote) line = `<span class="sync-dot is-error"></span>${esc(this.imgNote)}`;
+        else if (this.imgNeedAuth) line = `<span class="sync-dot is-paused"></span>Google の許可が切れています（1時間ほどで切れます）。${c ? `送信待ち ${c.up}枚・受信待ち ${c.down}枚` : ''}`;
+        else if (this.imgWorking) line = `<span class="sync-dot is-syncing"></span>画像を同期しています…${c && (c.up || c.down) ? `（送信 ${c.up}枚・受信 ${c.down}枚）` : ''}`;
+        else if (c) line = `<span class="sync-dot is-${c.up || c.down ? 'paused' : 'ok'}"></span>${c.total}枚${c.up || c.down ? `（送信待ち ${c.up}枚・受信待ち ${c.down}枚${c.missing ? `。うち${c.missing}枚は、ほかの端末からまだ届いていません` : ''}）` : '・同期済み'}`;
+        else line = '<span class="sync-dot"></span>確かめています…';
+        const btn = this.imgNeedAuth || (this.imgNote && !this.driveTokenOk()) ? '<button type="button" data-sync="drive" class="sp-drive">画像を同期する（Google の許可）</button>' : '';
+        return `<div class="sp-img"><div class="sp-img-h">画像：Google ドライブ（このアプリ専用の見えないフォルダ）</div><p class="sp-msg is-${this.imgNeedAuth || this.imgNote ? 'paused' : 'ok'}">${line}</p>${btn}</div>`;
+      }
+
       // ---------- 表示 ----------
       setStatus(status, message) {
         this.status = status;
@@ -11351,7 +11568,7 @@
           const on = !!this.state.uid;
           btn.style.display = on ? '' : 'none';
           const dot = btn.querySelector('.sync-dot');
-          const st = this.status === 'off' ? 'error' : this.status;
+          const st = this.status === 'off' ? 'error' : (this.status === 'ok' && this.imgNeedAuth ? 'paused' : this.status);
           if (dot) dot.className = `sync-dot is-${st}`;
           btn.title = `同期：${this.statusText() || this.status}`;
         }
@@ -11381,7 +11598,8 @@
               <button type="button" data-sync="signout" class="sp-out">ログアウト</button>
             </div>
             <div class="sp-usage">今日この端末で使った回数：読み取り ${fmt(u.r)} / 50,000・書き込み ${fmt(u.w)} / 20,000<br>無料枠は毎日 夕方（日本時間16〜17時）にリセットされます。8割に近づくと同期を自動で止めます。</div>
-            <p class="sp-note">同期するもの：カード・ゴミ箱・エリア・カードの形や色などの設定。端末ごと：外観（ライト／ダーク）・ギャラリーの列数・並べ替え・表示中のエリア。<br>画像はまだ同期しません（次の段階で Google ドライブに置きます）。</p>`;
+            <p class="sp-note">同期するもの：カード・ゴミ箱・エリア・カードの形や色などの設定。端末ごと：外観（ライト／ダーク）・ギャラリーの列数・並べ替え・表示中のエリア。</p>`;
+          body = body.replace('<div class="sp-usage">', this.imgStatusHtml() + '<div class="sp-usage">');
         }
         el.innerHTML = `<div class="sp-head">${cloud}複数の端末で同期</div>${body}`;
         if (!el._bound) {
@@ -11393,6 +11611,7 @@
             if (act === 'signin') this.signIn();
             else if (act === 'now') { this.scan(); this.syncNow(); }
             else if (act === 'signout') this.signOut();
+            else if (act === 'drive') this.requestDriveToken();
           });
         }
       }
