@@ -2341,6 +2341,18 @@
     };
     const IMG_DISPLAY = { s: '小', m: '中', l: '幅いっぱい' };
     function rtImgId(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40); }
+    // 画像の種類は、決まったものだけを使う（読み込んだファイルに変な文字が入っていても、HTML に混ざらないように）
+    function safeImgType(t) { const v = String(t || '').toLowerCase(); return /^image\/(jpeg|png|gif|webp|avif|bmp)$/.test(v) ? v : 'image/jpeg'; }
+    // エリアの色は「#」で始まる色コードだけ
+    function safeColor(c) { return /^#[0-9a-fA-F]{3,8}$/.test(String(c || '')) ? c : '#8E8E93'; }
+    // エリアの一覧を整える（読み込み・インポート・同期のどこから来ても同じ形に）
+    function normalizeAreaList(list) {
+      if (!Array.isArray(list)) return [];
+      const seen = new Set();
+      return list.filter(a => a && typeof a === 'object' && a.id != null && String(a.name || '').trim()).map(a => ({
+        id: String(a.id), name: String(a.name), color: safeColor(a.color), icon: AREA_ICONS[a.icon] && a.icon !== 'all' ? a.icon : 'folder'
+      })).filter(a => !seen.has(a.id) && seen.add(a.id));
+    }
     function rtFigureEl(id, size, cap) {
       const fig = document.createElement('figure');
       fig.setAttribute('data-img', id);
@@ -2377,6 +2389,8 @@
       },
       req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
       async put(rec) {
+        const type = safeImgType(rec.type || (rec.blob && rec.blob.type));
+        rec = { ...rec, type, blob: rec.blob && rec.blob.type !== type ? new Blob([rec.blob], { type }) : rec.blob };
         if (!(await this.open())) { this.mem.set(rec.id, rec); return; }
         const db = this.db;
         await new Promise((res, rej) => { const t = db.transaction('images', 'readwrite'); t.objectStore('images').put(rec); t.oncomplete = res; t.onerror = () => rej(t.error); });
@@ -2439,8 +2453,10 @@
       if (IMG_DATAURLS.has(id)) return IMG_DATAURLS.get(id);
       const rec = await IMG_DB.get(id);
       if (!rec || !rec.blob) return null;
-      const url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(null); fr.readAsDataURL(rec.blob); });
-      if (url) IMG_DATAURLS.set(id, url);
+      const type = safeImgType(rec.type || rec.blob.type);
+      const url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(null); fr.readAsDataURL(new Blob([rec.blob], { type })); });
+      if (url && /^data:image\/[a-z]+;base64,[A-Za-z0-9+/=]*$/.test(url)) IMG_DATAURLS.set(id, url);
+      else return null;
       return url;
     }
     function imgExt(type) { return /png/.test(type) ? 'png' : /webp/.test(type) ? 'webp' : /gif/.test(type) ? 'gif' : 'jpg'; }
@@ -3719,7 +3735,7 @@
         const data = IMG_DATAURLS.get(fig.getAttribute('data-img'));
         const frag = document.createElement('div');
         if (data) {
-          frag.innerHTML = `<p><img src="${data}" alt="${rtEscape(cap)}" style="max-width: 100%;"></p>${cap ? `<p style="color: #888; font-size: 0.85em;">${rtEscape(cap)}</p>` : ''}`;
+          frag.innerHTML = `<p><img src="${rtEscape(data)}" alt="${rtEscape(cap)}" style="max-width: 100%;"></p>${cap ? `<p style="color: #888; font-size: 0.85em;">${rtEscape(cap)}</p>` : ''}`;
         } else {
           frag.innerHTML = `<p>${rtEscape(cap ? `［画像：${cap}］` : '［画像］')}</p>`;
         }
@@ -3915,6 +3931,38 @@
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
     }
 
+    // 設定の値を確かめる（数は範囲の中に、選ぶものは決まった値だけに）。
+    // 読み込んだファイルや同期で変な値が入っても、画面の HTML に混ざらないように
+    function normalizeConfig(cfg) {
+      const c = { ...DEFAULT_CONFIG, ...(cfg && typeof cfg === 'object' ? cfg : {}) };
+      const num = (k, lo, hi, step) => {
+        let v = parseFloat(c[k]);
+        if (!isFinite(v)) v = DEFAULT_CONFIG[k];
+        v = Math.min(hi, Math.max(lo, v));
+        c[k] = step ? Math.round(v / step) * step : v;
+      };
+      num('charsPerLine', 16, 36, 1);
+      num('linesCount', 8, 25, 1);
+      num('gridColumns', 2, 6, 1);
+      num('wideFontPx', 13, 20, 0.5);
+      num('autoArchiveDays', 1, 365, 1);
+      const pick = (k, list) => { if (!list.includes(c[k])) c[k] = DEFAULT_CONFIG[k]; };
+      pick('accentTheme', Object.keys(CARD_ACCENT_HEX));
+      pick('sortOrder', Object.keys(SORT_ORDERS));
+      pick('mdLayout', ['area', 'flat', 'single']);
+      pick('cardHeader', ['rich', 'simple']);
+      pick('theme', ['light', 'dark', 'auto']);
+      pick('imageSize', Object.keys(IMG_SIZES));
+      pick('imageDisplay', Object.keys(IMG_DISPLAY));
+      pick('statusFilter', ['all', 'active', ...STATUS_ORDER]);
+      ['flipAnimation', 'copyWithSource', 'wideCard', 'mdHardBreak', 'loopCards', 'imageScreenshotBoost', 'codeWrap', 'autoArchive', 'groupByStatus']
+        .forEach(k => { c[k] = typeof c[k] === 'boolean' ? c[k] : !!DEFAULT_CONFIG[k]; });
+      const sc = c.statusColors && typeof c.statusColors === 'object' ? c.statusColors : {};
+      c.statusColors = {};
+      STATUS_ORDER.forEach(st => { c.statusColors[st] = STATUS_COLORS[sc[st]] ? sc[st] : DEFAULT_CONFIG.statusColors[st]; });
+      return c;
+    }
+
     class CardDeckApp {
       constructor() {
         this.areas = this.loadAreas();
@@ -3987,7 +4035,8 @@
       loadAreas() {
         try {
           const saved = JSON.parse(localStorage.getItem('indexcards_areas_v1') || 'null');
-          if (Array.isArray(saved) && saved.length) return saved;
+          const list = normalizeAreaList(saved);
+          if (list.length) return list;
         } catch (e) { /* 既定値へ */ }
         return DEFAULT_AREAS.map(a => ({ ...a }));
       }
@@ -4108,9 +4157,9 @@
           // v58・v59 の「すべて」はアーカイブを含まなかったので、「アクティブ」に読み替える
           if (cfg.statusVer !== 2) { if (cfg.statusFilter === 'all') cfg.statusFilter = 'active'; cfg.statusVer = 2; }
           delete cfg.showArchive;
-          return cfg;
+          return normalizeConfig(cfg);
         } catch (e) {
-          return DEFAULT_CONFIG;
+          return { ...DEFAULT_CONFIG };
         }
       }
 
@@ -4785,14 +4834,14 @@
           this.storeImportedImages(imp.images).then(() => { imp.imagesStored = true; this.applyImport(mode); });
           return;
         }
-        const clean = (a) => ({ id: String(a.id), name: String(a.name), color: a.color || '#8E8E93', icon: a.icon || 'folder' });
+        const clean = (a) => normalizeAreaList([a])[0] || { id: String(a.id), name: String(a.id), color: '#8E8E93', icon: 'folder' };
 
         if (mode === 'replace') {
           this.areas = imp.areas.length ? imp.areas.map(clean) : DEFAULT_AREAS.map(a => ({ ...a }));
           this.cards = this.migrateCards(imp.cards);
           this.trash = imp.trash.slice();
           if (imp.config) {
-            this.config = { ...DEFAULT_CONFIG, ...imp.config };
+            this.config = normalizeConfig({ ...DEFAULT_CONFIG, ...imp.config });
             this.saveConfig();
           }
         } else {
@@ -7303,7 +7352,7 @@
       inlineMetaLabel() {
         const areas = [...(this.editorAreas || [])].map(id => this.getArea(id)).filter(Boolean);
         const src = this.readSourceFromEditor();
-        const dots = areas.map(a => `<i style="background:${a.color}"></i>`).join('');
+        const dots = areas.map(a => `<i style="background:${safeColor(a.color)}"></i>`).join('');
         const names = areas.map(a => this.escapeHtml(a.name)).join('・');
         let srcText = '';
         if (this.hasSource(src)) {
@@ -7929,7 +7978,7 @@
         const text = CARD_STATUS[st].label;
         const inner = `${statusIconSvg(st, 11)}<span>${text}</span>`;
         if (!opts.button) return `<span class="st-pill is-${st}">${inner}</span>`;
-        return `<button type="button" class="st-pill is-${st}" data-action="status" data-id="${card.id}" title="状態を変える" aria-haspopup="menu">${inner}<svg class="st-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>`;
+        return `<button type="button" class="st-pill is-${st}" data-action="status" data-id="${rtEscape(card.id)}" title="状態を変える" aria-haspopup="menu">${inner}<svg class="st-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>`;
       }
 
       // 状態ごとに分けて並べているか（すべて・アクティブで、引用元の絞り込みがないとき）
@@ -8613,7 +8662,7 @@
             <div class="card-head-row flex items-center gap-2 mb-1.5">
               <div class="card-lead flex items-center gap-2 inline-hide">
                 ${this.statusPillHtml(card, { button: !isMini })}
-                ${isMini && card.pinnedAt ? `<button type="button" class="mini-pin" data-action="unpin" data-id="${card.id}" title="ピン留めを外す">${pinIconSvg(13, true)}</button>` : ''}
+                ${isMini && card.pinnedAt ? `<button type="button" class="mini-pin" data-action="unpin" data-id="${rtEscape(card.id)}" title="ピン留めを外す">${pinIconSvg(13, true)}</button>` : ''}
                 ${!isMini ? this.cardAreasHtml(card) : ''}
               </div>
               ${!isMini ? `<div class="inline-actions ml-auto">
@@ -8623,16 +8672,16 @@
                 <button type="button" class="ia-done" data-action="inline-done" title="完了 (⌘ + Enter)">完了</button>
               </div>` : ''}
               ${!isMini ? `<div class="card-tools ml-auto flex items-center space-x-2 inline-hide">
-                  <button data-action="pin" data-id="${card.id}" class="pin-btn${card.pinnedAt ? ' is-on' : ''} p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${card.pinnedAt ? 'ピン留めを外す' : 'ピン留め（いちばん前に置く）'}" aria-pressed="${!!card.pinnedAt}">${pinIconSvg(15, !!card.pinnedAt)}</button>
-                  <button data-action="copy-menu" data-id="${card.id}" class="copy-menu-btn inline-flex items-center gap-[1px] pl-1 pr-0.5 py-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="本文をコピー（種類を選ぶ）" aria-haspopup="menu">
+                  <button data-action="pin" data-id="${rtEscape(card.id)}" class="pin-btn${card.pinnedAt ? ' is-on' : ''} p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${card.pinnedAt ? 'ピン留めを外す' : 'ピン留め（いちばん前に置く）'}" aria-pressed="${!!card.pinnedAt}">${pinIconSvg(15, !!card.pinnedAt)}</button>
+                  <button data-action="copy-menu" data-id="${rtEscape(card.id)}" class="copy-menu-btn inline-flex items-center gap-[1px] pl-1 pr-0.5 py-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="本文をコピー（種類を選ぶ）" aria-haspopup="menu">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </button>
-                  <button data-action="edit" data-id="${card.id}" class="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="カードを編集">
+                  <button data-action="edit" data-id="${rtEscape(card.id)}" class="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="カードを編集">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                   </button>
                   <span class="card-wide-sep" aria-hidden="true"></span>
-                  <button data-action="flip" data-id="${card.id}" class="flip-btn${linkCount ? '' : ' is-empty'} inline-flex items-center gap-[3px] ${linkCount ? 'pl-1 pr-1.5' : 'p-1'} py-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${linkCount ? `裏返してリンク ${linkCount}件を見る (L)` : '裏返す：リンクはまだありません (L)'}">
+                  <button data-action="flip" data-id="${rtEscape(card.id)}" class="flip-btn${linkCount ? '' : ' is-empty'} inline-flex items-center gap-[3px] ${linkCount ? 'pl-1 pr-1.5' : 'p-1'} py-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${linkCount ? `裏返してリンク ${linkCount}件を見る (L)` : '裏返す：リンクはまだありません (L)'}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>${linkCount ? `<span class="link-count">${linkCount}</span>` : ''}
                   </button>
                   <button data-action="wide" class="card-wide-btn p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${this.isWide() ? '元の大きさに戻す (W)' : '全画面で表示 (W)'}">
@@ -8686,7 +8735,7 @@
       cardAreasHtml(card) {
         const areas = (card.areas || []).map(id => this.getArea(id)).filter(Boolean);
         if (!areas.length) return '';
-        return `<span class="card-areas">${areas.map(a => `<span><i style="background:${a.color}"></i>${this.escapeHtml(a.name)}</span>`).join('')}</span>`;
+        return `<span class="card-areas">${areas.map(a => `<span><i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}</span>`).join('')}</span>`;
       }
 
       // 「今日」「昨日」「3日前」「9月20日」「2025年9月20日」
@@ -9346,10 +9395,10 @@
           pop.innerHTML = `<div class="bp-title">${n}枚のエリア</div>` + this.areas.map(a => {
             const k = cards.filter(c => c.areas.includes(a.id)).length;
             const state = k === n ? 'all' : k ? 'some' : 'none';
-            return `<div class="bp-area" data-area="${a.id}">
+            return `<div class="bp-area" data-area="${rtEscape(a.id)}">
               <button type="button" class="bp-area-main" data-toggle="1" title="${state === 'all' ? '選んだカードから外す' : '選んだカードに加える'}">
                 <span class="bp-box is-${state}">${state === 'all' ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : state === 'some' ? '<i></i>' : ''}</span>
-                <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${a.color}">${areaIconSvg(a.icon, 11)}</span>
+                <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${safeColor(a.color)}">${areaIconSvg(a.icon, 11)}</span>
                 <span class="truncate">${this.escapeHtml(a.name)}</span>
                 <span class="bp-count">${k}/${n}</span>
               </button>
@@ -9581,7 +9630,7 @@
           inner = `<span class="src-main truncate">${esc(src.text)}</span>`;
         }
         const title = t === 'web' && src.url ? 'ページを開く' : '同じ引用元のカードを集める';
-        return `<div class="src-row src-click inline-flex max-w-full items-center gap-2 ${isMini ? 'text-[11px] -ml-1 px-1 py-0.5' : 'text-[12px] -ml-1.5 px-1.5 py-1'}" data-action="source" data-id="${card.id}" title="${title}">${ico}${inner}</div>`;
+        return `<div class="src-row src-click inline-flex max-w-full items-center gap-2 ${isMini ? 'text-[11px] -ml-1 px-1 py-0.5' : 'text-[12px] -ml-1.5 px-1.5 py-1'}" data-action="source" data-id="${rtEscape(card.id)}" title="${title}">${ico}${inner}</div>`;
       }
 
       // 引用元を押したとき：Webはページを開く、それ以外は同じ引用元で絞り込む
@@ -9794,9 +9843,9 @@
         const mac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
         const key = (n) => `${mac ? '⌘' : 'Ctrl+'}${n}`;
         const item = (id, name, color, icon, count, n) => `
-          <button type="button" class="am-item${this.currentArea === id ? ' is-on' : ''}" data-area="${id}">
+          <button type="button" class="am-item${this.currentArea === id ? ' is-on' : ''}" data-area="${rtEscape(id)}">
             <span class="am-check">${this.currentArea === id ? '✓' : ''}</span>
-            <span class="area-ico" style="background:${color}">${areaIconSvg(icon, 13)}</span>
+            <span class="area-ico" style="background:${safeColor(color)}">${areaIconSvg(icon, 13)}</span>
             <span class="truncate">${this.escapeHtml(name)}</span>
             <span class="am-count">${count}</span>
             ${n <= 9 ? `<span class="am-kbd">${key(n)}</span>` : ''}
@@ -9863,7 +9912,7 @@
           row.className = 'ae-row relative';
           const count = this.cards.filter(c => c.areas.includes(a.id)).length;
           row.innerHTML = `
-            <button type="button" class="area-ico !w-8 !h-8 !rounded-[9px] shrink-0" data-act="style" style="background:${a.color}" title="色とアイコン">${areaIconSvg(a.icon, 16)}</button>
+            <button type="button" class="area-ico !w-8 !h-8 !rounded-[9px] shrink-0" data-act="style" style="background:${safeColor(a.color)}" title="色とアイコン">${areaIconSvg(a.icon, 16)}</button>
             <input type="text" value="${this.escapeHtml(a.name)}" placeholder="エリア名" class="flex-1 min-w-0 h-8 px-2.5 rounded-lg bg-black/[0.04] dark:bg-white/[0.07] border border-transparent focus:border-appleBlue outline-none text-[13px] font-semibold text-neutral-900 dark:text-white">
             <span class="text-[11px] text-neutral-400 w-10 text-right tabular-nums shrink-0">${a.isNew ? '' : count + '枚'}</span>
             <button type="button" class="ae-btn" data-act="up" title="上へ" ${i === 0 ? 'disabled' : ''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button>
@@ -9944,7 +9993,7 @@
           b.style.setProperty('--area-color', a.color);
           b.innerHTML = `
             <span class="ac-box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${a.color}">${areaIconSvg(a.icon, 11)}</span>
+            <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${safeColor(a.color)}">${areaIconSvg(a.icon, 11)}</span>
             <span>${this.escapeHtml(a.name)}</span>`;
           b.addEventListener('click', () => {
             if (this.editorAreas.has(a.id)) {
@@ -10005,7 +10054,7 @@
           : (ids.length > 1 || !ids.includes(this.currentArea));
         if (!show) return '';
         return ids.map(id => this.getArea(id)).filter(Boolean)
-          .map(a => `<span class="area-badge"><i style="background:${a.color}"></i>${this.escapeHtml(a.name)}</span>`).join('');
+          .map(a => `<span class="area-badge"><i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}</span>`).join('');
       }
 
       // ============================================================
@@ -11257,7 +11306,8 @@
             if (takeRemote) delete pend[id];
           } else if (data.k === 'areas') {
             if (!Array.isArray(data.d) || !data.d.length) return;
-            let next = data.d.map(a => ({ id: String(a.id), name: String(a.name), color: a.color || '#8E8E93', icon: a.icon || 'folder' }));
+            let next = normalizeAreaList(data.d);
+            if (!next.length) return;
             const p = pend[id];
             if (mode === 'normal' && p && p.t > (data.m || 0)) { synced[id] = this.hashOf({ k: 'areas', d: data.d }); return; }
             if (mode === 'merge') {
@@ -11303,6 +11353,7 @@
           if (app.currentArea !== ALL_AREAS && !app.getArea(app.currentArea)) { app.currentArea = ALL_AREAS; app.saveCurrentArea(); }
         }
         if (ch.config) {
+          app.config = normalizeConfig(app.config);
           app.saveConfig();
           app.applyCodeWrap();
         }
