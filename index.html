@@ -1205,6 +1205,12 @@
     .nr-title { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nr-pin { flex-shrink: 0; display: inline-flex; color: #FF9500; }
     .nr.is-active .nr-pin { color: inherit; }
+    /* 左の一覧を操作していないときは、選択を淡く（削除キーが効かない状態の目印） */
+    body:not(.list-focused) .nr.is-active, body:not(.list-focused) .nr.is-active:hover { background: #FFEDA8; }
+    .dark body:not(.list-focused) .nr.is-active, .dark body:not(.list-focused) .nr.is-active:hover { background: #5A4A18; }
+    .nr:focus { outline: none; }
+    .nr:focus-visible { outline: 2px solid #007AFF; outline-offset: -2px; }
+    .trash-btn:hover { background: rgba(255, 59, 48, 0.1); color: #FF3B30; }
     .nr-links { flex-shrink: 0; display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; color: #8E8E93; font-variant-numeric: tabular-nums; }
     .nr.is-active .nr-links { color: rgba(29, 29, 31, 0.72); }
     .dark .nr.is-active .nr-links { color: rgba(255, 255, 255, 0.8); }
@@ -1294,6 +1300,7 @@
       body.notes-layout .is-wide .card-head-row { min-height: 44px; padding: 5px 10px 5px 68px; }
       body.notes-layout .is-inline-editing .is-wide .card-head-row, body.is-inline-editing.notes-layout .is-wide .card-head-row { padding-left: 14px; }
       body.notes-layout .is-wide .card-title { padding: 30px 18px 0; }
+      body.notes-layout .is-wide .card-head-row .card-areas { display: none; } /* 帯を1行に収める。エリアは一覧の行で見える */
       body.notes-layout .is-wide .card-sub { padding: 0 18px 10px; }
       body.notes-layout .is-wide .card-head .card-date { top: 50px; }
       body.notes-layout .is-wide.is-collapsed .card-title { padding: 6px 60px 6px 18px; }
@@ -5241,6 +5248,7 @@
             return;
           }
           if (e.key === 'Escape') {
+            if (e.isComposing) return; // 変換中の esc は日本語入力に任せる
             if (this.closeRtMenus()) { e.preventDefault(); e.stopPropagation(); return; }
             if (this.isStatusFilterOpen()) { e.preventDefault(); this.closeStatusFilter(); return; }
             if (this.isSortMenuOpen()) { e.preventDefault(); this.closeSortMenu(); return; }
@@ -5257,9 +5265,8 @@
             if (this.isTagPopoverOpen()) { e.preventDefault(); this.closeTagPopover(true); return; }
             if (this.isLinkPickerOpen()) { e.preventDefault(); this.hideLinkPicker(); return; }
             if (this.inlineEditId && !this.isModalOpen()) {
-              e.preventDefault();
-              if (document.getElementById('inlineMeta').classList.contains('open')) { this.closeInlineMeta(); return; }
-              this.finishInlineEdit(false);
+              // esc では編集をやめない（日本語入力の取り消しで押すキーなので、書いた文字を失わないように）
+              if (document.getElementById('inlineMeta').classList.contains('open')) this.closeInlineMeta();
               return;
             }
             if (document.activeElement === this.searchInput) { this.searchInput.blur(); return; }
@@ -5285,6 +5292,12 @@
             this.bulkDelete();
             return;
           }
+          // Delete / Backspace：リストで選んでいるカードをゴミ箱へ（左の一覧を操作しているときだけ）
+          if (!mod && (e.key === 'Delete' || e.key === 'Backspace') && !e.repeat && this.currentView === 'single' && this._listFocused && !this.isStatusMenuOpen()) {
+            const id = this.currentCardId();
+            if (id) { e.preventDefault(); this.deleteCard(id); }
+            return;
+          }
           // W：横いっぱい ⇄ 設定通りの大きさ（カードビューのみ）
           if (!mod && !e.altKey && (e.key === 'w' || e.key === 'W') && this.currentView === 'single' && window.innerWidth >= 768) {
             e.preventDefault();
@@ -5301,6 +5314,7 @@
           // リストビュー：↑↓ で一覧を移動（Mac のメモと同じ）
           if (this.currentView === 'single' && this.isListLayout() && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
             e.preventDefault();
+            this.setListFocus(true);
             if (e.key === 'ArrowDown') this.nextCard(); else this.prevCard();
             return;
           }
@@ -6373,10 +6387,113 @@
       }
 
       setBlock(tag) {
+        // 範囲を選んでいるときは自前で変える（ブラウザの formatBlock は、複数の行にまたがると順番を入れ替えたり、まとめてしまったりする）
+        const sel = window.getSelection();
+        if (sel.rangeCount && !sel.isCollapsed && this.editCardBody.contains(sel.anchorNode)) { this.setBlockOnRange(tag); return; }
         const cur = this.currentBlockTag();
         const target = (cur === tag && tag !== 'div') ? 'div' : tag;
         if (target === 'div' && cur === 'blockquote') { this.unquoteCurrent(); return; }
         document.execCommand('formatBlock', false, `<${target}>`);
+      }
+
+      // 選んだ範囲の行を、1行ずつ見出し・本文・引用に変える。表・リスト・コード・コールアウトには触らない。文字と順番は必ず保つ
+      setBlockOnRange(tag) {
+        const ed = this.editCardBody;
+        const sel = window.getSelection();
+        const range = sel.getRangeAt(0);
+        const TEXT_BLOCK = /^(DIV|P|H1|H2|H3|H4|H5|H6|BLOCKQUOTE)$/;
+        const ANY_BLOCK = /^(DIV|P|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|UL|OL|TABLE|PRE|ASIDE|FIGURE|HR)$/;
+        const isBlock = (n) => n.nodeType === 1 && ANY_BLOCK.test(n.tagName);
+        // 選択範囲に、文字が1文字でもかかっているか（次の行の頭で終わる選択は、次の行を含めない）
+        const touched = (el) => {
+          const r = document.createRange();
+          r.selectNodeContents(el);
+          if (range.compareBoundaryPoints(Range.START_TO_START, r) > 0) r.setStart(range.startContainer, range.startOffset);
+          if (range.compareBoundaryPoints(Range.END_TO_END, r) < 0) r.setEnd(range.endContainer, range.endOffset);
+          return !r.collapsed && r.toString().replace(/​/g, '').trim() !== '';
+        };
+        // ブロックの外に直接置かれた文字を、行にまとめる
+        const wrapLoose = (root) => {
+          let run = null;
+          [...root.childNodes].forEach(n => {
+            if (isBlock(n)) { run = null; return; }
+            if (n.nodeType === 3 && !n.nodeValue.trim() && !run) return;
+            if (!run) { run = document.createElement('div'); n.before(run); }
+            run.appendChild(n);
+          });
+        };
+        // <br> で区切られた行を、別々の行に分ける（選んだ行だけを変えられるように）
+        const splitLines = (el) => {
+          if (![...el.childNodes].some(n => n.nodeName === 'BR')) return [el];
+          const lines = [];
+          let cur = el.cloneNode(false);
+          [...el.childNodes].forEach(n => {
+            if (n.nodeName === 'BR') { lines.push(cur); cur = el.cloneNode(false); }
+            else cur.appendChild(n);
+          });
+          if (cur.childNodes.length) lines.push(cur);
+          lines.forEach(l => { if (!l.childNodes.length) l.appendChild(document.createElement('br')); });
+          el.replaceWith(...lines);
+          return lines;
+        };
+        const collect = (root, out) => {
+          wrapLoose(root);
+          [...root.children].forEach(el => {
+            if (!TEXT_BLOCK.test(el.tagName)) return;
+            if (el.tagName === 'DIV' && el.className && el.className !== 'rt-gap') return; // 部品の中身には触らない
+            if ([...el.children].some(isBlock)) { collect(el, out); return; }
+            if (touched(el)) out.push(el);
+          });
+          return out;
+        };
+        const picked = collect(ed, []);
+        if (!picked.length) return;
+        // 範囲の情報を使い切る前に、行に分ける
+        const lines = [];
+        picked.forEach(el => {
+          const multi = [...el.childNodes].some(n => n.nodeName === 'BR') && el.textContent.trim();
+          if (!multi) { lines.push(el); return; }
+          const parts = [...el.childNodes];
+          const hit = [];
+          let idx = 0; const groups = [[]];
+          parts.forEach(n => { if (n.nodeName === 'BR') { groups.push([]); idx++; } else groups[idx].push(n); });
+          groups.forEach((g, i) => {
+            hit[i] = g.some(n => { try { return range.intersectsNode(n) && (n.textContent || '').trim() !== ''; } catch (e) { return false; } });
+          });
+          const made = splitLines(el);
+          made.forEach((l, i) => { if (hit[i]) lines.push(l); });
+        });
+        if (!lines.length) return;
+        // すべて同じ見出しなら、もう一度押すと本文に戻す（今までと同じ動き）
+        const allSame = tag !== 'div' && lines.every(el => el.tagName.toLowerCase() === tag);
+        const target = allSame ? 'div' : tag;
+        const changed = lines.map(el => {
+          if (el.tagName.toLowerCase() === target) return el;
+          const next = document.createElement(target);
+          while (el.firstChild) next.appendChild(el.firstChild);
+          el.replaceWith(next);
+          return next;
+        });
+        // 引用は、隣り合う行を1つの引用にまとめる
+        const kept = changed.filter(el => el.isConnected);
+        if (target === 'blockquote') {
+          kept.forEach(el => {
+            const prev = el.previousElementSibling;
+            if (prev && prev.tagName === 'BLOCKQUOTE' && kept.includes(prev) && el.isConnected) {
+              prev.appendChild(document.createElement('br'));
+              while (el.firstChild) prev.appendChild(el.firstChild);
+              el.remove();
+              kept[kept.indexOf(el)] = prev;
+            }
+          });
+        }
+        // 変えた行を選んだままにする
+        const first = kept[0], last = kept[kept.length - 1];
+        const r = document.createRange();
+        r.setStart(first, 0);
+        r.setEnd(last, last.childNodes.length);
+        sel.removeAllRanges();
+        sel.addRange(r);
       }
 
       // 区切り線を独立したブロックにする（行の中に入ったままだと、次の行頭ショートカットで消えてしまう）
@@ -6542,7 +6659,8 @@
           case 'clear':
             document.execCommand('removeFormat');
             document.execCommand('unlink');
-            if (this.currentBlockTag() === 'blockquote') this.unquoteCurrent();
+            if (!window.getSelection().isCollapsed) this.setBlockOnRange('div');
+            else if (this.currentBlockTag() === 'blockquote') this.unquoteCurrent();
             else if (['h1', 'h2', 'h3'].includes(this.currentBlockTag())) {
               document.execCommand('formatBlock', false, '<div>');
             }
@@ -7704,6 +7822,7 @@
         const idx = this.getFilteredCards().findIndex(c => c.id === card.id);
         this.currentIndex = Math.max(0, idx);
         this.setNotesDetail(true);
+        this.setListFocus(false);
         if (this.currentView !== 'single') {
           this.switchView('single', { animate: false, instant: true });
         } else {
@@ -7719,7 +7838,12 @@
         if (!id) return;
         if (this.inlineIsNew) { this.finishInlineEdit(false); return; }
         this.finishInlineEdit(false, { noRender: true, quiet: true });
-        this.moveToTrash([id]);
+        this.deleteCard(id);
+      }
+
+      // カードをゴミ箱へ（次のカードを開く。トーストで元に戻せる）
+      deleteCard(id) {
+        if (!this.moveToTrash([id])) return;
         const n = this.getFilteredCards().length;
         if (this.currentIndex >= n) this.currentIndex = Math.max(0, n - 1);
         this.renderAll();
@@ -8908,7 +9032,7 @@
               ${!isMini ? `<div class="inline-actions ml-auto">
                 <button type="button" class="ia-del" data-action="inline-delete" title="このカードを削除"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                 <button type="button" class="ia-link" data-action="inline-link" title="リンクを追加・削除"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="link-count">${linkCount || ''}</span></button>
-                <button type="button" class="ia-cancel" data-action="inline-cancel" title="キャンセル (esc)">キャンセル</button>
+                <button type="button" class="ia-cancel" data-action="inline-cancel" title="書いた内容を保存せずに編集をやめる">キャンセル</button>
                 <button type="button" class="ia-done" data-action="inline-done" title="完了 (⌘ + Enter)">完了</button>
               </div>` : ''}
               ${!isMini ? `<div class="card-tools ml-auto flex items-center space-x-2 inline-hide">
@@ -8920,6 +9044,7 @@
                   <button data-action="edit" data-id="${rtEscape(card.id)}" class="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="カードを編集">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                   </button>
+                  <button data-action="trash" class="trash-btn p-1 rounded-full transition text-neutral-500 cursor-pointer" title="ゴミ箱に移す"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                   <span class="card-wide-sep" aria-hidden="true"></span>
                   <button data-action="wide" class="card-wide-btn p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${this.config.listHidden ? '一覧を表示 (W)' : '一覧を隠す (W)'}">
                     ${'<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>'}
@@ -9164,6 +9289,9 @@
             });
           }
 
+          const trashBtn = cardWrapper.querySelector('[data-action="trash"]');
+          if (trashBtn) trashBtn.addEventListener('click', (e) => { e.stopPropagation(); this.deleteCard(card.id); });
+
           const editBtn = cardWrapper.querySelector('[data-action="edit"]');
           if (editBtn) {
             editBtn.addEventListener('click', (e) => {
@@ -9171,16 +9299,9 @@
               this.startInlineEdit(card.id);
             });
           }
-          // 本文をダブルクリックしても、その場で書き始められる
+          // 本文・タイトルをダブルクリックすると、その場で書き始められる
           const bodyForDbl = cardWrapper.querySelector('.card-body-scroll');
-          if (bodyForDbl) {
-            bodyForDbl.addEventListener('dblclick', (e) => {
-              if (this.inlineEditId || e.target.closest('button, a, .rt-code-bar')) return;
-              const pt = { x: e.clientX, y: e.clientY };
-              this.startInlineEdit(card.id, pt);
-            });
-            this.bindClickToEdit(cardWrapper, bodyForDbl, card.id);
-          }
+          if (bodyForDbl) this.bindDblClickToEdit(cardWrapper, bodyForDbl, card.id);
           cardWrapper.querySelector('[data-action="inline-done"]').addEventListener('click', (e) => { e.stopPropagation(); this.finishInlineEdit(true); });
           cardWrapper.querySelector('[data-action="inline-cancel"]').addEventListener('click', (e) => { e.stopPropagation(); this.finishInlineEdit(false); });
           cardWrapper.addEventListener('keydown', (e) => {
@@ -9344,6 +9465,10 @@
           if (row) { e.preventDefault(); this.openNote(row.dataset.id); }
         });
         this.bindLinkDrag();
+        // 左の一覧を操作しているか（Mac のメモと同じく、そのときだけ選択が濃い黄色になり、削除キーが効く）
+        document.addEventListener('mousedown', (e) => {
+          this.setListFocus(!!(e.target.closest && e.target.closest('#notesList')));
+        }, true);
         document.getElementById('nlHideBtn').addEventListener('click', () => this.toggleWide());
         document.getElementById('notesBackBtn').addEventListener('click', () => {
           if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
@@ -9392,12 +9517,9 @@
         this.scrollToIndex(idx, false);
       }
 
-      // Mac のメモと同じように、本文を押すとそのまま書き始められる（マウスのある端末だけ）
-      bindClickToEdit(wrap, body, cardId) {
-        if (!window.matchMedia('(hover: hover)').matches) return;
-        const canStart = () => !this.inlineEditId && window.getSelection().isCollapsed;
-        body.addEventListener('click', (e) => {
-          if (!canStart() || e.target.closest('button, a, img, figure, input, summary, .rt-code')) return;
+      bindDblClickToEdit(wrap, body, cardId) {
+        body.addEventListener('dblclick', (e) => {
+          if (this.inlineEditId || e.target.closest('button, a, img, figure, input, summary, .rt-code')) return;
           const r = body.getBoundingClientRect();
           if (e.clientX >= r.left + body.clientWidth) return; // スクロールバーの上
           const li = e.target.closest('li[data-checked]');
@@ -9405,8 +9527,8 @@
           this.startInlineEdit(cardId, { x: e.clientX, y: e.clientY });
         });
         const title = wrap.querySelector('.card-title');
-        title.addEventListener('click', () => {
-          if (!canStart() || wrap.classList.contains('is-collapsed')) return;
+        title.addEventListener('dblclick', () => {
+          if (this.inlineEditId || wrap.classList.contains('is-collapsed')) return;
           this.startInlineEdit(cardId);
           if (this.inlineHome) { title.focus(); this.placeCaret(title, true); }
         });
@@ -9477,6 +9599,11 @@
         const act = box.querySelector('.nr.is-active');
         if (act && activeId !== this._listScrolledTo) act.scrollIntoView({ block: 'nearest' });
         this._listScrolledTo = activeId;
+      }
+
+      setListFocus(on) {
+        this._listFocused = !!on;
+        document.body.classList.toggle('list-focused', !!on);
       }
 
       markActiveRow(id) {
