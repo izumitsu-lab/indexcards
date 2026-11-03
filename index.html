@@ -158,9 +158,6 @@
 
     /* ===== 全画面（横いっぱい）：見出しを1行にし、余白を詰める ===== */
     body.wide-view #singleViewContainer { padding: 8px; }
-    body.wide-view.wide-editing #singleViewContainer { padding-top: 60px; }
-    body.wide-view #prevCardBtn { left: 6px; width: 40px; height: 40px; }
-    body.wide-view #nextCardBtn { right: 6px; width: 40px; height: 40px; }
     body.wide-view .card-carousel-panel { padding: 0; align-items: flex-start; } /* 見出しを畳んでも、カードの上端は動かさない */
     .is-wide { max-height: none !important; border-radius: 20px !important; }
     .is-wide > .glass-specular { border-radius: 20px !important; }
@@ -210,7 +207,6 @@
     .is-wide .card-body-scroll table { display: table; overflow: visible; }
     .is-wide .card-body-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--th-solid, #F3F3F5); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.14); }
     .dark .is-wide .card-body-scroll thead th { background: var(--th-solid, #2C2C32); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.16); }
-    .card-carousel-panel.is-loop-clone { pointer-events: none; }
     .card-carousel-panel {
       min-width: 100%;
       width: 100%;
@@ -283,18 +279,6 @@
     /* ===== カードを裏返す（カードビュー ⇄ リンクビュー） ===== */
     #viewStage { perspective: 1800px; }
     .flip-pane { backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; }
-    .tb-flip-btn {
-      display: inline-flex; align-items: center; gap: 6px; height: 30px;
-      padding: 0 12px; border-radius: 9px; font-size: 12px; font-weight: 500;
-      color: #525252; background: rgba(0, 0, 0, 0.055);
-      transition: background 0.15s, color 0.15s, opacity 0.2s, transform 0.2s;
-    }
-    .dark .tb-flip-btn { color: #A3A3A3; background: rgba(255, 255, 255, 0.08); }
-    .tb-flip-btn:hover { color: #171717; background: rgba(0, 0, 0, 0.08); }
-    .dark .tb-flip-btn:hover { color: #F5F5F5; }
-    .tb-flip-btn.is-on { background: rgba(0, 122, 255, 0.12); color: #007AFF; font-weight: 600; }
-    .dark .tb-flip-btn.is-on { background: rgba(77, 163, 255, 0.18); color: #4DA3FF; }
-    .tb-flip-btn.is-hidden { opacity: 0; pointer-events: none; transform: translateX(-6px); }
 
     /* ===== エリア ===== */
     .area-btn {
@@ -476,9 +460,10 @@
     /* ===== リッチテキスト（カード本文・エディタ共通） ===== */
     .rich > div, .rich p { margin: 0; }
     .rich h1, .rich h2, .rich h3 { font-weight: 700; margin: 0.25em 0 0.05em; line-height: 1.35; }
-    .rich h1 { font-size: 1.5em; }
-    .rich h2 { font-size: 1.28em; }
-    .rich h3 { font-size: 1.1em; }
+    /* 見出しの大きさは本文に対する倍率。設定で変えられる */
+    .rich h1 { font-size: var(--rt-h1, 1.5em); }
+    .rich h2 { font-size: var(--rt-h2, 1.28em); }
+    .rich h3 { font-size: var(--rt-h3, 1.1em); }
     .rich > h1:first-child, .rich > h2:first-child, .rich > h3:first-child { margin-top: 0; }
     .rich b, .rich strong { font-weight: 700; }
     .rich i, .rich em { font-style: italic; }
@@ -739,13 +724,8 @@
     .inline-actions .ia-link { color: #8E8E93; padding: 5px 7px; display: inline-flex; align-items: center; gap: 3px; margin-right: 4px; }
     .inline-actions .ia-link:hover { background: rgba(0, 122, 255, 0.1); color: #007AFF; }
     .inline-actions .ia-link .link-count:empty { display: none; }
-    .flip-btn.is-empty { opacity: 0.5; }
-    .flip-btn.is-empty:hover { opacity: 1; }
     /* リンクビュー（カードの裏）の見出し */
     .link-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 2px 2px 6px; }
-    .link-back { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 10px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: #007AFF; background: rgba(0, 122, 255, 0.1); transition: background 0.12s; }
-    .link-back:hover { background: rgba(0, 122, 255, 0.16); }
-    .dark .link-back { color: #4DA3FF; background: rgba(77, 163, 255, 0.16); }
     .link-bar-title { min-width: 0; flex: 1; font-size: 13px; color: #6E6E73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .link-bar-title b { color: #1D1D1F; font-weight: 700; }
     .dark .link-bar-title { color: #A1A1A6; }
@@ -783,7 +763,6 @@
     #inlineMeta.open { opacity: 1; visibility: visible; transform: translateY(0); transition: opacity 0.14s, transform 0.16s, visibility 0s; }
     .dark #inlineMeta { background: #232327; box-shadow: 0 24px 50px -14px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
     #inlineMeta > div + div { margin-top: 14px; }
-    body.is-inline-editing #prevCardBtn, body.is-inline-editing #nextCardBtn { opacity: 0; pointer-events: none; }
     body.is-inline-editing #cardCarousel { overflow-x: hidden; }
     #inlineBar {
       position: fixed; z-index: 60; left: 50%; transform: translate(-50%, 4px); opacity: 0; pointer-events: none;
@@ -1130,7 +1109,7 @@
       /* ヘッダー：エリア・表示の切り替え・リンク・検索ボタン・枚数・設定だけ */
       header { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
       header > .w-px { display: none; }
-      #areaBtnName { display: none; }
+      #areaBtnName, #statusBtnName, #statusBtnCount { display: none; }
       #mSearchBtn.m-only { display: inline-flex !important; }
       #mSearchBtn.is-on { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
       #addCardQuickBtn { display: none !important; }
@@ -1147,9 +1126,7 @@
       #searchTagChips { max-width: 50% !important; }
       html, body { overflow-x: clip; } /* 何かがはみ出しても、画面全体が横にずれないように */
       #searchKbd { display: none !important; }
-      #statusSeg .tb-seg-btn { padding: 5px 7px; flex: 1 1 auto; justify-content: center; white-space: nowrap; gap: 3px; }
       body.m-search-open #searchWrap { flex-wrap: wrap; row-gap: 8px; }
-      #statusSeg { order: -2; flex: 1 1 auto; }
       #searchBox { flex-basis: 60% !important; }
       #searchInput { font-size: 16px !important; } /* 16px 未満だと、iPhone は入力のたびに画面を拡大する */
       /* タグの枠・並べ替えのメニューは、画面の幅に合わせる */
@@ -1185,17 +1162,278 @@
       #settingImageSizeSeg { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     }
 
-    /* ===== カードの状態（Permanent / Fleeting / Archive） ===== */
-    #statusSeg .tb-seg-btn { gap: 5px; padding: 5px 10px; white-space: nowrap; }
-    #statusSeg .tb-seg-btn svg { flex-shrink: 0; }
+    /* ===== リストビュー（Mac のメモのように、左に一覧・右に開いたカード） ===== */
+    #notesSidebar { display: none; }
+    #notesBackBtn { display: none; }
+    #viewStage { min-width: 0; }
+    body.notes-layout #notesSidebar {
+      display: flex; flex-direction: column; flex-shrink: 0; width: 300px; min-height: 0;
+      background: #F4F4F6; border-right: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .dark body.notes-layout #notesSidebar, body.notes-layout.dark #notesSidebar { background: #1A1A1D; border-right-color: rgba(255, 255, 255, 0.08); }
+    body.notes-layout.notes-list-hidden #notesSidebar { display: none; }
+    /* 裏面は「見渡す」画面：ギャラリーと同じく画面いっぱいに並べる */
+    body.notes-layout.link-view #notesSidebar { display: none !important; }
+    .nl-head { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 8px 0 18px; flex-shrink: 0; }
+    .nl-title { min-width: 0; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nl-count { font-size: 12px; color: #8E8E93; font-variant-numeric: tabular-nums; }
+    .nl-hide { margin-left: auto; }
+    #notesList { flex: 1; min-height: 0; overflow-y: auto; padding: 0 10px 88px; }
+    /* 一覧の見出し：スクロールしても上に残り、今どのまとまりかわかる */
+    .nl-group {
+      position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 8px; margin: 0 -2px; padding: 12px 2px 6px 6px;
+      font-size: 12.5px; font-weight: 700; color: #1D1D1F; background: #F4F4F6;
+    }
+    .nl-group:first-child { padding-top: 2px; }
+    .dark .nl-group { background: #1A1A1D; }
+    .nl-group .st-pill { height: 24px; padding: 0 11px 0 8px; gap: 5px; font-size: 12px; font-weight: 700; }
+    .nl-group-n { font-size: 12px; font-weight: 600; color: #6E6E73; font-variant-numeric: tabular-nums; }
+    .dark .nl-group-n { color: #A1A1A6; }
+    .nl-group-line { flex: 1; height: 1px; background: rgba(0, 0, 0, 0.1); }
+    .dark .nl-group-line { background: rgba(255, 255, 255, 0.12); }
+    .dark .nl-group { color: #F5F5F7; }
+    .nr { position: relative; display: block; width: 100%; text-align: left; padding: 9px 12px 10px; border-radius: 9px; cursor: default; color: #1D1D1F; }
+    .dark .nr { color: #F5F5F7; }
+    .nr + .nr::before { content: ""; position: absolute; left: 12px; right: 12px; top: 0; height: 1px; background: rgba(0, 0, 0, 0.08); }
+    .dark .nr + .nr::before { background: rgba(255, 255, 255, 0.09); }
+    .nr.is-active::before, .nr.is-active + .nr::before { display: none; }
+    .nr:hover { background: rgba(0, 0, 0, 0.04); }
+    .dark .nr:hover { background: rgba(255, 255, 255, 0.05); }
+    .nr.is-active, .nr.is-active:hover { background: #FFD84D; color: #1D1D1F; }
+    .dark .nr.is-active, .dark .nr.is-active:hover { background: #8A6D12; color: #fff; }
+    .nr-top { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .nr-title { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nr-pin { flex-shrink: 0; display: inline-flex; color: #FF9500; }
+    .nr.is-active .nr-pin { color: inherit; }
+    .nr-links { flex-shrink: 0; display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; color: #8E8E93; font-variant-numeric: tabular-nums; }
+    .nr.is-active .nr-links { color: rgba(29, 29, 31, 0.72); }
+    .dark .nr.is-active .nr-links { color: rgba(255, 255, 255, 0.8); }
+    .nr-sub { margin-top: 2px; font-size: 12px; line-height: 1.4; color: #6E6E73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dark .nr-sub { color: #A1A1A6; }
+    .nr-date { color: #1D1D1F; margin-right: 8px; font-weight: 500; }
+    .dark .nr-date { color: #E5E5EA; }
+    .nr.is-active .nr-sub { color: rgba(29, 29, 31, 0.72); }
+    .dark .nr.is-active .nr-sub { color: rgba(255, 255, 255, 0.82); }
+    .nr.is-active .nr-date { color: inherit; }
+    .nr-area { margin-top: 3px; display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8E8E93; overflow: hidden; white-space: nowrap; }
+    .nr-area i { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .nr.is-active .nr-area { color: rgba(29, 29, 31, 0.66); }
+    .dark .nr.is-active .nr-area { color: rgba(255, 255, 255, 0.76); }
+    .nl-empty { padding: 32px 12px; text-align: center; font-size: 12px; color: #8E8E93; }
+
+    /* 右側：カードの枠をなくして、1枚の紙のように */
+    body.notes-layout #singleViewContainer { padding: 0; background: #fff; }
+    .dark body.notes-layout #singleViewContainer, body.notes-layout.dark #singleViewContainer { background: #1E1E22; }
+    body.notes-layout #cardCarousel { overflow: hidden; }
+    body.notes-layout .card-carousel-panel { padding: 0; align-items: flex-start; }
+    body.notes-layout .card-carousel-panel > .is-wide {
+      max-width: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+      background: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; transition: none;
+    }
+    body.notes-layout .card-carousel-panel > .is-wide > .glass-specular { display: none; }
+    /* 上端の帯：読むときは状態とコピーなど、書くときは書式と完了など。同じ場所で中身だけが替わる */
+    body.notes-layout .head-simple.is-wide .card-head { display: block; padding: 0 !important; border-bottom: 0; cursor: default; }
+    body.notes-layout .is-wide .card-head-row {
+      display: flex !important; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-height: 48px; margin: 0 !important; padding: 7px 14px 7px 36px;
+      background: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .dark body.notes-layout .is-wide .card-head-row, body.notes-layout.dark .is-wide .card-head-row { background: #1E1E22; border-bottom-color: rgba(255, 255, 255, 0.08); }
+    body.notes-layout .is-wide .card-title { font-size: var(--card-title, 24px) !important; line-height: 1.35 !important; padding: 34px 36px 0; }
+    body.notes-layout .is-wide .card-sub { margin: 6px 0 0 !important; padding: 0 36px 14px; }
+    body.notes-layout .is-wide .card-head .card-date { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); margin: 0; }
+    /* 読み進めたら：帯はそのまま、タイトルだけ細い1行に */
+    body.notes-layout .is-wide.is-collapsed .card-title { font-size: 13px !important; padding: 6px 76px 6px 36px; -webkit-line-clamp: 1; cursor: pointer; }
+    body.notes-layout .is-wide.is-collapsed .card-head { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
+    .dark body.notes-layout .is-wide.is-collapsed .card-head { border-bottom-color: rgba(255, 255, 255, 0.07); }
+    body.notes-layout .is-wide.is-collapsed .wide-progress { position: absolute; right: 18px; bottom: 8px; margin: 0; }
+    /* 帯の中の書式ボタン */
+    .card-head-row #rtToolbar { flex: 0 1 auto; min-width: 0; flex-wrap: wrap; gap: 2px; padding: 0; border: 0; background: transparent; animation: rt-dock-in 0.16s ease; }
+    @keyframes rt-dock-in { from { opacity: 0; } to { opacity: 1; } }
+    .card-head-row #rtToolbar .rt-grp { display: inline-flex; align-items: center; gap: 2px; }
+    .card-head-row #rtToolbar .rt-sep { margin: 0 5px; }
+    .card-head-row #rtToolbar .rt-btn { width: 30px; height: 30px; min-width: 30px; padding: 0; color: #48484A; }
+    .dark .card-head-row #rtToolbar .rt-btn { color: #D4D4D4; }
+    .card-head-row #rtToolbar .rt-btn.is-active { color: #007AFF; }
+    .card-head-row .inline-actions { gap: 4px; }
+    .card-head-row .inline-actions .ia-link { margin-right: 6px; }
+    /* まとめボタン：帯の中だけ。iPhone のキーボードの上では、今までどおり横に並べる */
+    .rt-menu, .rt-pop { display: contents; }
+    .rt-menu-btn { display: none; }
+    .card-head-row .rt-menu { display: inline-flex; position: relative; }
+    .card-head-row .rt-menu-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 3px; min-width: 30px; height: 30px; padding: 0 5px 0 7px; border-radius: 7px; color: #48484A; font-size: 13px;
+      transition: background 0.12s;
+    }
+    .dark .card-head-row .rt-menu-btn { color: #D4D4D4; }
+    .card-head-row .rt-menu-btn:hover, .card-head-row .rt-menu.is-open > .rt-menu-btn { background: rgba(0, 0, 0, 0.06); }
+    .dark .card-head-row .rt-menu-btn:hover, .dark .card-head-row .rt-menu.is-open > .rt-menu-btn { background: rgba(255, 255, 255, 0.1); }
+    .card-head-row .rt-menu:has(.rt-btn.is-active) > .rt-menu-btn { color: #007AFF; }
+    .rt-caret { opacity: 0.55; }
+    .rt-aa { font-weight: 700; letter-spacing: -0.02em; }
+    .rt-aa-color { padding-bottom: 1px; border-bottom: 2.5px solid #D44C47; line-height: 1.05; }
+    .card-head-row .rt-pop {
+      display: none; position: absolute; z-index: 40; top: calc(100% + 8px); left: 0; padding: 5px; border-radius: 12px; background: #fff;
+      box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    }
+    .dark .card-head-row .rt-pop { background: #2C2C30; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.12); }
+    .card-head-row .rt-menu.is-open > .rt-pop { display: flex; }
+    .card-head-row .rt-pop-row { gap: 2px; }
+    .card-head-row .rt-pop-row .rt-btn { width: auto; min-width: 34px; padding: 0 8px; }
+    .card-head-row .rt-pop-list { flex-direction: column; width: 190px; }
+    .card-head-row #rtToolbar .rt-pop-list .rt-btn { display: flex; width: 100%; height: 32px; justify-content: flex-start; gap: 10px; padding: 0 9px; font-size: 13px; white-space: nowrap; }
+    .card-head-row .rt-pop-list .rt-btn[data-label]::after { content: attr(data-label); font-weight: 500; }
+    .rt-pop-sep { height: 1px; margin: 4px 8px; background: rgba(0, 0, 0, 0.08); }
+    .dark .rt-pop-sep { background: rgba(255, 255, 255, 0.1); }
+    @media (max-width: 639px) { .rt-pop-sep { display: none; } }
+    body.notes-layout .is-wide .card-body-box { padding: 4px 36px 0 !important; }
+    body.notes-layout .is-wide .card-foot { padding: 0 36px 10px !important; }
+    body.notes-layout .is-wide .card-date .cd-pop { right: auto; left: 50%; transform: translateX(-50%); }
+    @media (min-width: 640px) {
+    }
+    @media (max-width: 639px) {
+      body.notes-layout .is-wide .card-head-row { min-height: 44px; padding: 5px 10px 5px 68px; }
+      body.notes-layout .is-inline-editing .is-wide .card-head-row, body.is-inline-editing.notes-layout .is-wide .card-head-row { padding-left: 14px; }
+      body.notes-layout .is-wide .card-title { padding: 30px 18px 0; }
+      body.notes-layout .is-wide .card-sub { padding: 0 18px 10px; }
+      body.notes-layout .is-wide .card-head .card-date { top: 50px; }
+      body.notes-layout .is-wide.is-collapsed .card-title { padding: 6px 60px 6px 18px; }
+      /* iPhone：一覧 → 押すと開く → 「一覧」で戻る（iPhone のメモと同じ流れ） */
+      body.notes-layout #notesSidebar { width: 100%; border-right: 0; }
+      body.notes-layout:not(.notes-detail) #viewStage { display: none; }
+      body.notes-layout.notes-detail #notesSidebar { display: none; }
+      body.notes-layout.notes-list-hidden:not(.notes-detail) #notesSidebar { display: flex; }
+      .nl-hide { display: none; }
+      .nl-head { padding-left: 20px; }
+      .nl-title { font-size: 20px; }
+      .nr { padding: 11px 12px 12px; }
+      .nr-title { font-size: 15px; }
+      .nr-sub { font-size: 13px; }
+      body.notes-layout #notesBackBtn {
+        position: absolute; z-index: 26; top: 4px; left: 6px; display: inline-flex; align-items: center; gap: 1px; height: 34px; padding: 0 8px 0 2px;
+        font-size: 15px; font-weight: 500; color: #007AFF;
+      }
+      .dark #notesBackBtn { color: #4DA3FF; }
+      body.is-inline-editing #notesBackBtn { display: none !important; }
+      body.notes-layout #linkViewContainer { padding-top: 40px !important; }
+      body.notes-layout .is-wide .card-body-box { padding: 4px 18px 0 !important; }
+      body.notes-layout .is-wide .card-foot { padding: 0 18px 8px !important; }
+      body.notes-layout.notes-detail #fabAddBtn { display: none !important; }
+    }
+
+    /* 表示の切り替えが3つになった分、狭い画面ではヘッダーの文字を省く */
+    @media (max-width: 960px) { #listModeBtn span, #gridModeBtn span { display: none; } }
+    @media (max-width: 900px) { #addCardQuickBtn span, #statusBtnName, #areaBtnName { display: none; } }
+    @media (max-width: 720px) { header { gap: 4px !important; padding-left: 8px !important; padding-right: 8px !important; } #searchKbd { display: none; } #statusBtnCount { display: none; } }
+
+    /* 状態の絞り込み（エリアと同じ形のメニュー） */
+    .status-ico { width: 22px; height: 22px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; color: #6E6E73; }
+    .dark .status-ico { color: #A1A1A6; }
+    .am-item.is-on .status-ico { color: #007AFF; }
+    .dark .am-item.is-on .status-ico { color: #4DA3FF; }
+    #statusBtn { font-weight: 600; }
+    #statusBtn.is-filtered { color: #007AFF; }
+    #statusBtn.is-filtered .status-ico { color: inherit; }
+    .dark #statusBtn.is-filtered { color: #4DA3FF; }
+    .am-sub { margin-left: 7px; font-size: 11px; font-weight: 400; color: #8E8E93; }
+
+    /* ギャラリー・裏面のカードのリンク数：押すとそのカードの裏面へ */
+    .mini-flip {
+      position: relative; display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 10px 0 8px; border-radius: 9999px;
+      font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: #007AFF; background: rgba(0, 122, 255, 0.1); cursor: pointer; transition: background 0.12s, color 0.12s, opacity 0.12s;
+    }
+    .mini-flip::after { content: ""; position: absolute; inset: -14px -12px; } /* 縮小表示でも押しやすいように */
+    .mini-flip:hover { color: #fff; background: #007AFF; }
+    .dark .mini-flip { color: #4DA3FF; background: rgba(77, 163, 255, 0.16); }
+    .dark .mini-flip:hover { color: #fff; background: #0A84FF; }
+    .mini-flip.is-zero { color: #8E8E93; background: rgba(0, 0, 0, 0.05); opacity: 0; }
+    .dark .mini-flip.is-zero { background: rgba(255, 255, 255, 0.08); }
+    .grid-cell:hover .mini-flip.is-zero, .mini-flip.is-zero:focus-visible { opacity: 1; }
+    .mini-flip.is-zero:hover { color: #fff; background: #007AFF; }
+    @media (hover: none) { .mini-flip.is-zero { opacity: 0.7; } }
+    #gridCardsContainer.is-selecting .mini-flip { pointer-events: none; }
+
+    /* ===== ドラッグ＆ドロップでリンク ===== */
+    .nr[draggable="true"] { -webkit-user-drag: element; }
+    .grid-cell[draggable="true"] { -webkit-user-drag: element; }
+    .grid-cell[draggable="true"] .rich, .grid-cell[draggable="true"] img { -webkit-user-select: none; user-select: none; pointer-events: none; }
+    .is-drag-source { opacity: 0.45; }
+    #linkDragGhost {
+      position: fixed; left: -1000px; top: -1000px; z-index: -1; display: inline-flex; align-items: center; gap: 6px; max-width: 280px; height: 34px; padding: 0 13px 0 10px; border-radius: 10px;
+      font: 700 13px -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; color: #fff; background: #007AFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    /* ギャラリー：重ねた先のカード */
+    .grid-cell.is-drop-target { box-shadow: 0 0 0 3px #007AFF, 0 14px 30px -12px rgba(0, 122, 255, 0.5) !important; }
+    .grid-cell.is-drop-linked { box-shadow: 0 0 0 3px #AEAEB2 !important; }
+    .grid-cell.is-drop-target::after, .grid-cell.is-drop-linked::after {
+      content: attr(data-drop-label); position: absolute; z-index: 20; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 7px 13px; border-radius: 10px; white-space: nowrap;
+      font-size: 13px; font-weight: 700; color: #fff; background: #007AFF; box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.4); pointer-events: none;
+    }
+    .grid-cell.is-drop-linked::after { background: #636366; }
+    /* リスト：右側の案内 */
+    #linkDropHint { display: none; position: absolute; inset: 10px; z-index: 24; align-items: center; justify-content: center; border-radius: 14px; pointer-events: none; }
+    #linkDropHint.is-over { display: flex; background: rgba(0, 122, 255, 0.08); box-shadow: inset 0 0 0 2.5px #007AFF; }
+    #linkDropHint.is-linked { display: flex; background: rgba(120, 120, 128, 0.08); box-shadow: inset 0 0 0 2.5px #AEAEB2; }
+    #linkDropHintText { max-width: 80%; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; color: #fff; background: #007AFF; box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #linkDropHint.is-linked #linkDropHintText { background: #636366; }
+
+    /* ===== 裏返すボタン（ヘッダーに常に置く） ===== */
+    #flipFabWrap { position: relative; flex-shrink: 0; }
+    #flipFabWrap.is-off { display: none; }
+    #flipFab {
+      display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 5px 0 9px; border-radius: 10px; white-space: nowrap;
+      font-size: 13px; font-weight: 700; color: #007AFF; background: rgba(0, 122, 255, 0.11); cursor: pointer; transition: background 0.15s, color 0.15s;
+    }
+    #flipFab:hover { background: rgba(0, 122, 255, 0.18); }
+    #flipFab:active { transform: scale(0.97); }
+    #flipFab:focus-visible { outline: 2px solid #007AFF; outline-offset: 2px; }
+    .dark #flipFab { color: #4DA3FF; background: rgba(77, 163, 255, 0.16); }
+    .dark #flipFab:hover { background: rgba(77, 163, 255, 0.24); }
+    .ff-ico { display: inline-flex; }
+    .ff-ico.is-turning svg { animation: ff-turn 0.46s ease; }
+    @keyframes ff-turn { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+    .ff-count { display: inline-flex; align-items: center; gap: 3px; height: 24px; padding: 0 8px 0 6px; border-radius: 7px; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: #fff; background: #007AFF; }
+    .ff-count.is-zero { color: #6E6E73; background: rgba(255, 255, 255, 0.75); }
+    .dark .ff-count { background: #0A84FF; }
+    .dark .ff-count.is-zero { color: #C7C7CC; background: rgba(255, 255, 255, 0.1); }
+    /* 裏面にいるときは、塗りつぶして「表に戻す」 */
+    #flipFab.is-back, .dark #flipFab.is-back { padding: 0 12px 0 9px; color: #fff; background: #007AFF; }
+    #flipFab.is-back:hover { background: #0A6CE0; }
+    #flipFab.is-back .ff-count { display: none; }
+    /* ボタンに触れると、裏面のリンクを予告する */
+    #flipPeek { display: none; position: absolute; top: 100%; left: 0; z-index: 45; width: 290px; padding-top: 8px; }
+    #flipPeek > div { padding: 8px; border-radius: 14px; background: #fff; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.1); }
+    .dark #flipPeek > div { background: #2C2C30; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.12); }
+    @media (hover: hover) { #flipFabWrap:hover #flipPeek:not(:empty) { display: block; } }
+    .fp-head { padding: 3px 8px 6px; font-size: 11px; font-weight: 600; color: #8E8E93; }
+    .fp-row { display: block; width: 100%; padding: 6px 8px; border-radius: 8px; text-align: left; font-size: 12.5px; font-weight: 500; color: #1D1D1F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dark .fp-row { color: #F5F5F7; }
+    .fp-row:hover { background: rgba(0, 122, 255, 0.1); color: #007AFF; }
+    .dark .fp-row:hover { color: #4DA3FF; }
+    .fp-more, .fp-empty { padding: 4px 8px 5px; font-size: 11.5px; color: #8E8E93; }
+    @media (max-width: 1100px) { #flipFab:not(.is-back) #flipFabLabel { display: none; } }
+    @media (max-width: 760px) { #areaBtn > svg, #statusBtn > svg { display: none; } #areaBtn, #statusBtn { padding: 0 6px; } header .tb-seg-btn { padding: 5px 7px; } header > .w-px { display: none; } #searchWrap { min-width: 40px; } #searchBox { flex: 1 1 0; width: auto !important; min-width: 0; } }
+    @media (max-width: 374px) { header { gap: 4px !important; padding-left: 5px !important; padding-right: 5px !important; } #flipFabLabel { display: none; } #flipFab.is-back, .dark #flipFab.is-back { padding: 0 9px; } }
+
+    /* 裏面：表とは違う紙にして、いま裏にいることが一目でわかるように */
+    #linkViewContainer { background-color: #E7ECF4; background-image: radial-gradient(rgba(40, 60, 100, 0.13) 1px, transparent 1px); background-size: 16px 16px; }
+    .dark #linkViewContainer { background-color: #15181F; background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); }
+    .link-side-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px 0 8px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; color: #fff; background: #007AFF; }
+    .dark .link-side-chip { background: #0A84FF; }
+    @media (max-width: 639px) {
+      /* iPhone：一覧にはまだ開いたカードがないので出さない */
+      body.notes-layout:not(.notes-detail) #flipFabWrap { display: none; }
+      #flipPeek { display: none !important; }
+    }
+
+    /* ===== カードの状態（Permanent / Project / Fleeting / Archive） ===== */
     .ss-n { font-size: 10.5px; font-weight: 500; color: #8E8E93; font-variant-numeric: tabular-nums; }
-    #statusSeg .tb-seg-btn.is-on .ss-n { color: inherit; opacity: 0.75; }
-    @media (max-width: 1379px) { .ss-label { display: none; } #statusSeg .tb-seg-btn[data-status="all"] .ss-label, #statusSeg .tb-seg-btn[data-status="active"] .ss-label { display: inline; } }
     .st-pill { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px 0 6px; border-radius: 9999px; font-size: 10.5px; font-weight: 600; line-height: 1; white-space: nowrap; letter-spacing: 0; text-transform: none; }
     .st-pill.is-permanent { background: rgba(88, 86, 214, 0.1); color: #5856D6; }
+    .st-pill.is-project { background: rgba(15, 138, 125, 0.13); color: #0B7A6E; }
     .st-pill.is-fleeting { background: rgba(255, 149, 0, 0.14); color: #B26500; }
     .st-pill.is-archive { background: rgba(142, 142, 147, 0.15); color: #6E6E73; }
     .dark .st-pill.is-permanent { background: rgba(94, 92, 230, 0.22); color: #A5A3FF; }
+    .dark .st-pill.is-project { background: rgba(45, 212, 191, 0.16); color: #5EEAD4; }
     .dark .st-pill.is-fleeting { background: rgba(255, 159, 10, 0.18); color: #FFB340; }
     .dark .st-pill.is-archive { background: rgba(142, 142, 147, 0.2); color: #AEAEB2; }
     button.st-pill { cursor: pointer; transition: box-shadow 0.12s, filter 0.12s; }
@@ -1253,7 +1491,7 @@
     .sc-sw.on { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #007AFF; }
     .dark .sc-sw.on { box-shadow: 0 0 0 2px #1E1E22, 0 0 0 3.5px #0A84FF; }
     /* 状態を選ぶメニュー */
-    #statusMenu { position: fixed; z-index: 70; width: 250px; padding: 5px; border-radius: 14px; background: #fff; box-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.1); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 0.12s, transform 0.14s, visibility 0s linear 0.14s; }
+    #statusMenu { position: fixed; z-index: 70; width: 340px; max-width: calc(100vw - 16px); padding: 5px; border-radius: 14px; background: #fff; box-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.1); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 0.12s, transform 0.14s, visibility 0s linear 0.14s; }
     #statusMenu.open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.12s, transform 0.14s, visibility 0s; }
     .dark #statusMenu { background: #2A2A2E; box-shadow: 0 22px 48px -12px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
     #statusMenu .sm-item { width: 100%; display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 9px; text-align: left; color: #1D1D1F; }
@@ -1362,26 +1600,40 @@
       </button>
       <div id="areaMenu" class="area-menu" role="menu"></div>
     </div>
+    <!-- カードの状態：すべて・アクティブ（アーカイブ以外）・Permanent・Project・Fleeting・Archive -->
+    <div class="relative shrink-0">
+      <button id="statusBtn" class="area-btn" aria-haspopup="true" aria-expanded="false" title="カードの状態で絞り込む">
+        <span id="statusBtnIcon" class="status-ico"></span>
+        <span id="statusBtnName" class="truncate">アクティブ</span>
+        <span id="statusBtnCount" class="ss-n"></span>
+        <svg class="shrink-0 text-neutral-400" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5 5 5-5"/></svg>
+      </button>
+      <div id="statusFilterMenu" class="area-menu" role="menu" style="width:290px"></div>
+    </div>
     <span class="w-px h-[22px] bg-black/10 dark:bg-white/10 shrink-0"></span>
 
     <!-- 表示切り替え -->
     <div class="flex items-center bg-black/[0.055] dark:bg-white/[0.08] p-0.5 rounded-[10px] shrink-0">
+      <button id="listModeBtn" class="tb-seg-btn is-on" title="リストビュー（左に一覧、右に開いたカード）">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="M13 8h4"/><path d="M13 12h4"/></svg><span class="hidden sm:inline">リスト</span>
+      </button>
       <button id="gridModeBtn" class="tb-seg-btn" title="ギャラリービュー">
         <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">ギャラリー</span>
       </button>
-      <button id="singleModeBtn" class="tb-seg-btn is-on" title="カードビュー">
-        <i data-lucide="file-text" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">カード</span>
+    </div>
+
+    <!-- カードを裏返す（このアプリの肝なので、いつも上に）。触れると裏面のリンクを予告する -->
+    <div id="flipFabWrap" class="is-off">
+      <div id="flipPeek"></div>
+      <button id="flipFab" type="button" aria-keyshortcuts="L">
+        <span id="flipFabIco" class="ff-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/><path d="m16.5 12 3.5 3.5 3.5-3.5"/></svg></span>
+        <span id="flipFabLabel">裏返す</span>
+        <span id="flipFabCount" class="ff-count"></span>
       </button>
     </div>
-    <!-- カードの裏面（リンクビュー）へ。カードビュー／リンクビューのときだけ表示 -->
-    <button id="linkModeBtn" class="tb-flip-btn shrink-0" style="display:none" title="カードを裏返してリンクを表示 (L)">
-      <i data-lucide="link" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">リンク</span>
-    </button>
 
     <!-- 検索 + タグ（iPhone では虫眼鏡ボタンで、ヘッダーの下に開く） -->
     <div id="searchWrap" class="flex-1 flex justify-center items-center gap-1.5 min-w-0">
-      <!-- カードの状態：すべて・アクティブ（アーカイブ以外）・Permanent・Fleeting・Archive -->
-      <div id="statusSeg" class="flex items-center bg-black/[0.055] dark:bg-white/[0.08] p-0.5 rounded-[10px] shrink-0" role="group" aria-label="カードの状態"></div>
       <div id="searchBox" class="flex items-center gap-2 w-full max-w-[420px] h-[34px] px-2.5 rounded-[10px] bg-black/[0.055] dark:bg-white/[0.08] border border-transparent focus-within:bg-white dark:focus-within:bg-neutral-900 focus-within:border-appleBlue/50 focus-within:ring-[3px] focus-within:ring-appleBlue/15 transition cursor-text">
         <i data-lucide="search" class="w-4 h-4 text-neutral-400 shrink-0"></i>
         <div id="searchTagChips" class="flex items-center gap-1 shrink-0 max-w-[55%] overflow-hidden"></div>
@@ -1444,18 +1696,20 @@
 
   <div class="flex flex-1 overflow-hidden relative">
 
+    <!-- リストビューの左側：カードの一覧 -->
+    <aside id="notesSidebar" aria-label="カードの一覧">
+      <div class="nl-head">
+        <span id="nlTitle" class="nl-title">すべて</span>
+        <span id="nlCount" class="nl-count"></span>
+        <button id="nlHideBtn" type="button" class="tb-icon nl-hide" title="一覧を隠す (W)" aria-label="一覧を隠す"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button>
+      </div>
+      <div id="notesList"></div>
+    </aside>
 
     <main id="viewStage" class="flex-1 relative overflow-hidden flex flex-col bg-[#F2F2F7] dark:bg-[#151518]">
 
       <!-- 単一スワイプ表示 -->
       <div id="singleViewContainer" class="absolute inset-0 flex flex-col items-center justify-center p-2 sm:p-4 select-none overflow-hidden transition-opacity duration-300">
-        <button id="prevCardBtn" class="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-lg flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:scale-105 active:scale-95 transition hidden md:flex" aria-label="Previous Card">
-          <i data-lucide="chevron-left" class="w-6 h-6"></i>
-        </button>
-        <button id="nextCardBtn" class="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-lg flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:scale-105 active:scale-95 transition hidden md:flex" aria-label="Next Card">
-          <i data-lucide="chevron-right" class="w-6 h-6"></i>
-        </button>
-
         <div id="cardCarousel" class="card-carousel-container relative w-full h-full"></div>
       </div>
 
@@ -1473,6 +1727,13 @@
           <div id="linkCardsContainer" class="grid gap-3 md:gap-4 items-start pt-2 pb-20"></div>
         </div>
       </div>
+
+      <!-- 一覧の行を右側へドラッグしているときの案内 -->
+      <div id="linkDropHint" aria-hidden="true"><span id="linkDropHintText"></span></div>
+
+      <!-- iPhone のリストビュー：一覧へ戻る -->
+      <button id="notesBackBtn" type="button" aria-label="一覧へ戻る"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>一覧</button>
+
 
     </main>
   </div>
@@ -1528,7 +1789,7 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p class="text-[11.5px] text-neutral-400 mt-1.5 mb-3.5">チェックしたカードと相互にリンクされます（どちらのカードにも表示されます）</p>
+      <p class="text-[11.5px] text-neutral-400 mt-1.5 mb-3.5">チェックしたカードと相互にリンクされます（どちらのカードにも表示されます）。カードどうしをドラッグ＆ドロップしてもリンクできます。</p>
       <div class="flex items-center gap-2 h-[34px] px-2.5 mb-1 rounded-[10px] bg-black/5 dark:bg-white/[0.08]">
         <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
         <input id="linkPickerSearch" type="text" autocomplete="off" placeholder="カードを検索…" class="flex-1 min-w-0 bg-transparent outline-none text-[12.5px] text-neutral-900 dark:text-white placeholder-neutral-400">
@@ -1625,18 +1886,6 @@
           </div>
         </div>
 
-<!-- カードの見出し（通常の表示） -->
-        <div>
-          <div class="flex items-center justify-between font-medium mb-1.5">
-            <span>カードの見出し</span>
-            <div id="settingCardHeaderSeg" class="src-seg">
-              <button type="button" data-val="rich">リッチ</button>
-              <button type="button" data-val="simple">シンプル</button>
-            </div>
-          </div>
-          <p class="text-[11px] text-neutral-400">※ 通常のカード表示の見出しです。リッチ：大きなタイトルとタグ。シンプル：全画面と同じ、小さめのタイトルと細い区切り線。全画面のときは、いつもシンプルです。</p>
-        </div>
-
 <!-- 状態の色 -->
         <div class="pt-3 border-t border-black/5 dark:border-white/10">
           <div class="font-medium mb-1">状態の色</div>
@@ -1671,21 +1920,21 @@
 <!-- 1行の文字数 -->
         <div>
           <div class="flex justify-between font-medium mb-1.5">
-            <span>横の文字数 (全角指定)</span>
+            <span>ギャラリーの横の文字数</span>
             <span id="settingCharsDisplay" class="font-bold text-appleBlue font-mono">26 文字</span>
           </div>
           <input id="settingCharsInput" type="range" min="16" max="36" step="1" value="26" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ 全角文字を基準とした固定グリッド幅です（デフォルト: 26文字）。</p>
+          <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリーと裏面に並ぶカードの、全角文字を基準とした幅です（デフォルト: 26文字）。</p>
         </div>
 
 <!-- 縦の行数 -->
         <div>
           <div class="flex justify-between font-medium mb-1.5">
-            <span>縦の行数 (固定)</span>
+            <span>ギャラリーの縦の行数</span>
             <span id="settingLinesDisplay" class="font-bold text-appleBlue font-mono">12 行</span>
           </div>
           <input id="settingLinesInput" type="range" min="8" max="25" step="1" value="12" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ カード本文が占める厳密な行数です（デフォルト: 12行）。</p>
+          <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリーと裏面に並ぶカードの本文の行数です（デフォルト: 12行）。</p>
         </div>
 
 <!-- 一覧の列数設定（新機能） -->
@@ -1698,15 +1947,44 @@
           <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリービューのカードの並び列数（2〜6列で調整可能）。</p>
         </div>
 
-<!-- 全画面の文字の大きさ -->
+<!-- 本文の文字の大きさ -->
         <div>
           <div class="flex justify-between font-medium mb-1.5">
-            <span>全画面の文字の大きさ</span>
+            <span>本文の文字の大きさ</span>
             <span id="settingWideFontDisplay" class="font-bold text-appleBlue font-mono">18.5 px</span>
           </div>
-          <input id="settingWideFontInput" type="range" min="13" max="20" step="0.5" value="18.5" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ カードを全画面で表示したときの本文の大きさです（初期値は通常のカードと同じ18.5px）。小さくすると1画面に多く入ります。</p>
+          <input id="settingWideFontInput" type="range" min="12" max="28" step="0.5" value="18.5" class="w-full accent-appleBlue cursor-pointer">
+          <p class="text-[11px] text-neutral-400 mt-1">※ 右側に開いたカードの本文の大きさです（初期値は18.5px）。小さくすると1画面に多く入ります。</p>
         </div>
+        <div>
+          <div class="flex justify-between font-medium mb-1.5">
+            <span>タイトルの大きさ</span>
+            <span id="settingTitlePxDisplay" class="font-bold text-appleBlue font-mono"></span>
+          </div>
+          <input id="settingTitlePxInput" type="range" min="16" max="40" step="1" value="24" class="w-full accent-appleBlue cursor-pointer">
+        </div>
+        <div>
+          <div class="flex justify-between font-medium mb-1.5">
+            <span>見出し1（H1）の大きさ</span>
+            <span id="settingH1Display" class="font-bold text-appleBlue font-mono"></span>
+          </div>
+          <input id="settingH1Input" type="range" min="1" max="3" step="0.05" value="1.5" class="w-full accent-appleBlue cursor-pointer">
+        </div>
+        <div>
+          <div class="flex justify-between font-medium mb-1.5">
+            <span>見出し2（H2）の大きさ</span>
+            <span id="settingH2Display" class="font-bold text-appleBlue font-mono"></span>
+          </div>
+          <input id="settingH2Input" type="range" min="1" max="3" step="0.05" value="1.28" class="w-full accent-appleBlue cursor-pointer">
+        </div>
+        <div>
+          <div class="flex justify-between font-medium mb-1.5">
+            <span>見出し3（H3）の大きさ</span>
+            <span id="settingH3Display" class="font-bold text-appleBlue font-mono"></span>
+          </div>
+          <input id="settingH3Input" type="range" min="1" max="3" step="0.05" value="1.1" class="w-full accent-appleBlue cursor-pointer">
+        </div>
+        <p class="text-[11px] text-neutral-400 -mt-2">※ 見出しは本文に対する倍率です。本文の大きさを変えても釣り合いが保たれ、ギャラリーのカードにも同じ比率で効きます。</p>
 
         <!-- コードブロック -->
         <label class="flex items-center justify-between gap-4 cursor-pointer select-none pt-3 border-t border-black/5 dark:border-white/10">
@@ -1767,19 +2045,6 @@
           </span>
           <span class="relative shrink-0">
             <input id="settingFlipInput" type="checkbox" class="peer sr-only" checked>
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
-
-<!-- 最後から最初へ -->
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-          <span>
-            <span class="block font-medium">最後のカードから最初へつなげる</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">カードビューで、最後のカードの次に最初のカードが来るようにします（スワイプ・矢印・キーボード）。オフにすると端で止まります。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="settingLoopInput" type="checkbox" class="peer sr-only" checked>
             <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
             <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
           </span>
@@ -1988,38 +2253,23 @@
               <button type="button" class="rt-btn" data-rt="undo" title="元に戻す (⌘Z)"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="undo-2" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg></button>
               <button type="button" class="rt-btn" data-rt="redo" title="やり直す (⌘⇧Z)"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="redo-2" aria-hidden="true"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"></path></svg></button>
               <span class="rt-sep"></span>
-              <button type="button" class="rt-btn" data-rt="block" data-val="div" title="本文テキスト">本文</button>
-              <button type="button" class="rt-btn" data-rt="block" data-val="h1" title="見出し1（行頭で「# 」）">H1</button>
-              <button type="button" class="rt-btn" data-rt="block" data-val="h2" title="見出し2（行頭で「## 」）">H2</button>
-              <button type="button" class="rt-btn" data-rt="block" data-val="h3" title="見出し3（行頭で「### 」）">H3</button>
+              <span class="rt-menu"><button type="button" class="rt-menu-btn" title="文字の種類（本文・見出し）" aria-haspopup="true" aria-expanded="false"><span class="rt-aa">Aa</span><svg class="rt-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span class="rt-pop rt-pop-row"><button type="button" class="rt-btn" data-rt="block" data-val="div" title="本文テキスト">本文</button><button type="button" class="rt-btn" data-rt="block" data-val="h1" title="見出し1（行頭で「# 」）">H1</button><button type="button" class="rt-btn" data-rt="block" data-val="h2" title="見出し2（行頭で「## 」）">H2</button><button type="button" class="rt-btn" data-rt="block" data-val="h3" title="見出し3（行頭で「### 」）">H3</button></span></span>
               <span class="rt-sep"></span>
               <button type="button" class="rt-btn" data-rt="bold" title="太字 (⌘B)"><i data-lucide="bold" class="w-3.5 h-3.5"></i></button>
               <button type="button" class="rt-btn" data-rt="italic" title="斜体 (⌘I)"><i data-lucide="italic" class="w-3.5 h-3.5"></i></button>
               <button type="button" class="rt-btn" data-rt="underline" title="下線 (⌘U)"><i data-lucide="underline" class="w-3.5 h-3.5"></i></button>
               <button type="button" class="rt-btn" data-rt="strikeThrough" title="取り消し線 (⌘⇧X)"><i data-lucide="strikethrough" class="w-3.5 h-3.5"></i></button>
-              <button type="button" class="rt-btn" data-rt="code" title="インラインコード (⌘E)"><i data-lucide="code" class="w-3.5 h-3.5"></i></button>
-              <button type="button" class="rt-btn" data-rt="superscript" title="上付き文字（x²）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="superscript" aria-hidden="true"><path d="m4 19 8-8"></path><path d="m12 19-8-8"></path><path d="M20 12h-4c0-1.5.442-2 1.5-2.5S20 8.334 20 7.002c0-.472-.17-.93-.484-1.29a2.105 2.105 0 0 0-2.617-.436c-.42.239-.738.614-.899 1.06"></path></svg></button>
-              <button type="button" class="rt-btn" data-rt="subscript" title="下付き文字（H₂O）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="subscript" aria-hidden="true"><path d="m4 5 8 8"></path><path d="m12 5-8 8"></path><path d="M20 19h-4c0-1.5.44-2 1.5-2.5S20 15.33 20 14c0-.47-.17-.93-.48-1.29a2.11 2.11 0 0 0-2.62-.44c-.42.24-.74.62-.9 1.07"></path></svg></button>
+              <span class="rt-menu"><button type="button" class="rt-menu-btn" title="文字色" aria-haspopup="true" aria-expanded="false"><span class="rt-aa rt-aa-color">A</span><svg class="rt-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span class="rt-pop rt-pop-row"><button type="button" class="rt-btn" data-rt="color" data-val="default" title="文字色: デフォルト"><span class="rt-swatch border border-neutral-400 bg-white dark:bg-neutral-800"></span></button><button type="button" class="rt-btn" data-rt="color" data-val="red" title="文字色: 赤"><span class="rt-swatch" style="background: rgb(212, 76, 71);"></span></button><button type="button" class="rt-btn" data-rt="color" data-val="green" title="文字色: 緑"><span class="rt-swatch" style="background: rgb(68, 131, 97);"></span></button><button type="button" class="rt-btn" data-rt="color" data-val="blue" title="文字色: 青"><span class="rt-swatch" style="background: rgb(51, 126, 169);"></span></button></span></span>
               <span class="rt-sep"></span>
               <button type="button" class="rt-btn" data-rt="insertUnorderedList" title="箇条書き（行頭で「- 」）"><i data-lucide="list" class="w-3.5 h-3.5"></i></button>
               <button type="button" class="rt-btn" data-rt="insertOrderedList" title="番号付きリスト（行頭で「1. 」）"><i data-lucide="list-ordered" class="w-3.5 h-3.5"></i></button>
-              <button type="button" class="rt-btn" data-rt="block" data-val="blockquote" title="引用（行頭で「> 」）"><i data-lucide="text-quote" class="w-3.5 h-3.5"></i></button>
-              <button type="button" class="rt-btn" data-rt="callout" title="コールアウト（アイコンを押すと種類が変わります：メモ→ヒント→重要→注意→警告）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10v.01"/><path d="M11.5 10H17"/><path d="M11.5 14H17"/></svg></button>
-              <button type="button" class="rt-btn" data-rt="bubble" title="bubble（右寄せの吹き出し。左の丸を押すと色が変わります）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="message-circle" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg></button>
-              <button type="button" class="rt-btn" data-rt="hr" title="区切り線（「---」で改行）"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
-              <span class="rt-sep"></span>
               <button type="button" class="rt-btn" data-rt="todo" title="チェックリスト（行頭で「[] 」）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4M13 6h8M13 12h8M13 18h8"/></svg></button>
+              <span class="rt-sep"></span>
               <button type="button" class="rt-btn" data-rt="table" title="表（セルの移動は Tab）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></button>
-              <button type="button" class="rt-btn" data-rt="codeblock" title="コードブロック（行頭で「```」＋Enter）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m8 10-2 2 2 2M16 10l2 2-2 2M13 9l-2 6"/></svg></button>
-              <span class="rt-sep"></span>
-              <button type="button" class="rt-btn" data-rt="color" data-val="default" title="文字色: デフォルト"><span class="rt-swatch border border-neutral-400 bg-white dark:bg-neutral-800"></span></button>
-              <button type="button" class="rt-btn" data-rt="color" data-val="red" title="文字色: 赤"><span class="rt-swatch" style="background: rgb(212, 76, 71);"></span></button>
-              <button type="button" class="rt-btn" data-rt="color" data-val="green" title="文字色: 緑"><span class="rt-swatch" style="background: rgb(68, 131, 97);"></span></button>
-              <button type="button" class="rt-btn" data-rt="color" data-val="blue" title="文字色: 青"><span class="rt-swatch" style="background: rgb(51, 126, 169);"></span></button>
-              <span class="rt-sep"></span>
-              <button type="button" class="rt-btn" data-rt="link" title="リンク (⌘K)"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
               <button type="button" class="rt-btn" data-rt="image" title="画像を入れる（貼り付け・ドラッグでも入ります）"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
-              <button type="button" class="rt-btn" data-rt="clear" title="書式をクリア"><i data-lucide="remove-formatting" class="w-3.5 h-3.5"></i></button>
+              <button type="button" class="rt-btn" data-rt="link" title="リンク (⌘K)"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
+              <span class="rt-sep"></span>
+              <span class="rt-menu"><button type="button" class="rt-menu-btn" title="そのほかの書式" aria-haspopup="true" aria-expanded="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg><svg class="rt-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span class="rt-pop rt-pop-list"><button type="button" class="rt-btn" data-label="引用" data-rt="block" data-val="blockquote" title="引用（行頭で「> 」）"><i data-lucide="text-quote" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="コールアウト" data-rt="callout" title="コールアウト（アイコンを押すと種類が変わります：メモ→ヒント→重要→注意→警告）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10v.01"/><path d="M11.5 10H17"/><path d="M11.5 14H17"/></svg></button><button type="button" class="rt-btn" data-label="吹き出し" data-rt="bubble" title="bubble（右寄せの吹き出し。左の丸を押すと色が変わります）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="message-circle" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg></button><button type="button" class="rt-btn" data-label="区切り線" data-rt="hr" title="区切り線（「---」で改行）"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="コードブロック" data-rt="codeblock" title="コードブロック（行頭で「```」＋Enter）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m8 10-2 2 2 2M16 10l2 2-2 2M13 9l-2 6"/></svg></button><span class="rt-pop-sep"></span><button type="button" class="rt-btn" data-label="インラインコード" data-rt="code" title="インラインコード (⌘E)"><i data-lucide="code" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="上付き文字" data-rt="superscript" title="上付き文字（x²）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="superscript" aria-hidden="true"><path d="m4 19 8-8"></path><path d="m12 19-8-8"></path><path d="M20 12h-4c0-1.5.442-2 1.5-2.5S20 8.334 20 7.002c0-.472-.17-.93-.484-1.29a2.105 2.105 0 0 0-2.617-.436c-.42.239-.738.614-.899 1.06"></path></svg></button><button type="button" class="rt-btn" data-label="下付き文字" data-rt="subscript" title="下付き文字（H₂O）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="subscript" aria-hidden="true"><path d="m4 5 8 8"></path><path d="m12 5-8 8"></path><path d="M20 19h-4c0-1.5.44-2 1.5-2.5S20 15.33 20 14c0-.47-.17-.93-.48-1.29a2.11 2.11 0 0 0-2.62-.44c-.42.24-.74.62-.9 1.07"></path></svg></button><button type="button" class="rt-btn" data-label="書式をクリア" data-rt="clear" title="書式をクリア"><i data-lucide="remove-formatting" class="w-3.5 h-3.5"></i></button></span></span>
             </div>
       <div id="editCardBody" class="rt-editor rich p-3 text-[14px] text-neutral-900 dark:text-white outline-none min-h-[240px] max-h-[48vh] overflow-y-auto" contenteditable="true" spellcheck="false" data-placeholder="ここに本文を入力します…　「# 」で見出し、「- 」で箇条書き、「[] 」でチェックリスト。AIの回答のMarkdownも貼り付けられます"></div>
   </div>
@@ -2082,23 +2332,25 @@
       accentTheme: 'appleBlue',
       flipAnimation: true,  // カード ⇄ リンク の裏返しアニメーション
       copyWithSource: true, // コピーに引用元を付ける
-      wideCard: false,      // カードビューを横いっぱい・高さいっぱいに広げる
+      listHidden: false,    // リストビューの左の一覧を隠している
       sortOrder: 'updated', // 並べ替え：updated / created / createdAsc / title
       mdLayout: 'area',     // Markdown書き出しの分け方：area / flat / single
       mdHardBreak: false,   // Markdownで、段落内の改行の行末に「\」を付ける（GitHub など向け）
-      wideFontPx: 18.5,     // 全画面のときの本文の文字の大きさ（px）。通常のカードと同じ大きさから
-      cardHeader: 'rich',   // 通常の表示のカードの見出し：rich（大きなタイトル）／ simple（全画面と同じ形）
-      loopCards: true,      // カードビューで、最後のカードの次を最初のカードにつなげる
+      wideFontPx: 18.5,     // 右側に開いたカードの本文の文字の大きさ（px）
+      cardTitlePx: 24,      // 右側に開いたカードのタイトルの大きさ（px）
+      rtH1: 1.5,            // 見出し1の大きさ（本文の何倍か）
+      rtH2: 1.28,           // 見出し2
+      rtH3: 1.1,            // 見出し3
       theme: 'light',       // 外観：light / dark / auto（Mac・iPhone の設定に合わせる）
       imageSize: 'standard',       // 画像を保存するときの大きさ：small（600px・50KB）/ standard（800px・80KB）/ large（1200px・150KB）/ high（1600px・300KB）
       imageDisplay: 'm',           // 画像を入れたときの表示の大きさ：s / m / l
       imageScreenshotBoost: true,  // スクリーンショット（文字の多い画像）は、にじまないよう容量の上限を2倍に
       codeWrap: false,             // コードブロックを端で折り返す（最初の状態。ブロックごとに切り替えられる）
-      statusFilter: 'active',      // カードの状態の絞り込み：all（すべて）/ active（アーカイブ以外）/ permanent / fleeting / archive
+      statusFilter: 'active',      // カードの状態の絞り込み：all（すべて）/ active（アーカイブ以外）/ permanent / project / fleeting / archive
       autoArchive: true,           // Fleeting を、最後の編集から一定の日数がたったら自動でアーカイブにする
       autoArchiveDays: 30,         // その日数
       groupByStatus: true,         // すべて・アクティブのとき、状態ごとに分けて並べる
-      statusColors: { permanent: 'none', fleeting: 'none', archive: 'gray' } // 状態の色：none / gray / blue ほか
+      statusColors: { permanent: 'none', project: 'none', fleeting: 'none', archive: 'gray' } // 状態の色：none / gray / blue ほか
     };
 
     const INITIAL_CARDS = [
@@ -3870,11 +4122,12 @@
 
     // カードの状態（1枚に1つ）。並びは切り替えの順
     const CARD_STATUS = {
-      permanent: { label: 'Permanent', desc: '育った、自分の言葉のメモ', icon: '<path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/>' },
-      fleeting: { label: 'Fleeting', desc: '走り書き。あとで整理する', icon: '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/>' },
-      archive: { label: 'Archive', desc: '役目を終えた。ふだんは隠す', icon: '<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>' }
+      permanent: { label: 'Permanent', desc: '長期で残す知識・アイデア', icon: '<path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/>' },
+      project: { label: 'Project', desc: '期間や目的があるもの。終わったらArchiveへ', icon: '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/>' },
+      fleeting: { label: 'Fleeting', desc: '一時的なメモ。処理したら消すか昇格', icon: '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/>' },
+      archive: { label: 'Archive', desc: 'もう使わないが、消さずに残すもの', icon: '<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>' }
     };
-    const STATUS_ORDER = ['permanent', 'fleeting', 'archive'];
+    const STATUS_ORDER = ['permanent', 'project', 'fleeting', 'archive'];
     const PIN_ICON = '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>';
     function pinIconSvg(size = 15, filled = false) {
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PIN_ICON}</svg>`;
@@ -3888,7 +4141,7 @@
     function cardStatusNorm(v) {
       const k = String(v == null ? '' : v).trim().toLowerCase().replace(/[\s_-]*notes?$/, '');
       if (CARD_STATUS[k]) return k;
-      const alias = { floating: 'fleeting', fleet: 'fleeting', draft: 'fleeting', inbox: 'fleeting', seed: 'fleeting', evergreen: 'permanent', done: 'permanent', archived: 'archive' };
+      const alias = { floating: 'fleeting', fleet: 'fleeting', draft: 'fleeting', inbox: 'fleeting', seed: 'fleeting', evergreen: 'permanent', done: 'permanent', archived: 'archive', projects: 'project' };
       return alias[k] || null;
     }
 
@@ -3944,19 +4197,21 @@
       num('charsPerLine', 16, 36, 1);
       num('linesCount', 8, 25, 1);
       num('gridColumns', 2, 6, 1);
-      num('wideFontPx', 13, 20, 0.5);
+      num('wideFontPx', 12, 28, 0.5);
+      num('cardTitlePx', 16, 40, 1);
+      ['rtH1', 'rtH2', 'rtH3'].forEach(k => { let v = parseFloat(c[k]); if (!isFinite(v)) v = DEFAULT_CONFIG[k]; c[k] = Math.round(Math.min(3, Math.max(1, v)) * 100) / 100; });
       num('autoArchiveDays', 1, 365, 1);
       const pick = (k, list) => { if (!list.includes(c[k])) c[k] = DEFAULT_CONFIG[k]; };
       pick('accentTheme', Object.keys(CARD_ACCENT_HEX));
       pick('sortOrder', Object.keys(SORT_ORDERS));
       pick('mdLayout', ['area', 'flat', 'single']);
-      pick('cardHeader', ['rich', 'simple']);
       pick('theme', ['light', 'dark', 'auto']);
       pick('imageSize', Object.keys(IMG_SIZES));
       pick('imageDisplay', Object.keys(IMG_DISPLAY));
       pick('statusFilter', ['all', 'active', ...STATUS_ORDER]);
-      ['flipAnimation', 'copyWithSource', 'wideCard', 'mdHardBreak', 'loopCards', 'imageScreenshotBoost', 'codeWrap', 'autoArchive', 'groupByStatus']
+      ['flipAnimation', 'copyWithSource', 'listHidden', 'mdHardBreak', 'imageScreenshotBoost', 'codeWrap', 'autoArchive', 'groupByStatus']
         .forEach(k => { c[k] = typeof c[k] === 'boolean' ? c[k] : !!DEFAULT_CONFIG[k]; });
+      ['wideCard', 'listLayout', 'cardHeader', 'loopCards'].forEach(k => { delete c[k]; }); // カードビューと一緒になくなった設定
       const sc = c.statusColors && typeof c.statusColors === 'object' ? c.statusColors : {};
       c.statusColors = {};
       STATUS_ORDER.forEach(st => { c.statusColors[st] = STATUS_COLORS[sc[st]] ? sc[st] : DEFAULT_CONFIG.statusColors[st]; });
@@ -3978,14 +4233,18 @@
         this.tagSearchQuery = '';
         this.editingCardId = null;
 
-        this.isProgrammaticScroll = false;
-        this.programmaticScrollTimer = null;
-        this.scrollDebounceTimer = null;
 
         this.initDOMElements();
         this.bindEvents();
+        this.applyListLayout();
+        this.applyTypeScale();
         this.runAutoArchive({ render: false });
-        this.renderAll();
+        if (this.loadLastView() === 'grid') {
+          this.renderToolbar();
+          this.switchView('grid', { animate: false, instant: true });
+        } else {
+          this.renderAll();
+        }
         // クラウド同期（ログインしていなければ何もしない）
         this.sync = new CloudSync(this);
         this.sync.init();
@@ -4887,9 +5146,12 @@
         this.cardCarousel = document.getElementById('cardCarousel');
         this.gridCardsContainer = document.getElementById('gridCardsContainer');
 
-        this.singleModeBtn = document.getElementById('singleModeBtn');
         this.gridModeBtn = document.getElementById('gridModeBtn');
-        this.linkModeBtn = document.getElementById('linkModeBtn');
+        this.listModeBtn = document.getElementById('listModeBtn');
+        this.notesList = document.getElementById('notesList');
+        this.flipFabWrap = document.getElementById('flipFabWrap');
+        this.flipFab = document.getElementById('flipFab');
+        this.flipPeek = document.getElementById('flipPeek');
         this.linkViewContainer = document.getElementById('linkViewContainer');
         this.linkCardsContainer = document.getElementById('linkCardsContainer');
         this.linkPickerModal = document.getElementById('linkPickerModal');
@@ -4897,8 +5159,6 @@
         this.linkPickerSearch = document.getElementById('linkPickerSearch');
         this.linkPickerList = document.getElementById('linkPickerList');
 
-        this.prevCardBtn = document.getElementById('prevCardBtn');
-        this.nextCardBtn = document.getElementById('nextCardBtn');
         this.headerCardCounter = document.getElementById('headerCardCounter');
 
         this.searchBox = document.getElementById('searchBox');
@@ -4936,13 +5196,15 @@
       }
 
       bindEvents() {
-        this.singleModeBtn.addEventListener('click', () => this.switchView('single'));
+        this.listModeBtn.addEventListener('click', () => {
+          this.switchView('single', { animate: false });
+          // iPhone：「リスト」を押したら、開いたカードではなく一覧を出す
+          if (this.isPhone()) { this.setNotesDetail(false); this.renderNotesList(); }
+        });
         this.updateWideToggle();
         this.gridModeBtn.addEventListener('click', () => this.switchView('grid'));
-        // リンク：カードを裏返す（もう一度押すと表に戻る）
-        this.linkModeBtn.addEventListener('click', () => {
-          this.switchView(this.currentView === 'link' ? 'single' : 'link');
-        });
+        this.bindListView();
+        this.bindFlipFab();
         this.bindLinkPicker();
 
         this.bindToolbar();
@@ -4961,8 +5223,6 @@
           }
         });
 
-        this.prevCardBtn.addEventListener('click', () => this.prevCard());
-        this.nextCardBtn.addEventListener('click', () => this.nextCard());
 
         window.addEventListener('keydown', (e) => {
           const mod = e.metaKey || e.ctrlKey;
@@ -4981,6 +5241,8 @@
             return;
           }
           if (e.key === 'Escape') {
+            if (this.closeRtMenus()) { e.preventDefault(); e.stopPropagation(); return; }
+            if (this.isStatusFilterOpen()) { e.preventDefault(); this.closeStatusFilter(); return; }
             if (this.isSortMenuOpen()) { e.preventDefault(); this.closeSortMenu(); return; }
             if (!this.settingsModal.classList.contains('pointer-events-none') && !this.isTrashOpen() && !this.isAreaEditorOpen()) {
               e.preventDefault();
@@ -5004,8 +5266,7 @@
             if (this.isSelecting()) { e.preventDefault(); this.exitSelection(); return; }
             if (this.currentView === 'link' && !this.isModalOpen() && !this.isStatusMenuOpen()) {
               e.preventDefault();
-              const id = this.linkFocusId;
-              if (id && this.cards.some(c => c.id === id)) this.openInCardView(id); else this.switchView('single');
+              this.flipBack();
               return;
             }
           }
@@ -5033,10 +5294,16 @@
           // L：カードを裏返す（カードビュー ⇄ リンクビュー）
           if (!mod && !e.altKey && (e.key === 'l' || e.key === 'L') && this.currentView !== 'grid') {
             e.preventDefault();
-            this.switchView(this.currentView === 'link' ? 'single' : 'link');
+            if (this.currentView === 'link') this.flipBack(); else this.switchView('link');
             return;
           }
           if (this.currentView === 'link' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) return;
+          // リストビュー：↑↓ で一覧を移動（Mac のメモと同じ）
+          if (this.currentView === 'single' && this.isListLayout() && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+            e.preventDefault();
+            if (e.key === 'ArrowDown') this.nextCard(); else this.prevCard();
+            return;
+          }
           if (e.key === 'ArrowRight' || e.key === 'PageDown') {
             this.nextCard();
           } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
@@ -5048,24 +5315,6 @@
           }
         });
 
-        this.cardCarousel.addEventListener('scroll', () => {
-          if (this.isProgrammaticScroll) return;
-          clearTimeout(this.scrollDebounceTimer);
-          this.scrollDebounceTimer = setTimeout(() => {
-            if (this.isProgrammaticScroll) return;
-            const container = this.cardCarousel;
-            const width = container.clientWidth;
-            if (!width) return;
-            const list = this.getFilteredCards();
-            const index = this.realIndexAt(container.scrollLeft, list.length);
-            if (index >= 0 && index < list.length && index !== this.currentIndex) {
-              this.currentIndex = index;
-              this.updatePaginationAndCounter(list.length);
-              this.resetOtherBodies();
-            }
-          }, 50);
-        }, { passive: true });
-        this.bindLoopScroll();
 
 
         this.openSettingsBtn.addEventListener('click', () => this.showSettingsModal());
@@ -5102,11 +5351,23 @@
 
         // ツールバー: mousedownで選択範囲を保ったまま実行
         this.rtToolbar.addEventListener('mousedown', (e) => {
-          if (e.target.closest('.rt-btn')) e.preventDefault();
+          if (e.target.closest('.rt-btn, .rt-menu-btn')) e.preventDefault();
+        });
+        document.addEventListener('mousedown', (e) => {
+          if (!e.target.closest || !e.target.closest('.rt-menu')) this.closeRtMenus();
         });
         this.rtToolbar.addEventListener('click', (e) => {
+          const trigger = e.target.closest('.rt-menu-btn');
+          if (trigger) {
+            const menu = trigger.parentElement;
+            const open = menu.classList.contains('is-open');
+            this.closeRtMenus();
+            if (!open) { menu.classList.add('is-open'); trigger.setAttribute('aria-expanded', 'true'); }
+            return;
+          }
           const btn = e.target.closest('.rt-btn');
           if (!btn) return;
+          this.closeRtMenus();
           if (btn.dataset.rt === 'image') { this.openImagePicker(); return; }
           this.rtCommand(btn.dataset.rt, btn.dataset.val);
         });
@@ -6374,7 +6635,7 @@
         document.addEventListener('click', (e) => {
           const img = e.target.closest && e.target.closest('figure[data-img] img');
           if (!img || this.inlineEditId) return;
-          if (!img.closest('.card-carousel-panel') || img.closest('.is-loop-clone')) return;
+          if (!img.closest('.card-carousel-panel')) return;
           e.stopPropagation();
           this.openLightbox(img.closest('figure'));
         });
@@ -6604,7 +6865,8 @@
         const w = m.offsetWidth || 300, h = m.offsetHeight || 34;
         const bar = document.getElementById('inlineBar');
         const barR = bar && bar.classList.contains('open') ? bar.getBoundingClientRect() : null;
-        const minTop = Math.max(8, barR && barR.top < window.innerHeight / 2 ? barR.bottom + 6 : 64);
+        const dockR = this.inlineHome && this.inlineHome.docked ? this.inlineHome.wrap.querySelector('.card-head-row').getBoundingClientRect() : null;
+        const minTop = Math.max(8, dockR ? dockR.bottom + 6 : 0, barR && barR.top < window.innerHeight / 2 ? barR.bottom + 6 : 64);
         let top = r.top - h - 8;
         if (top < minTop) top = Math.min(r.bottom + 8, window.innerHeight - h - 8);
         if (barR && barR.top > window.innerHeight / 2 && top + h > barR.top - 6) top = Math.max(minTop, barR.top - h - 6);
@@ -7173,15 +7435,12 @@
         const wrap = panel && panel.firstElementChild;
         const shown = wrap && wrap.querySelector('.card-body-scroll');
         if (!card || !shown) return;
+        const shownTop = shown.getBoundingClientRect().top;
         this.closeTagPopover();
         this.closeLangMenu();
         this.closeCopyMenu();
-        // 全画面：見出しを開き、書式ツールバーの分だけ上を空けてから本文の高さを測り直す
-        if (wrap.classList.contains('is-wide')) {
-          document.body.classList.add('wide-editing');
-          this.setWideCollapsed(wrap, false);
-          this.fitWideCards();
-        }
+        // 読み進めて畳まれていた見出しを開く
+        this.setWideCollapsed(wrap, false);
 
         const ed = this.editCardBody;
         const bar = document.getElementById('inlineBar');
@@ -7250,11 +7509,20 @@
         shown.parentNode.insertBefore(ed, shown);
         ed.scrollTop = this.inlineHome.scrollTop;
 
-        bar.appendChild(this.rtToolbar);
+        // 書式は右側の上端の帯に入れて、削除・リンク・キャンセル・完了と1本にする
+        // iPhone はキーボードのすぐ上に出す（指が届く場所）
+        this.inlineHome.docked = !this.isPhone();
+        if (this.inlineHome.docked) {
+          const row = wrap.querySelector('.card-head-row');
+          row.insertBefore(this.rtToolbar, row.querySelector('.inline-actions'));
+        } else {
+          bar.appendChild(this.rtToolbar);
+        }
         wrap.classList.add('inline-editing');
         document.body.classList.add('is-inline-editing');
+        this.fitWideCards();
         this.placeInlineBar();
-        requestAnimationFrame(() => bar.classList.add('open'));
+        if (!this.inlineHome.docked) requestAnimationFrame(() => bar.classList.add('open'));
 
         this.updateEditorMeta();
         if (this.inlineIsNew) {
@@ -7266,7 +7534,8 @@
         // ダブルクリックした場所、なければ本文の最後にカーソルを置く
         let placed = false;
         if (point && document.caretRangeFromPoint) {
-          const r = document.caretRangeFromPoint(point.x, point.y);
+          // 編集に入ると見出しやツールバーの分だけ本文が動くので、その分を足して同じ文字を指す
+          const r = document.caretRangeFromPoint(point.x, point.y + ed.getBoundingClientRect().top - shownTop);
           if (r && ed.contains(r.startContainer)) {
             const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); placed = true;
           }
@@ -7276,6 +7545,14 @@
           if (last) this.placeCaret(last, true);
         }
         this.updateToolbarState();
+      }
+
+      // 書式のまとめボタンのメニューを閉じる（開いていたら true）
+      closeRtMenus() {
+        if (!this.rtToolbar) return false;
+        const open = this.rtToolbar.querySelectorAll('.rt-menu.is-open');
+        open.forEach(m => { m.classList.remove('is-open'); m.querySelector('.rt-menu-btn').setAttribute('aria-expanded', 'false'); });
+        return open.length > 0;
       }
 
       // ---------- タグ ----------
@@ -7417,15 +7694,16 @@
           body: '',
           html: '',
           links: [],
-          status: 'fleeting'
+          status: this.statusFilterKey() === 'project' ? 'project' : 'fleeting' // Project を見ているときは Project として作る
         };
         this.cards.unshift(card);
         // 新しいカードは Fleeting。Permanent・Archive だけを見ているときは「アクティブ」に戻す
-        if (!['all', 'active', 'fleeting'].includes(this.statusFilterKey())) { this.config.statusFilter = 'active'; this.saveConfig(); this.renderToolbar(); }
+        if (!['all', 'active', 'fleeting', 'project'].includes(this.statusFilterKey())) { this.config.statusFilter = 'active'; this.saveConfig(); this.renderToolbar(); }
         // 検索語で隠れないように、検索欄だけ空にする
         if (this.searchQuery) { this.searchQuery = ''; this.searchInput.value = ''; this.renderToolbar(); }
         const idx = this.getFilteredCards().findIndex(c => c.id === card.id);
         this.currentIndex = Math.max(0, idx);
+        this.setNotesDetail(true);
         if (this.currentView !== 'single') {
           this.switchView('single', { animate: false, instant: true });
         } else {
@@ -7624,7 +7902,7 @@
 
       placeInlineBar() {
         const bar = document.getElementById('inlineBar');
-        if (!this.inlineEditId || !this.inlineHome) return;
+        if (!this.inlineEditId || !this.inlineHome || this.inlineHome.docked) return;
         // iPhone：画面の下、キーボードが出ていればそのすぐ上
         if (this.isPhone()) {
           const vv = window.visualViewport;
@@ -7645,6 +7923,7 @@
         const id = this.inlineEditId;
         if (!id || !this.inlineHome) return;
         this.closeCalloutMenu();
+        this.closeRtMenus();
         const ed = this.editCardBody;
         const home = this.inlineHome;
         let changed = false;
@@ -7711,7 +7990,6 @@
         if (home.tagBox) home.tagBox.remove();
         (home.metaParts || []).slice().reverse().forEach(p => p.parent.insertBefore(p.el, p.next));
         document.body.classList.remove('is-inline-editing');
-        document.body.classList.remove('wide-editing');
         home.wrap.classList.remove('inline-editing');
         home.shown.style.display = '';
         const wasNew = this.inlineIsNew;
@@ -7839,7 +8117,6 @@
         domPre.querySelector('code').innerHTML = rtHighlight(domPre.textContent, lang);
         const btn = block.querySelector('.rt-code-lang');
         if (btn) btn.firstChild.nodeValue = rtLangLabel(lang);
-        this.syncLoopClones();
       }
 
       // コールアウトの種類・色のメニュー（押してもメニューは閉じない。外を押すか Esc で閉じる）
@@ -7926,7 +8203,6 @@
         this.saveCards(); // 見た目だけの変更なので、更新日時は変えない
         domPre.setAttribute('data-wrap', next);
         block.setAttribute('data-wrap', next);
-        this.syncLoopClones();
       }
       applyCodeWrap() { document.body.classList.toggle('code-wrap', !!this.config.codeWrap); }
 
@@ -7948,11 +8224,10 @@
         this.touchCard(card);
         this.saveCards();
         li.setAttribute('data-checked', next);
-        this.syncLoopClones();
       }
 
       // ============================================================
-      // カードの状態（Permanent / Fleeting / Archive）
+      // カードの状態（Permanent / Project / Fleeting / Archive）
       // ============================================================
       cardStatus(card) {
         return card && CARD_STATUS[card.status] ? card.status : 'permanent';
@@ -7968,7 +8243,7 @@
       matchStatus(card) {
         const st = this.cardStatus(card), k = this.statusFilterKey();
         if (k === 'all') return true;              // すべて：アーカイブも含む
-        if (k === 'active') return st !== 'archive'; // アクティブ：Permanent と Fleeting
+        if (k === 'active') return st !== 'archive'; // アクティブ：Permanent・Project・Fleeting
         return st === k;
       }
 
@@ -8030,13 +8305,22 @@
       }
 
       bindStatus() {
-        this.statusSeg = document.getElementById('statusSeg');
+        this.statusBtn = document.getElementById('statusBtn');
+        this.statusFilterMenu = document.getElementById('statusFilterMenu');
         this.statusMenu = document.getElementById('statusMenu');
-        this.statusSeg.addEventListener('click', (e) => {
+        this.statusBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.isStatusFilterOpen() ? this.closeStatusFilter() : this.openStatusFilter();
+        });
+        this.statusFilterMenu.addEventListener('mousedown', (e) => e.stopPropagation());
+        this.statusFilterMenu.addEventListener('click', (e) => {
           const b = e.target.closest('[data-status]');
           if (!b) return;
-          b.blur();
+          this.closeStatusFilter();
           this.setStatusFilter(b.dataset.status);
+        });
+        document.addEventListener('mousedown', (e) => {
+          if (this.isStatusFilterOpen() && !this.statusBtn.contains(e.target)) this.closeStatusFilter();
         });
         this.statusMenu.addEventListener('mousedown', (e) => e.stopPropagation());
         this.statusMenu.addEventListener('click', (e) => {
@@ -8051,7 +8335,7 @@
         });
         window.addEventListener('keydown', (e) => {
           if (!this.isStatusMenuOpen() || e.metaKey || e.ctrlKey || e.altKey || e.isComposing) return;
-          const map = { p: 'permanent', f: 'fleeting', a: 'archive' };
+          const map = { p: 'permanent', j: 'project', f: 'fleeting', a: 'archive' };
           const k = e.key.toLowerCase();
           if (map[k]) { e.preventDefault(); e.stopPropagation(); const id = this.statusMenuCardId; this.closeStatusMenu(); this.setCardsStatus([id], map[k]); }
           else if (k === 'escape') { e.preventDefault(); e.stopPropagation(); this.closeStatusMenu(); }
@@ -8066,20 +8350,67 @@
         this.cardCarousel.addEventListener('scroll', () => this.closeStatusMenu(), { passive: true });
       }
 
-      renderStatusSeg() {
-        if (!this.statusSeg) return;
-        const cnt = { permanent: 0, fleeting: 0, archive: 0 };
+
+      // 状態の絞り込み：すべて・アクティブのアイコン（Permanent などは状態のアイコン）
+      statusFilterIcon(k, size = 14) {
+        if (k === 'all') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>`;
+        if (k === 'active') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>`;
+        return statusIconSvg(k, size);
+      }
+
+      statusFilterInfo() {
+        const cnt = { permanent: 0, project: 0, fleeting: 0, archive: 0 };
         this.getAreaCards().forEach(c => { cnt[this.cardStatus(c)]++; });
+        return {
+          all: { label: 'すべて', sub: 'アーカイブも含む', n: cnt.permanent + cnt.project + cnt.fleeting + cnt.archive },
+          active: { label: 'アクティブ', sub: 'アーカイブ以外', n: cnt.permanent + cnt.project + cnt.fleeting },
+          permanent: { label: CARD_STATUS.permanent.label, n: cnt.permanent },
+          project: { label: CARD_STATUS.project.label, n: cnt.project },
+          fleeting: { label: CARD_STATUS.fleeting.label, n: cnt.fleeting },
+          archive: { label: CARD_STATUS.archive.label, n: cnt.archive }
+        };
+      }
+
+      renderStatusBtn() {
+        if (!this.statusBtn) return;
+        const k = this.statusFilterKey();
+        const it = this.statusFilterInfo()[k];
+        document.getElementById('statusBtnIcon').innerHTML = this.statusFilterIcon(k, 15);
+        document.getElementById('statusBtnName').textContent = it.label;
+        document.getElementById('statusBtnCount').textContent = it.n;
+        this.statusBtn.classList.toggle('is-filtered', k !== 'active'); // いつもと違う絞り込みのときだけ青く
+        this.statusBtn.title = `カードの状態で絞り込む（今：${it.label} ${it.n}枚）`;
+        if (this.isStatusFilterOpen()) this.renderStatusFilterMenu();
+      }
+
+      isStatusFilterOpen() { return !!(this.statusFilterMenu && this.statusFilterMenu.classList.contains('open')); }
+
+      openStatusFilter() {
+        this.closeTagPopover();
+        this.renderStatusFilterMenu();
+        this.statusFilterMenu.classList.add('open');
+        this.statusBtn.classList.add('is-open');
+        this.statusBtn.setAttribute('aria-expanded', 'true');
+      }
+
+      closeStatusFilter() {
+        if (!this.statusFilterMenu) return;
+        this.statusFilterMenu.classList.remove('open');
+        this.statusBtn.classList.remove('is-open');
+        this.statusBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      renderStatusFilterMenu() {
         const cur = this.statusFilterKey();
-        const keys = ['all', 'active', 'permanent', 'fleeting', 'archive'];
-        const total = { all: cnt.permanent + cnt.fleeting + cnt.archive, active: cnt.permanent + cnt.fleeting };
-        this.statusSeg.innerHTML = keys.map(k => {
-          const plain = k === 'all' || k === 'active';
-          const label = k === 'all' ? 'すべて' : k === 'active' ? 'アクティブ' : CARD_STATUS[k].label;
-          const n = plain ? total[k] : cnt[k];
-          const tip = k === 'all' ? 'すべて（アーカイブも含む）' : k === 'active' ? 'アクティブ（Permanent と Fleeting。アーカイブは含まない）' : label;
-          return `<button type="button" class="tb-seg-btn${k === cur ? ' is-on' : ''}" data-status="${k}" title="${tip}（${n}枚）" aria-pressed="${k === cur}">${plain ? '' : statusIconSvg(k, 13)}<span class="ss-label">${label}</span><span class="ss-n">${n}</span></button>`;
-        }).join('');
+        const info = this.statusFilterInfo();
+        const item = (k) => `
+          <button type="button" class="am-item${k === cur ? ' is-on' : ''}" role="menuitemradio" aria-checked="${k === cur}" data-status="${k}">
+            <span class="am-check">${k === cur ? '✓' : ''}</span>
+            <span class="status-ico">${this.statusFilterIcon(k, 15)}</span>
+            <span class="truncate">${info[k].label}${info[k].sub ? `<small class="am-sub">${info[k].sub}</small>` : ''}</span>
+            <span class="am-count">${info[k].n}</span>
+          </button>`;
+        this.statusFilterMenu.innerHTML = item('all') + item('active') + '<div class="am-sep"></div>' + STATUS_ORDER.map(item).join('');
       }
 
       // 絞り込みを変えても、見ていたカードが残っていれば見続ける
@@ -8133,7 +8464,7 @@
         const card = this.cards.find(c => c.id === cardId);
         if (!card) return;
         const cur = this.cardStatus(card);
-        const keys = { permanent: 'P', fleeting: 'F', archive: 'A' };
+        const keys = { permanent: 'P', project: 'J', fleeting: 'F', archive: 'A' };
         this.statusMenuCardId = cardId;
         this.statusMenuAnchor = anchor;
         this.statusMenu.innerHTML = STATUS_ORDER.map(st => `
@@ -8143,7 +8474,7 @@
             ${st === cur ? '<span class="sm-check">✓</span>' : `<kbd>${keys[st]}</kbd>`}
           </button>`).join('');
         const r = anchor.getBoundingClientRect();
-        const w = 250;
+        const w = Math.min(340, window.innerWidth - 16);
         this.statusMenu.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - w - 8))}px`;
         this.statusMenu.style.top = `${r.bottom + 6}px`;
         this.statusMenu.classList.add('open');
@@ -8251,7 +8582,7 @@
       updatePhoneSearchDot() {
         const dot = document.getElementById('mSearchDot');
         if (!dot) return;
-        const on = !!(this.searchQuery || (this.selectedTags && this.selectedTags.size) || this.sourceFilter || this.statusFilterKey() !== 'active');
+        const on = !!(this.searchQuery || (this.selectedTags && this.selectedTags.size) || this.sourceFilter);
         dot.classList.toggle('hidden', !on);
       }
 
@@ -8294,7 +8625,7 @@
         const gOn = this.config.groupByStatus !== false;
         const gWorks = ['all', 'active'].includes(this.statusFilterKey()) && !this.sourceFilter;
         html += `<div class="am-sep"></div><button type="button" class="am-switch${gWorks ? '' : ' is-dim'}" data-group="1" role="switch" aria-checked="${gOn}">
-          <span>状態ごとに分ける<small>${gWorks ? 'Permanent → Fleeting → Archive の順に' : '「すべて」「アクティブ」のときに効きます'}</small></span><span class="tsw${gOn ? ' on' : ''}"></span></button>`;
+          <span>状態ごとに分ける<small>${gWorks ? 'Permanent → Project → Fleeting → Archive の順に' : '「すべて」「アクティブ」のときに効きます'}</small></span><span class="tsw${gOn ? ' on' : ''}"></span></button>`;
         if (this.sourceFilter) html += '<div class="am-sep"></div><div class="px-2.5 py-1 text-[11px] text-neutral-400">引用元で絞り込み中は、ページ順に並びます</div>';
         this.sortMenu.innerHTML = html;
         this.sortMenu.querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => this.setSortOrder(b.dataset.sort)));
@@ -8337,7 +8668,9 @@
         const from = this.currentView;
         if (this.flipping) return;
         // カード（表）⇄ リンク（裏）は、カードを裏返すアニメーションで切り替える
-        const isFlip = (from === 'single' && view === 'link') || (from === 'link' && view === 'single');
+        const isFlip = from !== view && (from === 'link' || view === 'link');
+        // ギャラリーのスクロール位置を覚えておく（戻ったときに同じ場所から）
+        if (from === 'grid' && view !== 'grid') this._gridScroll = this.gridViewContainer.scrollTop;
         const flipOn = this.config.flipAnimation !== false && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (isFlip && opts.animate !== false && flipOn) {
           this.flipTo(view);
@@ -8346,20 +8679,20 @@
 
         // リンクビューに入るときは、いま見ているカードを中心にする
         if (view === 'link') {
-          const curId = from === 'link' ? null : (this._flipFocusId || this.currentCardId());
+          const curId = from === 'link' ? null : (this._backTarget || this.currentCardId());
           if (curId) this.linkFocusId = curId;
+          this._backTarget = null;
+          if (from !== 'link') this.linkReturn = from; // 戻る先（リスト／ギャラリー）
           if (!this.cards.some(c => c.id === this.linkFocusId)) this.linkFocusId = this.cards[0] && this.cards[0].id;
         }
         this.currentView = view;
-        this.gridModeBtn.classList.toggle('is-on', view === 'grid');
-        this.singleModeBtn.classList.toggle('is-on', view === 'single' || view === 'link');
-        this.linkModeBtn.classList.toggle('is-on', view === 'link');
-        this.linkModeBtn.classList.toggle('is-hidden', view === 'grid');
+        if (view !== 'link') this.saveLastView(view);
+        if (from === 'grid' && view !== 'grid') this.setNotesDetail(true);
+        this.applyListLayout();
         this.updateWideToggle();
         document.body.classList.toggle('link-view', view === 'link');
         if (view !== 'grid') this.exitSelection();
         this.updateBulkBar();
-        this.linkModeBtn.title = view === 'link' ? 'カードを表に戻す (L)' : 'カードを裏返してリンクを表示 (L)';
 
         const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer };
         Object.entries(panes).forEach(([k, el]) => {
@@ -8381,11 +8714,48 @@
           if (view === 'grid') this.renderGridView();
           else this.renderLinkView();
         }
+        if (view === 'grid' && this._gridScroll != null) {
+          const top = this._gridScroll;
+          this._gridScroll = null;
+          requestAnimationFrame(() => { this.gridViewContainer.scrollTop = top; });
+        }
+      }
+
+      // 指定のカードの裏面へ（裏面の中からなら、そのまま隣のカードの裏面へたどれる）
+      openBack(cardId) {
+        if (this.flipping) return;
+        if (this.currentView === 'link') {
+          if (this.linkFocusId === cardId) return;
+          this.linkFocusId = cardId;
+          this.renderLinkView();
+          this.linkViewContainer.scrollTop = 0;
+          return;
+        }
+        this._backTarget = cardId;
+        this.switchView('link');
+      }
+
+      // 裏面から戻る：入ってきた画面へ
+      flipBack() {
+        if (this.linkReturn === 'grid') { this.switchView('grid'); return; }
+        const id = this.linkFocusId;
+        if (id && this.cards.some(c => c.id === id)) this.openInCardView(id); else this.switchView('single');
+      }
+
+      // 前回の画面を、この端末に覚えておく
+      loadLastView() {
+        let v = null;
+        try { v = localStorage.getItem('indexcards_last_view'); } catch (e) {}
+        return v === 'single' ? 'single' : 'grid'; // はじめて開くときはギャラリーから
+      }
+
+      saveLastView(view) {
+        try { localStorage.setItem('indexcards_last_view', view); } catch (e) {}
       }
 
       // 表の面を90度まで回して隠し、裏の面を-90度から回して見せる
       flipTo(view) {
-        const panes = { single: this.singleViewContainer, link: this.linkViewContainer };
+        const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer };
         const fromEl = panes[this.currentView];
         const toEl = panes[view];
         const dir = view === 'link' ? 1 : -1;
@@ -8487,151 +8857,21 @@
         return merged;
       }
 
-      // 表示中以外のカードの本文は先頭に戻す
-      resetOtherBodies() {
-        this.cardCarousel.querySelectorAll('.card-carousel-panel').forEach(panel => {
-          if (String(panel.dataset.index) === String(this.currentIndex)) return;
-          const b = panel.querySelector('.card-body-scroll');
-          if (b && b.scrollTop) b.scrollTop = 0;
-        });
-      }
-
-      scrollToIndex(idx, smooth = true) {
+      // 右側には開いているカードだけを置く（めくらずに差し替える）
+      scrollToIndex(idx) {
         const list = this.getFilteredCards();
         if (list.length === 0) return;
         this.currentIndex = Math.max(0, Math.min(idx, list.length - 1));
-        setTimeout(() => this.resetOtherBodies(), smooth ? 460 : 0);
-
-        const targetPanel = this.cardCarousel.querySelector(`[data-index="${this.currentIndex}"]`);
-        if (targetPanel) {
-          this.isProgrammaticScroll = true;
-          this.cardCarousel.scrollTo({
-            left: targetPanel.offsetLeft,
-            behavior: smooth ? 'smooth' : 'instant'  // CSSのscroll-behavior: smoothに引きずられないように
-          });
-          clearTimeout(this.programmaticScrollTimer);
-          this.programmaticScrollTimer = setTimeout(() => {
-            this.isProgrammaticScroll = false;
-          }, smooth ? 450 : 80);
+        if (this.currentView === 'single') {
+          const shown = this.cardCarousel.querySelector('.card-carousel-panel[data-id]');
+          if (!shown || shown.dataset.id !== list[this.currentIndex].id) this.renderSingleDeck({ keepList: true });
         }
         this.updatePaginationAndCounter(list.length);
       }
 
-      nextCard() {
-        const list = this.getFilteredCards();
-        if (list.length === 0) return;
-        if (this.currentIndex < list.length - 1) {
-          this.scrollToIndex(this.currentIndex + 1, true);
-        } else if (this.hasLoopClones()) {
-          this.scrollToLoopClone('after');
-        }
-      }
+      nextCard() { this.scrollToIndex(this.currentIndex + 1); }
 
-      prevCard() {
-        const list = this.getFilteredCards();
-        if (list.length === 0) return;
-        if (this.currentIndex > 0) {
-          this.scrollToIndex(this.currentIndex - 1, true);
-        } else if (this.hasLoopClones()) {
-          this.scrollToLoopClone('before');
-        }
-      }
-
-      // ============================================================
-      // 最後のカードから最初へ（ループ）
-      // 最初のカードの左に「最後のカードの写し」、最後のカードの右に「最初のカードの写し」を置く。
-      // スワイプはブラウザ標準の横スクロールのまま。写しの上で止まったら、同じ見た目の本物へ一瞬で付け替える。
-      // ============================================================
-      loopEnabled() {
-        return this.config.loopCards !== false;
-      }
-
-      hasLoopClones() {
-        return !!this.cardCarousel.querySelector('.is-loop-clone');
-      }
-
-      // スクロール位置 → 本物のカードの番号（写しの上なら、その写しの元の番号）
-      realIndexAt(scrollLeft, n) {
-        const width = this.cardCarousel.clientWidth;
-        if (!width) return this.currentIndex;
-        let raw = Math.round(scrollLeft / width);
-        if (!this.hasLoopClones()) return raw;
-        raw -= 1;
-        if (raw < 0) return n - 1;
-        if (raw >= n) return 0;
-        return raw;
-      }
-
-      // 両端の写しを作り直す（本物のカードの今の見た目をそのまま写す）
-      syncLoopClones() {
-        const c = this.cardCarousel;
-        c.querySelectorAll('.is-loop-clone').forEach(el => el.remove());
-        const panels = [...c.querySelectorAll('.card-carousel-panel[data-index]')];
-        if (!this.loopEnabled() || panels.length < 2) return;
-        const make = (src, kind) => {
-          const cl = src.cloneNode(true);
-          cl.classList.add('is-loop-clone');
-          cl.removeAttribute('data-index');
-          cl.removeAttribute('data-id');
-          cl.dataset.clone = kind;
-          cl.setAttribute('aria-hidden', 'true');
-          cl.querySelectorAll('.card-body-scroll').forEach(b => { b.scrollTop = 0; });
-          return cl;
-        };
-        c.insertBefore(make(panels[panels.length - 1], 'before'), c.firstChild);
-        c.appendChild(make(panels[0], 'after'));
-      }
-
-      // 写しまでなめらかにめくる（止まったら本物へ付け替える）
-      scrollToLoopClone(kind) {
-        const target = this.cardCarousel.querySelector(`.is-loop-clone[data-clone="${kind}"]`);
-        if (!target) return;
-        const n = this.getFilteredCards().length;
-        this.currentIndex = kind === 'after' ? 0 : n - 1;
-        this.isProgrammaticScroll = true;
-        this.cardCarousel.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
-        clearTimeout(this.programmaticScrollTimer);
-        this.programmaticScrollTimer = setTimeout(() => { this.isProgrammaticScroll = false; }, 450);
-        this.updatePaginationAndCounter(n);
-      }
-
-      // スクロールが完全に止まり、指も離れていて、写しの上にいるときだけ付け替える
-      bindLoopScroll() {
-        const c = this.cardCarousel;
-        let touching = false;
-        let idleTimer = null;
-        const settle = () => {
-          clearTimeout(idleTimer);
-          idleTimer = setTimeout(() => this.jumpFromLoopClone(touching), 140);
-        };
-        c.addEventListener('scroll', settle, { passive: true });
-        if ('onscrollend' in window) c.addEventListener('scrollend', () => { if (!touching) this.jumpFromLoopClone(false); });
-        c.addEventListener('touchstart', () => { touching = true; }, { passive: true });
-        const up = () => { touching = false; settle(); };
-        c.addEventListener('touchend', up, { passive: true });
-        c.addEventListener('touchcancel', up, { passive: true });
-      }
-
-      jumpFromLoopClone(touching) {
-        if (touching || this.currentView !== 'single' || this.inlineEditId) return;
-        const c = this.cardCarousel;
-        const clones = c.querySelectorAll('.is-loop-clone');
-        if (!clones.length) return;
-        const on = [...clones].find(el => Math.abs(c.scrollLeft - el.offsetLeft) < 2);
-        if (!on) return;
-        const n = this.getFilteredCards().length;
-        const idx = on.dataset.clone === 'after' ? 0 : n - 1;
-        const real = c.querySelector(`.card-carousel-panel[data-index="${idx}"]`);
-        if (!real) return;
-        // 同じ見た目のカードへ、動きなしで付け替える
-        this.isProgrammaticScroll = true;
-        c.scrollTo({ left: real.offsetLeft, behavior: 'instant' });
-        clearTimeout(this.programmaticScrollTimer);
-        this.programmaticScrollTimer = setTimeout(() => { this.isProgrammaticScroll = false; }, 80);
-        this.currentIndex = idx;
-        this.updatePaginationAndCounter(n);
-        this.resetOtherBodies();
-      }
+      prevCard() { this.scrollToIndex(this.currentIndex - 1); }
 
       /**
        * カードHTMLの生成
@@ -8643,7 +8883,7 @@
         
         const bodyWidth = `${chars}em`;
         const bodyHeight = `${lines * 1.75}em`;
-        const fontSize = isMini ? '15.5px' : (this.isWide() ? `${this.wideFontSize()}px` : '18.5px');
+        const fontSize = isMini ? '15.5px' : `${this.wideFontSize()}px`;
 
         const accentColors = {
           appleBlue: { pill: 'bg-blue-500/10 text-appleBlue border-blue-500/20' },
@@ -8681,13 +8921,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                   </button>
                   <span class="card-wide-sep" aria-hidden="true"></span>
-                  <button data-action="flip" data-id="${rtEscape(card.id)}" class="flip-btn${linkCount ? '' : ' is-empty'} inline-flex items-center gap-[3px] ${linkCount ? 'pl-1 pr-1.5' : 'p-1'} py-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${linkCount ? `裏返してリンク ${linkCount}件を見る (L)` : '裏返す：リンクはまだありません (L)'}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>${linkCount ? `<span class="link-count">${linkCount}</span>` : ''}
-                  </button>
-                  <button data-action="wide" class="card-wide-btn p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${this.isWide() ? '元の大きさに戻す (W)' : '全画面で表示 (W)'}">
-                    ${this.isWide()
-                      ? '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m14 10 7-7"/><path d="M20 10h-6V4"/><path d="m3 21 7-7"/><path d="M4 14h6v6"/></svg>'
-                      : '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>'}
+                  <button data-action="wide" class="card-wide-btn p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-neutral-500 hover:text-neutral-900 dark:hover:text-white cursor-pointer" title="${this.config.listHidden ? '一覧を表示 (W)' : '一覧を隠す (W)'}">
+                    ${'<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>'}
                   </button>
               </div>` : ''}
             </div>
@@ -8720,12 +8955,12 @@
               <div class="card-foot-rule h-px bg-black/[0.05] dark:bg-white/[0.07] mb-2.5"></div>
               ${this.sourceRowHtml(card, false)}
             </div>` : ''}
-          ${isMini && (linkCount || this.areaBadgesHtml(card) || this.hasSource(card.source)) ? `
+          ${isMini ? `
             <div class="${this.hasSource(card.source) ? 'relative -mt-3 px-4 pb-3' : 'absolute left-4 right-4 bottom-2'} z-10 flex items-center justify-between gap-2 text-neutral-400">
               <div class="min-w-0 flex-1">${this.hasSource(card.source) ? this.sourceRowHtml(card, true) : ''}</div>
               <div class="shrink-0 flex items-center gap-1.5">
               ${this.areaBadgesHtml(card)}
-              ${linkCount ? `<span class="flex items-center gap-[3px]"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="link-count">${linkCount}</span></span>` : ''}
+              <button type="button" class="mini-flip${linkCount ? '' : ' is-zero'}" data-action="mini-flip" title="${linkCount ? `裏返して、リンク ${linkCount}件を見る` : '裏返して、リンクを追加する'}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="link-count">${linkCount}</span></button>
               </div>
             </div>` : ''}
         `;
@@ -8774,7 +9009,7 @@
         return `<span class="card-date inline-hide" data-action="date" tabindex="0">${label}<span class="cd-pop" role="tooltip"><span><em>作成</em>${full(c)}</span>${edited ? `<span><em>更新</em>${full(u)}</span>` : ''}${extra}</span></span>`;
       }
 
-      renderSingleDeck() {
+      renderSingleDeck(opts = {}) {
         // その場編集中に描き直すときは、書いた内容を先に保存しておく
         if (this.inlineEditId) { this.finishInlineEdit(true); return; }
         const list = this.getFilteredCards();
@@ -8791,16 +9026,20 @@
           `;
           this.cardCarousel.appendChild(emptyPanel);
           if (this.headerCardCounter) this.headerCardCounter.textContent = '0 / 0';
+          this.renderNotesList(list);
+          this.updateFlipFab();
           return;
         }
 
         if (this.currentIndex >= list.length) {
           this.currentIndex = list.length - 1;
         }
-
-        const cardIdealWidth = Math.max(540, Math.min(1080, Math.round(this.config.charsPerLine * 18.5 + 130)));
+        // 一覧の中身が同じなら（↑↓や行を押しただけなら）、選択の印だけ動かす
+        if (opts.keepList) this.markActiveRow(list[this.currentIndex].id);
+        else this.renderNotesList(list);
 
         list.forEach((card, idx) => {
+          if (idx !== this.currentIndex) return; // 右側に置くのは、開いているカードだけ
           const panel = document.createElement('div');
           panel.className = 'card-carousel-panel';
           panel.dataset.index = idx;
@@ -8808,10 +9047,9 @@
 
           const cardWrapper = document.createElement('div');
           cardWrapper.className = `relative max-w-[96vw] max-h-[92vh] bg-white/85 dark:bg-[#1E1E24]/85 backdrop-blur-3xl rounded-4xl shadow-apple-float dark:shadow-apple-dark-float border border-white/60 dark:border-white/10 overflow-hidden transition-all duration-300`;
-          cardWrapper.style.width = this.isWide() ? 'calc(100vw - 112px)' : `${cardIdealWidth}px`;
-          if (this.isWide()) cardWrapper.classList.add('is-wide');
-          // 見出し：全画面では常にシンプル、通常の表示では設定（リッチ／シンプル）
-          if (this.isWide() || this.config.cardHeader === 'simple') cardWrapper.classList.add('head-simple');
+          cardWrapper.style.width = '100%';
+          cardWrapper.classList.add('is-wide');
+          cardWrapper.classList.add('head-simple');
           cardWrapper.style.setProperty('--card-accent', CARD_ACCENT_HEX[card.accent] || CARD_ACCENT_HEX.appleBlue);
           cardWrapper.classList.add('st-' + this.cardStatus(card));
           this.statusColorClass(card).split(' ').filter(Boolean).forEach(k => cardWrapper.classList.add(k));
@@ -8819,7 +9057,7 @@
 
           const bodyEl = cardWrapper.querySelector('.card-body-scroll');
           if (bodyEl) this.bindBodyScroll(bodyEl);
-          if (bodyEl && this.isWide()) this.bindWideCollapse(cardWrapper, bodyEl);
+          if (bodyEl) this.bindWideCollapse(cardWrapper, bodyEl);
 
           const copyBtn = cardWrapper.querySelector('[data-action="copy-menu"]');
           if (copyBtn) {
@@ -8917,16 +9155,6 @@
             });
           }
 
-          const flipBtn = cardWrapper.querySelector('[data-action="flip"]');
-          if (flipBtn) {
-            flipBtn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              flipBtn.blur();
-              this._flipFocusId = card.id;
-              this.switchView('link');
-              this._flipFocusId = null;
-            });
-          }
           const inlineLinkBtn = cardWrapper.querySelector('[data-action="inline-link"]');
           if (inlineLinkBtn) {
             inlineLinkBtn.addEventListener('mousedown', (e) => e.preventDefault());
@@ -8951,6 +9179,7 @@
               const pt = { x: e.clientX, y: e.clientY };
               this.startInlineEdit(card.id, pt);
             });
+            this.bindClickToEdit(cardWrapper, bodyForDbl, card.id);
           }
           cardWrapper.querySelector('[data-action="inline-done"]').addEventListener('click', (e) => { e.stopPropagation(); this.finishInlineEdit(true); });
           cardWrapper.querySelector('[data-action="inline-cancel"]').addEventListener('click', (e) => { e.stopPropagation(); this.finishInlineEdit(false); });
@@ -8968,24 +9197,13 @@
         if (window.lucide) window.lucide.createIcons();
         this.updateWideToggle();
         if (this.isWide()) this.fitWideCards();
-        this.syncLoopClones();
-        // 写しを先頭に足したので、今のカードの位置へすぐ合わせる（一瞬でも写しが見えないように）
-        if (this.hasLoopClones()) {
-          const cur = this.cardCarousel.querySelector(`.card-carousel-panel[data-index="${this.currentIndex}"]`);
-          if (cur) {
-            this.isProgrammaticScroll = true;
-            this.cardCarousel.scrollTo({ left: cur.offsetLeft, behavior: 'instant' });
-            clearTimeout(this.programmaticScrollTimer);
-            this.programmaticScrollTimer = setTimeout(() => { this.isProgrammaticScroll = false; }, 80);
-          }
-        }
       }
 
       // ============================================================
       // 横いっぱい表示（カードビューだけ。幅は矢印の内側まで、高さは画面いっぱい）
       // ============================================================
       isWide() {
-        return !!this.config.wideCard && window.innerWidth >= 768;
+        return this.isListLayout(); // 右側は、画面いっぱいに広げた形のカードを使う
       }
 
       // 全画面のときだけ、画面まわりの余白も詰める（body に印を付ける）
@@ -8993,16 +9211,37 @@
         document.body.classList.toggle('wide-view', this.currentView === 'single' && this.isWide());
       }
 
+      // タイトル・見出しの大きさを画面に反映する
+      applyTypeScale() {
+        const r = document.documentElement.style;
+        r.setProperty('--card-title', `${this.config.cardTitlePx}px`);
+        r.setProperty('--rt-h1', `${this.config.rtH1}em`);
+        r.setProperty('--rt-h2', `${this.config.rtH2}em`);
+        r.setProperty('--rt-h3', `${this.config.rtH3}em`);
+      }
+
+      // 「1.50倍（28px）」：倍率と、本文の大きさから計算した実際の大きさ
+      headingLabel(ratio, base = this.wideFontSize()) {
+        return `${ratio.toFixed(2)}倍（${Math.round(ratio * base)}px）`;
+      }
+
+      syncTypeLabels(base = this.wideFontSize()) {
+        [['settingH1', 'settingH1Input'], ['settingH2', 'settingH2Input'], ['settingH3', 'settingH3Input']].forEach(([id, input]) => {
+          document.getElementById(`${id}Display`).textContent = this.headingLabel(parseFloat(document.getElementById(input).value), base);
+        });
+      }
+
       wideFontSize() {
         const v = parseFloat(this.config.wideFontPx);
-        return v >= 12 && v <= 24 ? v : 18.5;
+        return v >= 12 && v <= 28 ? v : 18.5;
       }
 
       toggleWide() {
         if (this.currentView !== 'single') return;
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
         this.closeCopyMenu();
-        this.config.wideCard = !this.config.wideCard;
+        this.config.listHidden = !this.config.listHidden; // 左の一覧を隠す・出す
+        this.applyListLayout();
         this.saveConfig();
         this.updateWideToggle();
         this.renderSingleDeck();
@@ -9045,7 +9284,6 @@
         const run = () => {
           const panels = this.cardCarousel.querySelectorAll('.card-carousel-panel');
           panels.forEach(panel => {
-            if (panel.classList.contains('is-loop-clone')) return;
             const wrap = panel.firstElementChild;
             const body = wrap && wrap.querySelector('.card-body-scroll');
             if (!body || !panel.clientHeight) return;
@@ -9069,13 +9307,380 @@
             wrap.style.transition = prevT;
             this.setWideCollapsed(wrap, wasCollapsed);
           });
-          if (this.hasLoopClones()) this.syncLoopClones();
         };
         run();
         if (!this.cardCarousel.clientHeight) requestAnimationFrame(run);
       }
 
+      // ============================================================
+      // リストビュー（Mac のメモのように、左に一覧・右に開いたカード）
+      // 「カードビュー」の仕組み（その場編集・裏返し）をそのまま使い、右側にカードを1枚だけ置く
+      // ============================================================
+      isListLayout() {
+        return this.currentView !== 'grid';
+      }
+
+      applyListLayout() {
+        const b = document.body, v = this.currentView;
+        b.classList.toggle('notes-layout', this.isListLayout());
+        b.classList.toggle('notes-list-hidden', !!this.config.listHidden);
+        this.gridModeBtn.classList.toggle('is-on', v === 'grid');
+        this.listModeBtn.classList.toggle('is-on', v === 'single');
+      }
+
+      // iPhone：開いたカードを前に出す（false で一覧へ戻る）
+      setNotesDetail(on) {
+        document.body.classList.toggle('notes-detail', !!on);
+      }
+
+      bindListView() {
+        this.notesList.addEventListener('click', (e) => {
+          const row = e.target.closest('.nr');
+          if (row) this.openNote(row.dataset.id);
+        });
+        this.notesList.addEventListener('keydown', (e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          const row = e.target.closest('.nr');
+          if (row) { e.preventDefault(); this.openNote(row.dataset.id); }
+        });
+        this.bindLinkDrag();
+        document.getElementById('nlHideBtn').addEventListener('click', () => this.toggleWide());
+        document.getElementById('notesBackBtn').addEventListener('click', () => {
+          if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
+          if (this.currentView === 'link' && this.linkReturn === 'grid') { this.switchView('grid', { animate: false }); return; }
+          if (this.currentView === 'link') this.switchView('single', { animate: false });
+          this.setNotesDetail(false);
+          this.renderNotesList();
+        });
+        // 書いている文字を、一覧の行にもそのまま映す
+        let queued = false;
+        document.addEventListener('input', (e) => {
+          if (!this.inlineEditId || !this.inlineHome || !this.isListLayout() || queued) return;
+          if (e.target !== this.inlineHome.titleEl && !this.editCardBody.contains(e.target)) return;
+          queued = true;
+          requestAnimationFrame(() => { queued = false; this.updateEditingRow(); });
+        });
+      }
+
+      updateEditingRow() {
+        if (!this.inlineEditId || !this.inlineHome) return;
+        const row = this.notesList.querySelector(`.nr[data-id="${CSS.escape(this.inlineEditId)}"]`);
+        if (!row) return;
+        const title = this.inlineHome.titleEl.textContent.replace(/\s+/g, ' ').trim();
+        row.querySelector('.nr-title').textContent = title || '新規カード';
+        row.querySelector('.nr-snip').textContent = this.noteSnippet(this.editCardBody.textContent);
+      }
+
+      noteSnippet(text) {
+        return String(text || '').slice(0, 300).replace(/\s+/g, ' ').trim().slice(0, 80) || '追加のテキストはありません';
+      }
+
+      // 一覧の行を押したとき
+      openNote(id) {
+        this.setNotesDetail(true);
+        let edited = false;
+        if (this.inlineEditId) {
+          if (this.inlineEditId === id) return;
+          this.finishInlineEdit(true, { noRender: true });
+          this.renderToolbar();
+          edited = true;
+        }
+        const idx = this.getFilteredCards().findIndex(c => c.id === id);
+        if (this.currentView !== 'single' || idx < 0) { this.openInCardView(id); return; }
+        this.currentIndex = idx;
+        this.renderSingleDeck({ keepList: !edited });
+        this.scrollToIndex(idx, false);
+      }
+
+      // Mac のメモと同じように、本文を押すとそのまま書き始められる（マウスのある端末だけ）
+      bindClickToEdit(wrap, body, cardId) {
+        if (!window.matchMedia('(hover: hover)').matches) return;
+        const canStart = () => !this.inlineEditId && window.getSelection().isCollapsed;
+        body.addEventListener('click', (e) => {
+          if (!canStart() || e.target.closest('button, a, img, figure, input, summary, .rt-code')) return;
+          const r = body.getBoundingClientRect();
+          if (e.clientX >= r.left + body.clientWidth) return; // スクロールバーの上
+          const li = e.target.closest('li[data-checked]');
+          if (li && e.clientX - li.getBoundingClientRect().left <= (parseFloat(getComputedStyle(li).fontSize) || 16) * 1.5) return; // チェックボックス
+          this.startInlineEdit(cardId, { x: e.clientX, y: e.clientY });
+        });
+        const title = wrap.querySelector('.card-title');
+        title.addEventListener('click', () => {
+          if (!canStart() || wrap.classList.contains('is-collapsed')) return;
+          this.startInlineEdit(cardId);
+          if (this.inlineHome) { title.focus(); this.placeCaret(title, true); }
+        });
+      }
+
+      // 行の日付：今日は時刻、1週間以内は曜日、それより前は年月日（Mac のメモと同じ）
+      noteRowDate(card) {
+        const byCreated = ['created', 'createdAsc'].includes(this.config.sortOrder);
+        const d = new Date(byCreated ? card.createdAt : (card.updatedAt || card.createdAt));
+        if (isNaN(d)) return '';
+        const a = new Date(d); a.setHours(0, 0, 0, 0);
+        const b = new Date(); b.setHours(0, 0, 0, 0);
+        const days = Math.round((b - a) / 86400000);
+        if (days <= 0) return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+        if (days === 1) return '昨日';
+        if (days < 7) return '日月火水木金土'[d.getDay()] + '曜日';
+        return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}`;
+      }
+
+      // 一覧の見出し：状態ごとに分けているなら状態、そうでなければ Mac のメモと同じく日付で
+      noteGroupLabel(card) {
+        if (this.isGrouped()) return CARD_STATUS[this.groupKey(card)].label;
+        if (this.sourceFilter || !['updated', 'created', 'createdAsc'].includes(this.config.sortOrder)) return card.pinnedAt ? 'ピン留め' : '';
+        if (card.pinnedAt) return 'ピン留め';
+        const d = new Date(this.config.sortOrder === 'updated' ? (card.updatedAt || card.createdAt) : card.createdAt);
+        if (isNaN(d)) return 'それ以前';
+        const a = new Date(d); a.setHours(0, 0, 0, 0);
+        const b = new Date(); b.setHours(0, 0, 0, 0);
+        const days = Math.round((b - a) / 86400000);
+        if (days <= 0) return '今日';
+        if (days === 1) return '昨日';
+        if (days < 7) return '過去7日間';
+        if (days < 30) return '過去30日間';
+        return d.getFullYear() === b.getFullYear() ? `${d.getMonth() + 1}月` : `${d.getFullYear()}年`;
+      }
+
+      renderNotesList(list = this.getFilteredCards()) {
+        if (!this.isListLayout() || !this.notesList) return;
+        const box = this.notesList;
+        const activeId = (list[this.currentIndex] || {}).id;
+        const area = this.getArea(this.currentArea);
+        document.getElementById('nlTitle').textContent = area ? area.name : 'すべて';
+        document.getElementById('nlCount').textContent = `${list.length}枚`;
+        const showArea = this.currentArea === ALL_AREAS;
+        const linkIco = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+        const grouped = this.isGrouped();
+        const counts = new Map();
+        list.forEach(c => { const l = this.noteGroupLabel(c); counts.set(l, (counts.get(l) || 0) + 1); });
+        let last = null;
+        const html = list.map(card => {
+          const label = this.noteGroupLabel(card);
+          // 状態ごとのときは、カードやギャラリーと同じ色付きの札で
+          const name = grouped ? this.statusPillHtml({ status: this.groupKey(card) }) : `<span>${this.escapeHtml(label)}</span>`;
+          const head = label && label !== last ? `<div class="nl-group" role="heading" aria-level="3">${name}<span class="nl-group-n">${counts.get(label)}</span><span class="nl-group-line"></span></div>` : '';
+          last = label;
+          const n = this.getLinkedCards(card).length;
+          const areas = showArea ? (card.areas || []).map(id => this.getArea(id)).filter(Boolean) : [];
+          const cls = `nr${card.id === activeId ? ' is-active' : ''}`;
+          return `${head}<div role="button" tabindex="0" class="${cls}" data-id="${rtEscape(card.id)}"${card.id === activeId ? ' aria-current="true"' : ''}${this.canLinkDrag() ? ' draggable="true"' : ''}>
+            <span class="nr-top">${card.pinnedAt ? `<span class="nr-pin">${pinIconSvg(12, true)}</span>` : ''}<span class="nr-title">${this.escapeHtml(card.title || '新規カード')}</span>${n ? `<span class="nr-links" title="リンク ${n}件">${linkIco}${n}</span>` : ''}</span>
+            <span class="nr-sub" style="display:block"><span class="nr-date">${this.noteRowDate(card)}</span><span class="nr-snip">${this.escapeHtml(this.noteSnippet(card.body))}</span></span>
+            ${areas.length ? `<span class="nr-area">${areas.map(a => `<i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}`).join(' ')}</span>` : ''}
+          </div>`;
+        }).join('');
+        const top = box.scrollTop;
+        box.innerHTML = html || '<div class="nl-empty">表示するカードがありません</div>';
+        box.scrollTop = top;
+        const act = box.querySelector('.nr.is-active');
+        if (act && activeId !== this._listScrolledTo) act.scrollIntoView({ block: 'nearest' });
+        this._listScrolledTo = activeId;
+      }
+
+      markActiveRow(id) {
+        const box = this.notesList;
+        if (!box) return;
+        const old = box.querySelector('.nr.is-active');
+        if (old && old.dataset.id === id) return;
+        if (old) { old.classList.remove('is-active'); old.removeAttribute('aria-current'); }
+        const row = box.querySelector(`.nr[data-id="${CSS.escape(id)}"]`);
+        if (row) { row.classList.add('is-active'); row.setAttribute('aria-current', 'true'); row.scrollIntoView({ block: 'nearest' }); }
+        this._listScrolledTo = id;
+      }
+
+      // ============================================================
+      // ドラッグ＆ドロップでリンク（リスト：左の行 → 右のカード／ギャラリー：カード → カード）
+      // ============================================================
+      // マウスのある端末だけ（指では、長押しの選択やスクロールと重なるので使わない）
+      canLinkDrag() {
+        return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      }
+
+      bindLinkDrag() {
+        const stage = document.getElementById('viewStage');
+        const hint = document.getElementById('linkDropHint');
+        const hintText = document.getElementById('linkDropHintText');
+        const title = (c) => (c && c.title) || '無題のカード';
+        const isLinked = (srcId, dst) => (dst.links || []).includes(srcId);
+        let hovered = null;
+        const clearCell = () => {
+          if (hovered) { hovered.classList.remove('is-drop-target', 'is-drop-linked'); hovered.removeAttribute('data-drop-label'); }
+          hovered = null;
+        };
+        const clearHint = () => { hint.classList.remove('is-over', 'is-linked'); };
+
+        const start = (e, el) => {
+          const src = this.cards.find(c => c.id === el.dataset.id);
+          if (!src || !e.dataTransfer) return;
+          if (this.isSelecting && this.isSelecting()) { e.preventDefault(); return; }
+          this._linkDrag = { id: src.id, el };
+          e.dataTransfer.effectAllowed = 'link';
+          e.dataTransfer.setData('text/plain', title(src));
+          const ghost = document.createElement('div');
+          ghost.id = 'linkDragGhost';
+          ghost.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${this.escapeHtml(title(src))}`;
+          document.body.appendChild(ghost);
+          e.dataTransfer.setDragImage(ghost, 16, 17);
+          requestAnimationFrame(() => el.classList.add('is-drag-source'));
+        };
+        const end = () => {
+          const d = this._linkDrag;
+          if (d && d.el) d.el.classList.remove('is-drag-source');
+          this._linkDrag = null;
+          clearCell();
+          clearHint();
+          const g = document.getElementById('linkDragGhost');
+          if (g) g.remove();
+        };
+        document.addEventListener('dragend', end);
+
+        // リスト：左の行をつかむ
+        this.notesList.addEventListener('dragstart', (e) => {
+          const row = e.target.closest && e.target.closest('.nr');
+          if (row) start(e, row);
+        });
+        // リスト：右側（開いているカード）へ落とす。編集中の本文に文字として入らないよう、先に受け取る
+        stage.addEventListener('dragover', (e) => {
+          const d = this._linkDrag;
+          if (!d || this.currentView !== 'single') return;
+          const dst = this.cards.find(c => c.id === this.currentCardId());
+          if (!dst || dst.id === d.id) { clearHint(); e.preventDefault(); e.dataTransfer.dropEffect = 'none'; return; }
+          e.preventDefault();
+          const linked = isLinked(d.id, dst);
+          e.dataTransfer.dropEffect = linked ? 'none' : 'link';
+          hint.classList.toggle('is-over', !linked);
+          hint.classList.toggle('is-linked', linked);
+          hintText.textContent = linked ? 'すでにリンクしています' : `「${title(dst)}」にリンクする`;
+        }, true);
+        stage.addEventListener('dragleave', (e) => {
+          if (this._linkDrag && !stage.contains(e.relatedTarget)) clearHint();
+        }, true);
+        stage.addEventListener('drop', (e) => {
+          const d = this._linkDrag;
+          if (!d || this.currentView !== 'single') return;
+          e.preventDefault();
+          e.stopPropagation();
+          // 描き直すとつかんでいた行が消え、dragend が届かないので、先に片付ける
+          const id = d.id;
+          end();
+          this.linkByDrop(id, this.currentCardId());
+        }, true);
+
+        // ギャラリー：カードをつかんで、別のカードへ落とす
+        const grid = this.gridCardsContainer;
+        grid.addEventListener('dragstart', (e) => {
+          const cell = e.target.closest && e.target.closest('.grid-cell[data-id]');
+          if (cell) start(e, cell);
+        });
+        grid.addEventListener('dragover', (e) => {
+          const d = this._linkDrag;
+          if (!d) return;
+          e.preventDefault();
+          const cell = e.target.closest && e.target.closest('.grid-cell[data-id]');
+          const dst = cell && cell.dataset.id !== d.id ? this.cards.find(c => c.id === cell.dataset.id) : null;
+          if (!dst) { clearCell(); e.dataTransfer.dropEffect = 'none'; return; }
+          const linked = isLinked(d.id, dst);
+          e.dataTransfer.dropEffect = linked ? 'none' : 'link';
+          if (hovered !== cell) {
+            clearCell();
+            hovered = cell;
+            cell.classList.add(linked ? 'is-drop-linked' : 'is-drop-target');
+            cell.dataset.dropLabel = linked ? 'リンク済み' : 'ここにリンクする';
+          }
+        });
+        grid.addEventListener('dragleave', (e) => {
+          if (this._linkDrag && !grid.contains(e.relatedTarget)) clearCell();
+        });
+        grid.addEventListener('drop', (e) => {
+          const d = this._linkDrag;
+          if (!d) return;
+          e.preventDefault();
+          const cell = e.target.closest && e.target.closest('.grid-cell[data-id]');
+          const id = d.id;
+          end();
+          if (cell) this.linkByDrop(id, cell.dataset.id);
+        });
+      }
+
+      // 2枚をつなぐ（元に戻せる）
+      linkByDrop(srcId, dstId) {
+        const dst = this.cards.find(c => c.id === dstId);
+        const src = this.cards.find(c => c.id === srcId);
+        if (!dst || !src || srcId === dstId || (dst.links || []).includes(srcId)) return;
+        const before = [...(dst.links || [])];
+        this.setLinks(dstId, [...before, srcId]);
+        this.refreshAfterLinkDrop();
+        const name = (c) => (c.title || '無題のカード');
+        this.showToast(`「${name(src)}」と「${name(dst)}」をリンクしました`, '元に戻す', () => {
+          this.setLinks(dstId, before.filter(id => this.cards.some(c => c.id === id)));
+          this.refreshAfterLinkDrop();
+        });
+      }
+
+      // 開いているカードは描き直さない（読んでいた位置・書いている途中の内容をそのままに）
+      refreshAfterLinkDrop() {
+        if (this.currentView === 'grid') { this.renderGridView(); return; }
+        if (this.currentView === 'link') { this.renderLinkView(); return; }
+        this.renderNotesList();
+        this.updateFlipFab();
+        if (this.inlineEditId && this.inlineHome) {
+          this.updateEditingRow();
+          const card = this.cards.find(c => c.id === this.inlineEditId);
+          const badge = this.inlineHome.wrap.querySelector('.ia-link .link-count');
+          if (badge && card) badge.textContent = this.getLinkedCards(card).length || '';
+        }
+      }
+
+      // ============================================================
+      // 裏返すボタン
+      // ============================================================
+      bindFlipFab() {
+        this.flipFab.addEventListener('click', () => {
+          const ico = document.getElementById('flipFabIco');
+          ico.classList.remove('is-turning');
+          void ico.offsetWidth;
+          ico.classList.add('is-turning');
+          this.flipFab.blur();
+          if (this.currentView === 'link') this.flipBack(); else this.switchView('link');
+        });
+        this.flipPeek.addEventListener('click', (e) => {
+          const b = e.target.closest('[data-open]');
+          if (b) { this.setNotesDetail(true); this.openInCardView(b.dataset.open); }
+        });
+      }
+
+      updateFlipFab() {
+        if (!this.flipFab) return;
+        const v = this.currentView;
+        const id = v === 'link' ? this.linkFocusId : (v === 'single' ? this.currentCardId() : null);
+        const card = id ? this.cards.find(c => c.id === id) : null;
+        this.flipFabWrap.classList.toggle('is-off', !card);
+        if (!card) return;
+        const back = v === 'link';
+        const linked = this.getLinkedCards(card);
+        const n = linked.length;
+        this.flipFab.classList.toggle('is-back', back);
+        this.flipFab.setAttribute('aria-pressed', String(back));
+        const toGrid = back && this.linkReturn === 'grid';
+        this.flipFab.title = toGrid ? 'ギャラリーに戻る (L / esc)' : back ? 'カードを表に戻す (L / esc)' : `カードを裏返して、リンク ${n}件を見る (L)`;
+        document.getElementById('flipFabLabel').textContent = toGrid ? '戻る' : back ? '表に戻す' : '裏返す';
+        const cnt = document.getElementById('flipFabCount');
+        cnt.classList.toggle('is-zero', !n);
+        cnt.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${n}`;
+        if (back) {
+          this.flipPeek.innerHTML = '';
+        } else if (!n) {
+          this.flipPeek.innerHTML = '<div><div class="fp-empty">リンクはまだありません。裏面で追加できます</div></div>';
+        } else {
+          const rows = linked.slice(0, 5).map(c => `<button type="button" class="fp-row" data-open="${rtEscape(c.id)}">${this.escapeHtml(c.title || '無題のカード')}</button>`).join('');
+          this.flipPeek.innerHTML = `<div><div class="fp-head">裏面のリンク ${n}件</div>${rows}${n > 5 ? `<div class="fp-more">ほか ${n - 5}件</div>` : ''}</div>`;
+        }
+      }
+
       updatePaginationAndCounter(total) {
+        this.updateFlipFab();
         if (!this.headerCardCounter) return;
         if (this.currentView === 'link') {
           this.headerCardCounter.textContent = `リンク ${total}`;
@@ -9133,6 +9738,7 @@
           const cell = this.createMiniCell(card, idx);
           cell.dataset.id = card.id;
           cell.dataset.idx = idx;
+          if (this.canLinkDrag()) cell.draggable = true;
           const zone = document.createElement('span');
           zone.className = 'sel-zone';
           zone.title = '選ぶ';
@@ -9524,6 +10130,13 @@
             this.onSourceClick(card.id);
           });
         }
+        // リンク数を押すと、そのカードの裏面へ（⌘・Shift を押しながらなら、カードを選ぶ操作のまま）
+        scaledCard.querySelector('[data-action="mini-flip"]').addEventListener('click', (e) => {
+          if (this.isSelecting() || e.metaKey || e.ctrlKey || e.shiftKey) return;
+          e.stopPropagation();
+          e.currentTarget.blur();
+          this.openBack(card.id);
+        });
         cell.appendChild(scaledCard);
         return cell;
       }
@@ -10100,10 +10713,9 @@
         const bar = document.createElement('div');
         bar.className = 'link-bar col-span-full';
         bar.innerHTML = `
-          <button type="button" class="link-back" data-act="back" title="表に戻す (L / esc)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>表に戻す</button>
+          <span class="link-side-chip">裏面</span>
           <span class="link-bar-title">「<b>${this.escapeHtml(focus.title || '無題のカード')}</b>」のリンク ${linked.length}件</span>
           <button type="button" class="link-edit" data-act="edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>リンクを編集</button>`;
-        bar.querySelector('[data-act="back"]').addEventListener('click', () => this.openInCardView(focus.id));
         bar.querySelector('[data-act="edit"]').addEventListener('click', () => this.showLinkPicker(focus.id));
         container.appendChild(bar);
 
@@ -10118,7 +10730,7 @@
         focusWrap.className = 'relative';
         focusWrap.appendChild(focusCell);
         focusWrap.appendChild(flag);
-        focusCell.title = 'カードビューで開く';
+        focusCell.title = 'このカードを開く';
         focusCell.addEventListener('click', () => this.openInCardView(focus.id));
         container.appendChild(focusWrap);
 
@@ -10385,7 +10997,7 @@
 
       renderToolbar() {
         this.renderAreaButton();
-        this.renderStatusSeg();
+        this.renderStatusBtn();
         this.renderSortButton();
         this.updatePhoneSearchDot();
         if (this.isAreaMenuOpen()) this.renderAreaMenu();
@@ -10496,14 +11108,6 @@
           this.syncSettingsControls();
           this.renderAll();
         });
-        $('settingCardHeaderSeg').addEventListener('click', (e) => {
-          const b = e.target.closest('[data-val]');
-          if (!b) return;
-          this.config.cardHeader = b.dataset.val === 'simple' ? 'simple' : 'rich';
-          this.saveConfig();
-          this.syncSettingsControls();
-          this.renderAll();
-        });
 
         // カード：スライダーは動かしている間は数字だけ、離したら反映
         const slider = (el, key, parse, label) => {
@@ -10517,7 +11121,15 @@
         slider(this.settingCharsInput, 'charsPerLine', v => parseInt(v, 10), v => { this.settingCharsDisplay.textContent = `${v} 文字`; });
         slider(this.settingLinesInput, 'linesCount', v => parseInt(v, 10), v => { this.settingLinesDisplay.textContent = `${v} 行`; });
         slider(this.settingColumnsInput, 'gridColumns', v => parseInt(v, 10), v => { this.settingColumnsDisplay.textContent = `${v} 列`; });
-        slider($('settingWideFontInput'), 'wideFontPx', v => parseFloat(v), v => { $('settingWideFontDisplay').textContent = `${v} px`; });
+        slider($('settingWideFontInput'), 'wideFontPx', v => parseFloat(v), v => { $('settingWideFontDisplay').textContent = `${v} px`; this.syncTypeLabels(parseFloat(v)); });
+        slider($('settingTitlePxInput'), 'cardTitlePx', v => parseInt(v, 10), v => { $('settingTitlePxDisplay').textContent = `${v} px`; document.documentElement.style.setProperty('--card-title', `${v}px`); });
+        // 見出しは、動かしている間も本文の見出しに反映する
+        [['settingH1', 'rtH1', '--rt-h1'], ['settingH2', 'rtH2', '--rt-h2'], ['settingH3', 'rtH3', '--rt-h3']].forEach(([id, key, cssVar]) => {
+          slider($(`${id}Input`), key, v => parseFloat(v), v => {
+            document.documentElement.style.setProperty(cssVar, `${v}em`);
+            $(`${id}Display`).textContent = this.headingLabel(parseFloat(v));
+          });
+        });
 
         // 画像
         $('settingImageSizeSeg').addEventListener('click', (e) => {
@@ -10542,7 +11154,6 @@
           if (after) after();
         });
         toggle(this.settingFlipInput, 'flipAnimation');
-        toggle($('settingLoopInput'), 'loopCards', () => { if (this.currentView === 'single') { this.renderSingleDeck(); this.scrollToIndex(this.currentIndex, false); } });
         toggle(this.settingCopySourceInput, 'copyWithSource');
         toggle($('settingImageShotInput'), 'imageScreenshotBoost');
         toggle($('settingCodeWrapInput'), 'codeWrap', () => this.applyCodeWrap());
@@ -10608,8 +11219,6 @@
           b.classList.toggle('bg-black/5', !on);
           b.classList.toggle('dark:bg-white/5', !on);
         });
-        const head = this.config.cardHeader === 'simple' ? 'simple' : 'rich';
-        document.querySelectorAll('#settingCardHeaderSeg [data-val]').forEach(x => x.classList.toggle('is-on', x.dataset.val === head));
         this.settingCharsInput.value = this.config.charsPerLine;
         this.settingLinesInput.value = this.config.linesCount;
         this.settingColumnsInput.value = this.config.gridColumns || 4;
@@ -10618,9 +11227,14 @@
         this.settingColumnsDisplay.textContent = `${this.config.gridColumns || 4} 列`;
         $('settingWideFontInput').value = this.wideFontSize();
         $('settingWideFontDisplay').textContent = `${this.wideFontSize()} px`;
+        $('settingTitlePxInput').value = this.config.cardTitlePx;
+        $('settingTitlePxDisplay').textContent = `${this.config.cardTitlePx} px`;
+        $('settingH1Input').value = this.config.rtH1;
+        $('settingH2Input').value = this.config.rtH2;
+        $('settingH3Input').value = this.config.rtH3;
+        this.syncTypeLabels();
         this.updateSettingsSummary();
         this.settingFlipInput.checked = this.config.flipAnimation !== false;
-        $('settingLoopInput').checked = this.loopEnabled();
         this.settingCopySourceInput.checked = this.config.copyWithSource !== false;
         $('mdHardBreakInput').checked = !!this.config.mdHardBreak;
         $('settingsTrashCount').textContent = this.trash.length ? `（${this.trash.length}）` : '';
@@ -10653,9 +11267,9 @@
 
       resetSettingsSection(sec) {
         const keys = {
-          view: ['theme', 'accentTheme', 'cardHeader', 'statusColors'],
-          card: ['charsPerLine', 'linesCount', 'gridColumns', 'wideFontPx', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap'],
-          action: ['flipAnimation', 'loopCards', 'autoArchive', 'autoArchiveDays'],
+          view: ['theme', 'accentTheme', 'statusColors'],
+          card: ['charsPerLine', 'linesCount', 'gridColumns', 'wideFontPx', 'cardTitlePx', 'rtH1', 'rtH2', 'rtH3', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap'],
+          action: ['flipAnimation', 'autoArchive', 'autoArchiveDays'],
           copy: ['copyWithSource', 'mdHardBreak']
         }[sec] || [];
         keys.forEach(k => { if (k === 'theme') delete this.config.theme; else this.config[k] = k === 'statusColors' ? { ...DEFAULT_CONFIG.statusColors } : DEFAULT_CONFIG[k]; });
@@ -10704,17 +11318,14 @@
 
     let resizeTimer;
     window.addEventListener('resize', () => {
-      if (window.cardApp && window.cardApp.inlineEditId) { window.cardApp.placeInlineBar(); return; }
+      if (window.cardApp && window.cardApp.inlineEditId) { window.cardApp.placeInlineBar(); window.cardApp.fitWideCards(); return; }
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         if (window.cardApp) {
           if (window.cardApp.currentView !== 'single') {
             window.cardApp.updateGridCardScales();
           } else {
-            const app = window.cardApp;
-            if (app.config.wideCard && (app.isWide() !== !!app.cardCarousel.querySelector('.is-wide'))) app.renderSingleDeck();
-            else if (app.isWide()) app.fitWideCards();
-            app.scrollToIndex(app.currentIndex, false);
+            window.cardApp.fitWideCards();
           }
         }
       }, 80);
@@ -10735,8 +11346,8 @@
     const DRIVE_UPLOAD = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,createdTime';
     const IMG_CLEAN_GRACE = 3 * 86400000; // どのカードも使っていない画像を、ドライブから消すまでの日数（ほかの端末の書きかけを消さないように）
     // 端末をまたいで同じにする設定（外観・ギャラリーの列数・並べ替え・表示中のエリアなどは端末ごと）
-    const SYNC_SHARED_KEYS = ['charsPerLine', 'linesCount', 'accentTheme', 'cardHeader', 'statusColors', 'autoArchive', 'autoArchiveDays',
-      'copyWithSource', 'mdHardBreak', 'mdLayout', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap', 'flipAnimation', 'loopCards'];
+    const SYNC_SHARED_KEYS = ['charsPerLine', 'linesCount', 'accentTheme', 'statusColors', 'autoArchive', 'autoArchiveDays',
+      'copyWithSource', 'mdHardBreak', 'mdLayout', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap', 'flipAnimation'];
 
     // キーの順番によらない JSON（同じ中身なら同じ文字になる）
     function syncStable(v) {
