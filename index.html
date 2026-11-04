@@ -706,42 +706,44 @@
     .inline-editing .card-tags { display: none; }
     /* 検索欄は狭いと自分が縮む（隣の裏返すボタンに重ならない） */
     #searchBox { min-width: 0; }
-    /* ===== タグの棚：親を島に、子を札に ===== */
-    #tagShelf { display: none; flex-shrink: 0; flex-direction: column; max-height: 52vh; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 16px 34px -28px rgba(20, 20, 40, 0.45); z-index: 20; position: relative; }
-    .dark #tagShelf { background: #1E1E22; border-bottom-color: rgba(255, 255, 255, 0.1); }
-    body.tag-shelf-open #tagShelf { display: flex; }
-    #tagShelfList { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 28px 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px 34px; align-items: start; }
-    .ts-foot { flex-shrink: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 28px; border-top: 1px solid rgba(0, 0, 0, 0.07); font-size: 12.5px; }
-    .dark .ts-foot { border-top-color: rgba(255, 255, 255, 0.08); }
-    .ts-search { display: flex; align-items: center; gap: 7px; flex: 0 1 240px; min-width: 120px; height: 32px; padding: 0 11px; border-radius: 9px; color: #6E6E73; background: rgba(0, 0, 0, 0.055); }
+    /* ===== タグのポップアップ（絞り込む・付ける）：画面に重ねて開き、下は動かさない。親を島に、子を札に ===== */
+    .tag-pop { position: fixed; display: none; flex-direction: column; z-index: 70; box-sizing: border-box; background: #fff; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 14px; box-shadow: 0 18px 50px rgba(20, 20, 40, 0.24), 0 2px 6px rgba(20, 20, 40, 0.08); }
+    .dark .tag-pop { background: #1E1E22; border-color: rgba(255, 255, 255, 0.14); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3); }
+    body.tag-shelf-open #tagShelf, body.tag-drawer-open #tagDrawer { display: flex; }
+    #tagShelf { left: 16px; right: 16px; }
+    .tag-pop-arrow { position: absolute; top: -7px; width: 13px; height: 13px; margin-left: -7px; background: inherit; border-left: 1px solid rgba(0, 0, 0, 0.1); border-top: 1px solid rgba(0, 0, 0, 0.1); transform: rotate(45deg); }
+    .dark .tag-pop-arrow { border-color: rgba(255, 255, 255, 0.14); }
+    .tp-head { flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 20px; border-bottom: 1px solid rgba(0, 0, 0, 0.07); font-size: 13px; }
+    .dark .tp-head { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    .tp-end { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 12px; }
+    .tp-close { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: #48484A; background: rgba(0, 0, 0, 0.055); }
+    .tp-close:hover { background: rgba(0, 0, 0, 0.1); }
+    .dark .tp-close { color: #D4D4D4; background: rgba(255, 255, 255, 0.09); }
+    .dark .tp-close:hover { background: rgba(255, 255, 255, 0.16); }
+    #tagShelfList, #tagDrawerList { flex: 1; min-height: 0; overflow-y: auto; display: grid; align-items: start; align-content: start; padding: 16px 24px 20px; }
+    #tagShelfList { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px 34px; }
+    #tagDrawerList { grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px 30px; }
+    .ts-search { display: flex; align-items: center; gap: 7px; flex: 0 1 280px; min-width: 120px; height: 34px; padding: 0 11px; border-radius: 9px; color: #6E6E73; background: rgba(0, 0, 0, 0.055); }
+    #tagDrawer .ts-search { flex-basis: 340px; }
     .dark .ts-search { color: #A1A1A6; background: rgba(255, 255, 255, 0.08); }
     .ts-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 13px; color: #1D1D1F; -webkit-user-select: text; user-select: text; }
     .dark .ts-search input { color: #F5F5F7; }
     .ts-search input::placeholder { color: #6E6E73; }
-    .ts-count { flex: 1; min-width: 80px; color: #48484A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ts-count { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px; margin-left: 8px; color: #48484A; white-space: nowrap; }
     .dark .ts-count { color: #C7C7CC; }
-    .ts-btn { flex-shrink: 0; height: 30px; padding: 0 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #48484A; white-space: nowrap; }
+    .ts-count .ts-names { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .ts-count strong { flex-shrink: 0; font-weight: 700; color: #1D1D1F; }
+    .dark .ts-count strong { color: #F5F5F7; }
+    .ts-btn { flex-shrink: 0; height: 34px; padding: 0 11px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #48484A; white-space: nowrap; }
     .dark .ts-btn { color: #D4D4D4; }
     .ts-btn:hover { background: rgba(0, 0, 0, 0.05); }
     .dark .ts-btn:hover { background: rgba(255, 255, 255, 0.08); }
     .ts-btn.is-fill { background: rgba(0, 0, 0, 0.055); color: #1D1D1F; }
     .dark .ts-btn.is-fill { background: rgba(255, 255, 255, 0.08); color: #F5F5F7; }
-    .ts-btn.is-accent { color: #0066D6; }
+    .ts-btn.is-accent { height: 28px; padding: 0 8px; font-size: 13px; color: #0066D6; }
     .dark .ts-btn.is-accent { color: #4DA3FF; }
-    .ts-btn:disabled { opacity: 0.35; pointer-events: none; }
-    #tagDrawer { display: none; flex-shrink: 0; flex-direction: column; width: clamp(340px, 26vw, 460px); min-height: 0; background: #FAFAFB; border-left: 1px solid rgba(0, 0, 0, 0.1); }
-    .dark #tagDrawer { background: #1A1A1D; border-left-color: rgba(255, 255, 255, 0.1); }
-    body.tag-drawer-open #tagDrawer { display: flex; }
-    .td-top { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 12px 22px; border-bottom: 1px solid rgba(0, 0, 0, 0.07); }
-    .dark .td-top { border-bottom-color: rgba(255, 255, 255, 0.08); }
-    .td-top .ts-search { flex: 1 1 0; height: 36px; }
-    .td-top .ts-btn { height: 36px; }
-    .td-hint { flex-shrink: 0; padding: 10px 22px 12px; font-size: 11.5px; line-height: 1.5; color: #6E6E73; border-top: 1px solid rgba(0, 0, 0, 0.06); }
-    .dark .td-hint { color: #A1A1A6; border-top-color: rgba(255, 255, 255, 0.07); }
-    .td-x { width: 34px; padding: 0; font-size: 18px; font-weight: 400; }
-    #tagDrawerList { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 22px 24px; }
-    #tagDrawerList .ti-island { padding: 13px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
-    .dark #tagDrawerList .ti-island { border-bottom-color: rgba(255, 255, 255, 0.07); }
+    .td-hint { flex-shrink: 0; padding: 9px 24px 11px; font-size: 11.5px; line-height: 1.5; color: #6E6E73; border-top: 1px solid rgba(0, 0, 0, 0.07); }
+    .dark .td-hint { color: #A1A1A6; border-top-color: rgba(255, 255, 255, 0.08); }
     .ti-island { position: relative; min-width: 0; border-radius: 10px; }
     .ti-head, .ti-chip { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 11px; border-radius: 8px; font-size: 13px; color: #1D1D1F; cursor: pointer; max-width: 100%; }
     .dark .ti-head, .dark .ti-chip { color: #F5F5F7; }
@@ -771,20 +773,21 @@
     .ti-chip.drop-after { box-shadow: 4px 0 0 -1px #007AFF; }
     .ti-island.drop-before { box-shadow: 0 -3px 0 #007AFF; }
     .ti-island.drop-after { box-shadow: 0 3px 0 #007AFF; }
-    #tagShelfList .ti-island.drop-before { box-shadow: -5px 0 0 -2px #007AFF; }
-    #tagShelfList .ti-island.drop-after { box-shadow: 5px 0 0 -2px #007AFF; }
+    #tagShelfList .ti-island.drop-before, #tagDrawerList .ti-island.drop-before { box-shadow: -5px 0 0 -2px #007AFF; }
+    #tagShelfList .ti-island.drop-after, #tagDrawerList .ti-island.drop-after { box-shadow: 5px 0 0 -2px #007AFF; }
     .ti-island.drop-into, .ti-chip.drop-into { outline: 2px solid #007AFF; outline-offset: 3px; background: rgba(0, 122, 255, 0.07); }
     [data-drop-label]::after { content: attr(data-drop-label); position: absolute; z-index: 5; right: 4px; top: 4px; padding: 3px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; color: #fff; background: #0066D6; white-space: nowrap; pointer-events: none; }
     .ti-chip[data-drop-label] { position: relative; }
     .ti-chip[data-drop-label]::after { right: auto; left: 0; top: calc(100% + 4px); }
     #tagSortMenu { position: fixed; top: 0; left: 0; width: 180px; z-index: 80; }
-    @media (max-width: 1200px) { body.tag-drawer-open #notesSidebar { display: none !important; } }
     @media (max-width: 840px) {
-      #tagDrawer { position: fixed; top: 56px; right: 0; bottom: 0; left: 0; width: auto; z-index: 70; border-left: 0; }
-      #tagShelfList { padding: 12px 14px 8px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
-      .ts-foot { padding: 8px 14px; }
-      .td-top { padding-left: 14px; }
-      #tagDrawerList { padding: 4px 14px 20px; }
+      #tagDrawer { top: 56px; right: 0; bottom: 0; left: 0; border: 0; border-radius: 0; }
+      #tagDrawer .tag-pop-arrow { display: none; }
+      #tagShelf { left: 8px; right: 8px; }
+      .tp-head { flex-wrap: wrap; gap: 8px; padding: 10px; }
+      .ts-count { margin-left: 0; }
+      #tagShelfList { padding: 12px 14px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+      #tagDrawerList { padding: 12px 14px 20px; grid-template-columns: 1fr; }
       .ts-search input { font-size: 16px; }
       .ti-head, .ti-chip { height: 36px; }
     }
@@ -1740,17 +1743,34 @@
     </div>
   </header>
 
-  <!-- タグの棚（絞り込む）：ヘッダーのすぐ下に開いて、下のカードが押すたびに変わる -->
-  <section id="tagShelf" aria-label="タグで絞り込む">
-    <div id="tagShelfList"></div>
-    <div class="ts-foot">
-      <div class="ts-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagSearchInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す" aria-label="タグを探す"></div>
+  <!-- タグのポップアップ（絞り込む）：タグボタンの下に重ねて開く -->
+  <section id="tagShelf" class="tag-pop" role="dialog" aria-label="タグで絞り込む">
+    <span class="tag-pop-arrow" aria-hidden="true"></span>
+    <div class="tp-head">
+      <div class="ts-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagSearchInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す" aria-label="タグを探す"></div>
       <div id="tagMatchSeg" class="src-seg" role="group" aria-label="複数のタグの扱い"><button type="button" data-val="all">すべて含む</button><button type="button" data-val="any">いずれか</button></div>
       <span id="tagMatchCount" class="ts-count"></span>
-      <button id="tagShelfSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
       <button id="tagClearBtn" type="button" class="ts-btn is-accent">解除</button>
-      <button id="tagShelfClose" type="button" class="ts-btn">棚を閉じる</button>
+      <div class="tp-end">
+        <button id="tagShelfSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
+        <button id="tagShelfClose" type="button" class="tp-close" aria-label="閉じる" title="閉じる"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
     </div>
+    <div id="tagShelfList"></div>
+  </section>
+
+  <!-- タグのポップアップ（カードに付ける）：「＋ タグ」の下に重ねて開く -->
+  <section id="tagDrawer" class="tag-pop" role="dialog" aria-label="タグを付ける">
+    <span class="tag-pop-arrow" aria-hidden="true"></span>
+    <div class="tp-head">
+      <div class="ts-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagDrawerInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す・作る" aria-label="タグを探す・作る"></div>
+      <div class="tp-end">
+        <button id="tagDrawerSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
+        <button id="tagDrawerClose" type="button" class="tp-close" aria-label="閉じる" title="閉じる"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+    </div>
+    <div id="tagDrawerList"></div>
+    <div class="td-hint">「親/子」と入力すると親子で作れます。札を見出しへドラッグして親を変えることもできます</div>
   </section>
 
   <div class="flex flex-1 overflow-hidden relative">
@@ -1796,16 +1816,6 @@
 
     </main>
 
-    <!-- タグの棚（カードに付ける）：本文を読みながら選べるように、右に開く -->
-    <aside id="tagDrawer" aria-label="タグを選ぶ">
-      <div class="td-top">
-        <div class="ts-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagDrawerInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す・作る" aria-label="タグを探す・作る"></div>
-        <button id="tagDrawerSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
-        <button id="tagDrawerClose" type="button" class="ts-btn td-x" aria-label="棚を閉じる">×</button>
-      </div>
-      <div id="tagDrawerList"></div>
-      <div class="td-hint">「親/子」と入力すると親子で作れます。札を見出しへドラッグして親を変えることもできます</div>
-    </aside>
     <div id="tagSortMenu" class="area-menu" role="menu"></div>
   </div>
 
@@ -4330,6 +4340,9 @@
       return c;
     }
 
+    const TAG_POP_BOTTOM_GAP = 80; // ポップアップの下に必ず残す余白（ここをクリックして閉じられる）
+
+
     class CardDeckApp {
       constructor() {
         this.areas = this.loadAreas();
@@ -5362,7 +5375,7 @@
             if (this.isAreaMenuOpen()) { e.preventDefault(); this.closeAreaMenu(); return; }
             if (this.isAreaEditorOpen()) { e.preventDefault(); this.hideAreaEditor(); return; }
             if (this.isTagPickOpen()) { e.preventDefault(); this.closeTagPick(); return; }
-            if (this.isTagPopoverOpen() && !this.inlineEditId) { e.preventDefault(); this.closeTagPopover(true); return; }
+            if (this.isTagPopoverOpen()) { e.preventDefault(); this.closeTagPopover(true); return; }
             if (this.isLinkPickerOpen()) { e.preventDefault(); this.hideLinkPicker(); return; }
             if (this.inlineEditId && !this.isModalOpen()) {
               // esc では編集をやめない（日本語入力の取り消しで押すキーなので、書いた文字を失わないように）
@@ -7805,7 +7818,7 @@
         box.appendChild(meta);
       }
 
-      // ---------- タグの棚（カードに付ける：右に開く／絞り込む：上に開く） ----------
+      // ---------- タグのポップアップ（カードに付ける／絞り込む） ----------
       // 親タグ1つを「島」にして、子を札で並べる。子のないタグは最後の島にまとめる
       tagCompare(counts) {
         const mode = this.config.tagSort;
@@ -7883,16 +7896,58 @@
       markTagAddOpen() {
         const add = this.inlineHome && this.inlineHome.tagBox && this.inlineHome.tagBox.querySelector('.it-add');
         if (add) add.classList.toggle('is-open', this.isTagPickOpen());
+        if (this.isTagPickOpen()) this.positionTagPick();
+      }
+
+      // ---------- ポップアップの置き場所 ----------
+      // 下の端までは伸ばさない（外をクリックして閉じられる余白を必ず残す）
+      positionTagFilter() {
+        const pop = document.getElementById('tagShelf');
+        const top = document.querySelector('header').getBoundingClientRect().bottom + 8;
+        pop.style.top = `${top}px`;
+        pop.style.maxHeight = `${Math.max(180, window.innerHeight - top - TAG_POP_BOTTOM_GAP)}px`;
+        const btn = this.tagFilterBtn.getBoundingClientRect();
+        const arrow = pop.querySelector('.tag-pop-arrow');
+        arrow.style.display = btn.width ? '' : 'none';
+        arrow.style.left = `${btn.left + btn.width / 2 - pop.getBoundingClientRect().left}px`;
+      }
+
+      positionTagPick() {
+        const pop = document.getElementById('tagDrawer');
+        if (window.matchMedia('(max-width: 840px)').matches) {
+          ['top', 'left', 'width', 'maxHeight'].forEach(k => { pop.style[k] = ''; });
+          return;
+        }
+        const tagBox = this.inlineHome && this.inlineHome.tagBox;
+        const add = tagBox && tagBox.querySelector('.it-add');
+        if (!add) return;
+        const box = tagBox.getBoundingClientRect();
+        const a = add.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const limit = window.innerHeight - TAG_POP_BOTTOM_GAP;
+        const headerBottom = document.querySelector('header').getBoundingClientRect().bottom;
+        const width = Math.min(Math.max(box.width, 560), vw - 32);
+        const left = Math.max(16, Math.min(box.left, vw - 16 - width));
+        // 「＋ タグ」が画面の下のほうにあるときは、選べるだけの高さを確保して上へずらす
+        const wanted = a.bottom + 8;
+        const top = Math.max(headerBottom + 8, Math.min(wanted, limit - 300));
+        pop.style.left = `${left}px`;
+        pop.style.width = `${width}px`;
+        pop.style.top = `${top}px`;
+        pop.style.maxHeight = `${limit - top}px`;
+        const arrow = pop.querySelector('.tag-pop-arrow');
+        arrow.style.display = top === wanted ? '' : 'none';
+        arrow.style.left = `${a.left + a.width / 2 - left}px`;
       }
 
       openTagPick() {
         this.bindTagShelves();
         this.tagPickInput.value = '';
         this.tagPickActive = -1;
+        this.closeTagPopover();
         document.body.classList.add('tag-drawer-open');
         this.renderTagPick();
         this.markTagAddOpen();
-        this.fitWideCards();
         this.tagPickInput.focus({ preventScroll: true });
       }
 
@@ -7900,7 +7955,6 @@
         if (!this.isTagPickOpen()) return;
         document.body.classList.remove('tag-drawer-open');
         this.markTagAddOpen();
-        this.fitWideCards();
       }
 
       tagPickCounts() {
@@ -7955,7 +8009,7 @@
       bindTagShelves() {
         if (this._tagShelvesBound) return;
         this._tagShelvesBound = true;
-        // ---- 右の棚 ----
+        // ---- 付けるポップアップ ----
         this.tagPickInput = document.getElementById('tagDrawerInput');
         this.tagPickList = document.getElementById('tagDrawerList');
         this.tagPickInput.addEventListener('input', (e) => {
@@ -7992,8 +8046,8 @@
         });
         document.getElementById('tagDrawerClose').addEventListener('click', () => this.closeTagPick());
         document.getElementById('tagDrawerSort').addEventListener('click', (e) => { e.stopPropagation(); this.openTagSortMenu(e.currentTarget); });
-        this.bindTagDrag(this.tagPickList, 'column');
-        // ---- 上の棚 ----
+        this.bindTagDrag(this.tagPickList, 'row');
+        // ---- 絞り込むポップアップ ----
         this.tagPopover = document.getElementById('tagShelf');
         this.tagShelfList = document.getElementById('tagShelfList');
         this.tagSearchInput = document.getElementById('tagSearchInput');
@@ -8001,7 +8055,13 @@
         this.tagSearchInput.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') { e.preventDefault(); const first = this.tagShelfList.querySelector('[data-tag]'); if (first) first.click(); }
         });
-        this.tagShelfList.addEventListener('click', (e) => { const t = e.target.closest('[data-tag]'); if (t) this.toggleTag(t.dataset.tag); });
+        this.tagShelfList.addEventListener('click', (e) => {
+          const t = e.target.closest('[data-tag]');
+          if (!t) return;
+          this.toggleTag(t.dataset.tag);
+          // 札は描き直しで消える。入力欄に戻して、続けて探せるように（Delete が下のカードに届かないように）
+          if (window.innerWidth > 840) this.tagSearchInput.focus({ preventScroll: true });
+        });
         document.getElementById('tagClearBtn').addEventListener('click', () => { this.selectedTags.clear(); this.currentIndex = 0; this.renderAll(); });
         document.getElementById('tagShelfClose').addEventListener('click', () => this.closeTagPopover(true));
         document.getElementById('tagShelfSort').addEventListener('click', (e) => { e.stopPropagation(); this.openTagSortMenu(e.currentTarget); });
@@ -8025,6 +8085,38 @@
           this.refreshTagUis();
         });
         document.addEventListener('mousedown', (e) => { if (this.tagSortMenu.classList.contains('open') && !this.tagSortMenu.contains(e.target)) this.tagSortMenu.classList.remove('open'); });
+        // ---- 外をクリックしたら閉じる ----
+        // 押した場所も外のときだけ閉じる（札のドラッグや文字の選択が外で終わっても閉じない）
+        const keepOpen = '#tagShelf, #tagDrawer, #tagSortMenu, #toast, #tagFilterBtn, .it-add, .it-tag';
+        let downOutside = false;
+        // 閉じたクリックの2回目（ダブルクリック）も、同じ場所なら下のカードに届かせない
+        let swallowed = null;
+        const isSecondClick = (e) => swallowed && Date.now() < swallowed.until && Math.abs(e.clientX - swallowed.x) < 8 && Math.abs(e.clientY - swallowed.y) < 8;
+        const swallow = (e) => { e.stopPropagation(); e.preventDefault(); };
+        document.addEventListener('pointerdown', (e) => {
+          downOutside = !(e.target.closest && e.target.closest(keepOpen));
+        }, true);
+        document.addEventListener('click', (e) => {
+          if (isSecondClick(e)) { swallow(e); return; }
+          if (!downOutside) return;
+          downOutside = false;
+          // 編集中は閉じるだけで、クリックはそのまま通す（本文ならカーソルが置かれる）
+          if (this.isTagPickOpen()) this.closeTagPick();
+          if (this.isTagPopoverOpen()) {
+            this.closeTagPopover();
+            // 下のカードは開かない。ヘッダーの操作だけはそのまま効かせる
+            if (!e.target.closest('header')) { swallow(e); swallowed = { x: e.clientX, y: e.clientY, until: Date.now() + 450 }; }
+          }
+        }, true);
+        document.addEventListener('dblclick', (e) => { if (isSecondClick(e)) swallow(e); }, true);
+        // ---- 置き場所を保つ ----
+        const reposition = (e) => {
+          if (e.type === 'scroll' && e.target.closest && e.target.closest('.tag-pop')) return;
+          if (this.isTagPickOpen()) this.positionTagPick();
+          if (this.isTagPopoverOpen()) this.positionTagFilter();
+        };
+        window.addEventListener('resize', reposition);
+        window.addEventListener('scroll', reposition, true);
       }
 
       tagSortLabel() { return { custom: '任意の順', name: '名前順', count: 'よく使う順' }[this.config.tagSort]; }
@@ -11523,10 +11615,12 @@
         this.tagSearchInput.value = '';
         this.tagSearchQuery = '';
         document.body.classList.add('tag-shelf-open');
+        this.closeTagPick();
         this.renderTagPopover();
+        this.positionTagFilter();
         this.tagFilterBtn.setAttribute('aria-expanded', 'true');
         this.tagFilterBtn.classList.add('is-on');
-        if (this.currentView === 'single') this.fitWideCards();
+        if (window.innerWidth > 840) this.tagSearchInput.focus({ preventScroll: true });
       }
 
       closeTagPopover(returnFocus = false) {
@@ -11535,7 +11629,6 @@
         this.tagFilterBtn.setAttribute('aria-expanded', 'false');
         this.tagFilterBtn.classList.toggle('is-on', this.selectedTags.size > 0);
         if (returnFocus) this.tagFilterBtn.focus({ preventScroll: true });
-        if (this.currentView === 'single') this.fitWideCards();
       }
 
       // 絞り込むタグを選ぶ。親を選ぶと子も含む（親で絞ると子を付けたカードも出る）。親と子は同時に選ばない
@@ -11574,9 +11667,9 @@
         box.scrollTop = top;
         document.querySelectorAll('#tagMatchSeg [data-val]').forEach(b => b.classList.toggle('is-on', b.dataset.val === this.config.tagMatch));
         const n = this.getFilteredCards().length;
-        const names = [...sel].map(tagLabel).join(this.config.tagMatch === 'any' ? ' または ' : ' ＋ ');
-        document.getElementById('tagMatchCount').textContent = sel.size ? `${names}：${n}枚` : `${tagMap.size}個のタグ`;
-        document.getElementById('tagClearBtn').disabled = sel.size === 0;
+        const names = [...sel].map(t => `「${this.escapeHtml(tagLabel(t))}」`).join('');
+        document.getElementById('tagMatchCount').innerHTML = sel.size ? `<span class="ts-names">${names}で絞り込み中</span><strong>${n}枚</strong>` : `<span class="ts-names">${tagMap.size}個のタグ</span>`;
+        document.getElementById('tagClearBtn').style.display = sel.size ? '' : 'none';
       }
 
       renderToolbar() {
