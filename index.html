@@ -295,6 +295,12 @@
       width: 22px; height: 22px; border-radius: 7px; flex-shrink: 0;
       display: inline-flex; align-items: center; justify-content: center; color: #fff;
     }
+    .area-ico { background: transparent !important; color: #6E6E73; }
+    .dark .area-ico { color: #A1A1A6; }
+    .am-item.is-on .area-ico { color: #007AFF; }
+    .dark .am-item.is-on .area-ico { color: #4DA3FF; }
+    .area-badge svg, .card-areas svg, .nr-area svg { color: inherit; opacity: 0.75; }
+    .nr-area-names { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
     .area-menu {
       position: absolute; top: calc(100% + 8px); left: 0; width: 270px; z-index: 45;
       background: rgba(255, 255, 255, 0.96);
@@ -328,6 +334,7 @@
     }
     .dark .area-chip { border-color: rgba(255, 255, 255, 0.12); color: #D4D4D4; }
     .area-chip .ac-box { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid #C7C7CC; display: flex; align-items: center; justify-content: center; color: transparent; }
+    .area-chip { --area-color: #007AFF; }
     .area-chip.is-on { border-color: var(--area-color); color: #1D1D1F; background: color-mix(in srgb, var(--area-color) 8%, transparent); }
     .dark .area-chip.is-on { color: #F5F5F5; }
     .area-chip.is-on .ac-box { background: var(--area-color); border-color: var(--area-color); color: #fff; }
@@ -347,8 +354,6 @@
     .ae-btn:hover { background: rgba(0, 0, 0, 0.06); color: #1D1D1F; }
     .dark .ae-btn:hover { background: rgba(255, 255, 255, 0.1); color: #F5F5F5; }
     .ae-btn:disabled { opacity: 0.3; pointer-events: none; }
-    .ae-pop { position: absolute; z-index: 5; top: 36px; left: 0; background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.1); display: grid; gap: 6px; }
-    .dark .ae-pop { background: #2A2A2E; }
 
     /* ===== 引用元 ===== */
     .src-ico {
@@ -1754,7 +1759,7 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p class="text-[11.5px] text-neutral-400 mt-3 mb-2">アイコンを押すと色と形を変えられます。エリアを削除しても、カードは消えません。</p>
+      <p class="text-[11.5px] text-neutral-400 mt-3 mb-2">エリアを削除しても、カードは消えません。</p>
       <div id="areaEditorList" class="flex-1 overflow-y-auto -mx-1 px-1 space-y-0.5"></div>
       <button id="areaEditorAddBtn" class="mt-2 self-start text-xs font-semibold text-appleBlue px-2 py-1.5 rounded-lg hover:bg-appleBlue/10 transition">＋ 新しいエリア</button>
       <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-black/[0.06] dark:border-white/[0.08]">
@@ -2332,6 +2337,18 @@
   <div id="toast" class="px-4 py-2 rounded-full bg-neutral-900/90 dark:bg-white/90 text-white dark:text-neutral-900 text-xs font-semibold shadow-lg">コピーしました</div>
 
   <script>
+    // 日本語入力の操作（変換の確定の Enter、取り消しの esc など）は、アプリのキー操作として扱わない。
+    // Safari は確定のとき compositionend のあとに keydown を出し、isComposing が false になる（keyCode は 229）。
+    // ここで最初に受け止めて、どの入力欄でも同じように効くようにする。文字の確定そのものは妨げない。
+    (function () {
+      let endedAt = 0;
+      document.addEventListener('compositionend', () => { endedAt = Date.now(); }, true);
+      window.addEventListener('keydown', (e) => {
+        const justEnded = e.key === 'Enter' && Date.now() - endedAt < 40;
+        if (e.isComposing || e.keyCode === 229 || justEnded) e.stopImmediatePropagation();
+      }, true);
+    })();
+
     const DEFAULT_CONFIG = {
       charsPerLine: 26,
       linesCount: 12,
@@ -4118,7 +4135,6 @@
       users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
       all: '<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>'
     };
-    const AREA_ICON_KEYS = Object.keys(AREA_ICONS).filter(k => k !== 'all');
     const DEFAULT_AREAS = [
       { id: 'area-knowledge', name: 'Knowledge', color: '#5856D6', icon: 'book' },
       { id: 'area-office', name: 'Office', color: '#34C759', icon: 'briefcase' },
@@ -4153,8 +4169,8 @@
     }
 
     function areaIconSvg(key, size = 13) {
-      const body = AREA_ICONS[key] || AREA_ICONS.folder;
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+      // どのエリアも同じフォルダ（色や形のデータは残してあるが、表示には使わない）
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0">${AREA_ICONS.folder}</svg>`;
     }
 
     // ============================================================
@@ -7747,7 +7763,7 @@
       inlineMetaLabel() {
         const areas = [...(this.editorAreas || [])].map(id => this.getArea(id)).filter(Boolean);
         const src = this.readSourceFromEditor();
-        const dots = areas.map(a => `<i style="background:${safeColor(a.color)}"></i>`).join('');
+        const dots = areas.length ? areaIconSvg('folder', 11) : '';
         const names = areas.map(a => this.escapeHtml(a.name)).join('・');
         let srcText = '';
         if (this.hasSource(src)) {
@@ -9095,7 +9111,7 @@
       cardAreasHtml(card) {
         const areas = (card.areas || []).map(id => this.getArea(id)).filter(Boolean);
         if (!areas.length) return '';
-        return `<span class="card-areas">${areas.map(a => `<span><i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}</span>`).join('')}</span>`;
+        return `<span class="card-areas">${areas.map(a => `<span>${areaIconSvg('folder', 13)}${this.escapeHtml(a.name)}</span>`).join('')}</span>`;
       }
 
       // 「今日」「昨日」「3日前」「9月20日」「2025年9月20日」
@@ -9590,7 +9606,7 @@
           return `${head}<div role="button" tabindex="0" class="${cls}" data-id="${rtEscape(card.id)}"${card.id === activeId ? ' aria-current="true"' : ''}${this.canLinkDrag() ? ' draggable="true"' : ''}>
             <span class="nr-top">${card.pinnedAt ? `<span class="nr-pin">${pinIconSvg(12, true)}</span>` : ''}<span class="nr-title">${this.escapeHtml(card.title || '新規カード')}</span>${n ? `<span class="nr-links" title="リンク ${n}件">${linkIco}${n}</span>` : ''}</span>
             <span class="nr-sub" style="display:block"><span class="nr-date">${this.noteRowDate(card)}</span><span class="nr-snip">${this.escapeHtml(this.noteSnippet(card.body))}</span></span>
-            ${areas.length ? `<span class="nr-area">${areas.map(a => `<i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}`).join(' ')}</span>` : ''}
+            ${areas.length ? `<span class="nr-area">${areaIconSvg('folder', 12)}<span class="nr-area-names">${areas.map(a => this.escapeHtml(a.name)).join('・')}</span></span>` : ''}
           </div>`;
         }).join('');
         const top = box.scrollTop;
@@ -10131,7 +10147,7 @@
             return `<div class="bp-area" data-area="${rtEscape(a.id)}">
               <button type="button" class="bp-area-main" data-toggle="1" title="${state === 'all' ? '選んだカードから外す' : '選んだカードに加える'}">
                 <span class="bp-box is-${state}">${state === 'all' ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : state === 'some' ? '<i></i>' : ''}</span>
-                <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${safeColor(a.color)}">${areaIconSvg(a.icon, 11)}</span>
+                <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]">${areaIconSvg(a.icon, 11)}</span>
                 <span class="truncate">${this.escapeHtml(a.name)}</span>
                 <span class="bp-count">${k}/${n}</span>
               </button>
@@ -10555,9 +10571,7 @@
 
       renderAreaButton() {
         const a = this.getArea(this.currentArea);
-        const color = a ? a.color : '#8E8E93';
-        this.areaBtnIcon.style.background = color;
-        this.areaBtnIcon.innerHTML = areaIconSvg(a ? a.icon : 'all', 13);
+        this.areaBtnIcon.innerHTML = areaIconSvg(a ? a.icon : 'all', 16);
         this.areaBtnName.textContent = a ? a.name : 'すべて';
         this.searchInput.placeholder = a ? `${a.name} 内を検索` : '本文・タイトルを検索';
       }
@@ -10585,7 +10599,7 @@
         const item = (id, name, color, icon, count, n) => `
           <button type="button" class="am-item${this.currentArea === id ? ' is-on' : ''}" data-area="${rtEscape(id)}">
             <span class="am-check">${this.currentArea === id ? '✓' : ''}</span>
-            <span class="area-ico" style="background:${safeColor(color)}">${areaIconSvg(icon, 13)}</span>
+            <span class="area-ico">${areaIconSvg(icon, 16)}</span>
             <span class="truncate">${this.escapeHtml(name)}</span>
             <span class="am-count">${count}</span>
             ${n <= 9 ? `<span class="am-kbd">${key(n)}</span>` : ''}
@@ -10610,9 +10624,7 @@
       nextAreaStyle(taken = this.areas) {
         const used = new Set(taken.map(a => a.color));
         const color = AREA_COLORS.find(c => !used.has(c)) || AREA_COLORS[taken.length % AREA_COLORS.length];
-        const usedIcons = new Set(taken.map(a => a.icon));
-        const icon = AREA_ICON_KEYS.find(k => !usedIcons.has(k)) || 'folder';
-        return { color, icon };
+        return { color, icon: 'folder' };
       }
 
       // ---------- エリア編集画面 ----------
@@ -10652,7 +10664,7 @@
           row.className = 'ae-row relative';
           const count = this.cards.filter(c => c.areas.includes(a.id)).length;
           row.innerHTML = `
-            <button type="button" class="area-ico !w-8 !h-8 !rounded-[9px] shrink-0" data-act="style" style="background:${safeColor(a.color)}" title="色とアイコン">${areaIconSvg(a.icon, 16)}</button>
+            <span class="area-ico !w-8 !h-8 shrink-0">${areaIconSvg('folder', 18)}</span>
             <input type="text" value="${this.escapeHtml(a.name)}" placeholder="エリア名" class="flex-1 min-w-0 h-8 px-2.5 rounded-lg bg-black/[0.04] dark:bg-white/[0.07] border border-transparent focus:border-appleBlue outline-none text-[13px] font-semibold text-neutral-900 dark:text-white">
             <span class="text-[11px] text-neutral-400 w-10 text-right tabular-nums shrink-0">${a.isNew ? '' : count + '枚'}</span>
             <button type="button" class="ae-btn" data-act="up" title="上へ" ${i === 0 ? 'disabled' : ''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button>
@@ -10664,37 +10676,8 @@
           row.querySelector('[data-act="up"]').addEventListener('click', () => { [this.areaDraft[i - 1], this.areaDraft[i]] = [this.areaDraft[i], this.areaDraft[i - 1]]; this.renderAreaEditor(); });
           row.querySelector('[data-act="down"]').addEventListener('click', () => { [this.areaDraft[i + 1], this.areaDraft[i]] = [this.areaDraft[i], this.areaDraft[i + 1]]; this.renderAreaEditor(); });
           row.querySelector('[data-act="del"]').addEventListener('click', () => { this.areaDraft.splice(i, 1); this.renderAreaEditor(); });
-          row.querySelector('[data-act="style"]').addEventListener('click', (e) => {
-            e.stopPropagation();
-            const open = row.querySelector('.ae-pop');
-            list.querySelectorAll('.ae-pop').forEach(p => p.remove());
-            if (open) return;
-            const pop = document.createElement('div');
-            pop.className = 'ae-pop';
-            pop.innerHTML = `
-              <div class="flex gap-1.5">${AREA_COLORS.map(c => `<button type="button" data-color="${c}" class="w-6 h-6 rounded-full ${c === a.color ? 'ring-2 ring-offset-2 ring-neutral-400 dark:ring-offset-neutral-800' : ''}" style="background:${c}"></button>`).join('')}</div>
-              <div class="flex gap-1.5">${AREA_ICON_KEYS.map(k => `<button type="button" data-icon="${k}" class="w-7 h-7 rounded-lg flex items-center justify-center ${k === a.icon ? 'bg-black/10 dark:bg-white/15 text-neutral-900 dark:text-white' : 'text-neutral-500 hover:bg-black/5 dark:hover:bg-white/10'}">${areaIconSvg(k, 15)}</button>`).join('')}</div>`;
-            pop.addEventListener('click', (ev) => {
-              ev.stopPropagation();
-              const c = ev.target.closest('[data-color]');
-              const ic = ev.target.closest('[data-icon]');
-              if (c) a.color = c.dataset.color;
-              if (ic) a.icon = ic.dataset.icon;
-              if (c || ic) { this.renderAreaEditor(); }
-            });
-            row.appendChild(pop);
-          });
           list.appendChild(row);
         });
-        // ポップアップの外を押したら閉じる
-        if (!this._aePopBound) {
-          this._aePopBound = true;
-          this.areaEditorModal.addEventListener('click', (e) => {
-            if (!e.target.closest('.ae-pop') && !e.target.closest('[data-act="style"]')) {
-              this.areaEditorList.querySelectorAll('.ae-pop').forEach(p => p.remove());
-            }
-          });
-        }
       }
 
       saveAreaEditor() {
@@ -10730,10 +10713,9 @@
           const b = document.createElement('button');
           b.type = 'button';
           b.className = `area-chip${this.editorAreas.has(a.id) ? ' is-on' : ''}`;
-          b.style.setProperty('--area-color', a.color);
           b.innerHTML = `
             <span class="ac-box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]" style="background:${safeColor(a.color)}">${areaIconSvg(a.icon, 11)}</span>
+            <span class="area-ico !w-[18px] !h-[18px] !rounded-[5px]">${areaIconSvg(a.icon, 11)}</span>
             <span>${this.escapeHtml(a.name)}</span>`;
           b.addEventListener('click', () => {
             if (this.editorAreas.has(a.id)) {
@@ -10794,7 +10776,7 @@
           : (ids.length > 1 || !ids.includes(this.currentArea));
         if (!show) return '';
         return ids.map(id => this.getArea(id)).filter(Boolean)
-          .map(a => `<span class="area-badge"><i style="background:${safeColor(a.color)}"></i>${this.escapeHtml(a.name)}</span>`).join('');
+          .map(a => `<span class="area-badge">${areaIconSvg('folder', 11)}${this.escapeHtml(a.name)}</span>`).join('');
       }
 
       // ============================================================
