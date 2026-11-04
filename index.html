@@ -418,52 +418,6 @@
     .lp-row.is-on .lp-chk { background: #007AFF; border-color: #007AFF; color: #fff; }
 
     /* ===== タグのポップオーバー ===== */
-    .tag-popover {
-      position: absolute; top: calc(100% + 12px); left: 50%;
-      width: 340px; z-index: 40;
-      background: rgba(255, 255, 255, 0.94);
-      -webkit-backdrop-filter: blur(30px) saturate(1.6);
-      backdrop-filter: blur(30px) saturate(1.6);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      border-radius: 16px;
-      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.25), 0 8px 20px -8px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
-      padding: 14px;
-      transform-origin: 50% -8px;
-      transform: translateX(-50%) scale(0.94);
-      opacity: 0; visibility: hidden;
-      transition: opacity 0.16s ease, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 0s linear 0.2s;
-    }
-    .tag-popover.open {
-      opacity: 1; visibility: visible;
-      transform: translateX(-50%) scale(1);
-      transition: opacity 0.16s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 0s;
-    }
-    .tag-popover::before {
-      content: ""; position: absolute; top: -7px; left: calc(50% - 7px);
-      width: 14px; height: 14px; transform: rotate(45deg);
-      background: rgba(255, 255, 255, 0.95);
-      border-left: 0.5px solid rgba(0, 0, 0, 0.08); border-top: 0.5px solid rgba(0, 0, 0, 0.08);
-      border-radius: 3px 0 0 0;
-    }
-    .dark .tag-popover {
-      background: rgba(40, 40, 44, 0.94);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.08);
-    }
-    .dark .tag-popover::before { background: rgba(44, 44, 48, 0.98); border-color: rgba(255, 255, 255, 0.1); }
-    .tp-chip {
-      font-size: 12px; padding: 5px 10px; border-radius: 9999px;
-      background: rgba(0, 0, 0, 0.05); color: #333;
-      display: inline-flex; gap: 6px; align-items: center;
-      transition: background 0.12s, color 0.12s, box-shadow 0.12s, transform 0.12s;
-    }
-    .tp-chip:hover { background: rgba(0, 0, 0, 0.09); }
-    .tp-chip:active { transform: scale(0.96); }
-    .tp-chip em { font-style: normal; font-size: 10.5px; color: #999; }
-    .dark .tp-chip { background: rgba(255, 255, 255, 0.08); color: #E5E5E5; }
-    .dark .tp-chip:hover { background: rgba(255, 255, 255, 0.14); }
-    .tp-chip.is-on { background: #007AFF; color: #fff; box-shadow: 0 2px 6px rgba(0, 122, 255, 0.35); }
-    .tp-chip.is-on em { color: rgba(255, 255, 255, 0.8); }
 
     /* ===== リッチテキスト（カード本文・エディタ共通） ===== */
     .rich > div, .rich p { margin: 0; }
@@ -750,6 +704,91 @@
     .inline-tags { display: none; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 0.5rem; }
     .inline-editing .inline-tags { display: flex; }
     .inline-editing .card-tags { display: none; }
+    /* 検索欄は狭いと自分が縮む（隣の裏返すボタンに重ならない） */
+    #searchBox { min-width: 0; }
+    /* ===== タグの棚：親を島に、子を札に ===== */
+    #tagShelf { display: none; flex-shrink: 0; flex-direction: column; max-height: 52vh; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 16px 34px -28px rgba(20, 20, 40, 0.45); z-index: 20; position: relative; }
+    .dark #tagShelf { background: #1E1E22; border-bottom-color: rgba(255, 255, 255, 0.1); }
+    body.tag-shelf-open #tagShelf { display: flex; }
+    #tagShelfList { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 28px 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px 34px; align-items: start; }
+    .ts-foot { flex-shrink: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 28px; border-top: 1px solid rgba(0, 0, 0, 0.07); font-size: 12.5px; }
+    .dark .ts-foot { border-top-color: rgba(255, 255, 255, 0.08); }
+    .ts-search { display: flex; align-items: center; gap: 7px; flex: 0 1 240px; min-width: 120px; height: 32px; padding: 0 11px; border-radius: 9px; color: #6E6E73; background: rgba(0, 0, 0, 0.055); }
+    .dark .ts-search { color: #A1A1A6; background: rgba(255, 255, 255, 0.08); }
+    .ts-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 13px; color: #1D1D1F; -webkit-user-select: text; user-select: text; }
+    .dark .ts-search input { color: #F5F5F7; }
+    .ts-search input::placeholder { color: #6E6E73; }
+    .ts-count { flex: 1; min-width: 80px; color: #48484A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dark .ts-count { color: #C7C7CC; }
+    .ts-btn { flex-shrink: 0; height: 30px; padding: 0 10px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #48484A; white-space: nowrap; }
+    .dark .ts-btn { color: #D4D4D4; }
+    .ts-btn:hover { background: rgba(0, 0, 0, 0.05); }
+    .dark .ts-btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .ts-btn.is-fill { background: rgba(0, 0, 0, 0.055); color: #1D1D1F; }
+    .dark .ts-btn.is-fill { background: rgba(255, 255, 255, 0.08); color: #F5F5F7; }
+    .ts-btn.is-accent { color: #0066D6; }
+    .dark .ts-btn.is-accent { color: #4DA3FF; }
+    .ts-btn:disabled { opacity: 0.35; pointer-events: none; }
+    #tagDrawer { display: none; flex-shrink: 0; flex-direction: column; width: clamp(340px, 26vw, 460px); min-height: 0; background: #FAFAFB; border-left: 1px solid rgba(0, 0, 0, 0.1); }
+    .dark #tagDrawer { background: #1A1A1D; border-left-color: rgba(255, 255, 255, 0.1); }
+    body.tag-drawer-open #tagDrawer { display: flex; }
+    .td-top { flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 12px 14px 12px 22px; border-bottom: 1px solid rgba(0, 0, 0, 0.07); }
+    .dark .td-top { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    .td-top .ts-search { flex: 1 1 0; height: 36px; }
+    .td-top .ts-btn { height: 36px; }
+    .td-hint { flex-shrink: 0; padding: 10px 22px 12px; font-size: 11.5px; line-height: 1.5; color: #6E6E73; border-top: 1px solid rgba(0, 0, 0, 0.06); }
+    .dark .td-hint { color: #A1A1A6; border-top-color: rgba(255, 255, 255, 0.07); }
+    .td-x { width: 34px; padding: 0; font-size: 18px; font-weight: 400; }
+    #tagDrawerList { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 22px 24px; }
+    #tagDrawerList .ti-island { padding: 13px 0; border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
+    .dark #tagDrawerList .ti-island { border-bottom-color: rgba(255, 255, 255, 0.07); }
+    .ti-island { position: relative; min-width: 0; border-radius: 10px; }
+    .ti-head, .ti-chip { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 11px; border-radius: 8px; font-size: 13px; color: #1D1D1F; cursor: pointer; max-width: 100%; }
+    .dark .ti-head, .dark .ti-chip { color: #F5F5F7; }
+    .ti-head { margin: 0 0 6px -8px; padding: 0 9px; font-size: 13.5px; font-weight: 700; }
+    .ti-head:hover { background: rgba(0, 0, 0, 0.05); }
+    .dark .ti-head:hover { background: rgba(255, 255, 255, 0.08); }
+    .ti-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ti-chip { background: rgba(0, 0, 0, 0.055); }
+    .ti-chip:hover { background: rgba(0, 0, 0, 0.1); }
+    .dark .ti-chip { background: rgba(255, 255, 255, 0.09); }
+    .dark .ti-chip:hover { background: rgba(255, 255, 255, 0.15); }
+    .ti-head em, .ti-chip em { font-style: normal; font-size: 11px; font-weight: 500; color: #6E6E73; font-variant-numeric: tabular-nums; }
+    .dark .ti-head em, .dark .ti-chip em { color: #A1A1A6; }
+    .ti-head.is-on, .ti-chip.is-on, .ti-head.is-on:hover, .ti-chip.is-on:hover { background: #0066D6; color: #fff; font-weight: 600; }
+    .ti-head.is-on em, .ti-chip.is-on em { color: rgba(255, 255, 255, 0.85); }
+    .ti-chip.is-implied, .ti-chip.is-implied:hover { background: rgba(0, 102, 214, 0.13); color: #0058B8; }
+    .dark .ti-chip.is-implied, .dark .ti-chip.is-implied:hover { background: rgba(77, 163, 255, 0.2); color: #8CC4FF; }
+    .ti-head b, .ti-chip b { font-weight: 700; }
+    .ti-head.is-active, .ti-chip.is-active, .ti-create.is-active { outline: 2px solid #007AFF; outline-offset: 1px; }
+    .ti-loose-label { margin-bottom: 8px; font-size: 12px; font-weight: 600; color: #6E6E73; }
+    .dark .ti-loose-label { color: #A1A1A6; }
+    .ti-create { margin-top: 12px; padding: 9px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; color: #0058B8; background: rgba(0, 102, 214, 0.1); cursor: pointer; }
+    .dark .ti-create { color: #8CC4FF; background: rgba(77, 163, 255, 0.16); }
+    .ti-empty { padding: 18px 4px; font-size: 12.5px; color: #6E6E73; }
+    /* 並び替え：差し込む位置の線と、入れ先の囲み */
+    .ti-chip.drop-before { box-shadow: -4px 0 0 -1px #007AFF; }
+    .ti-chip.drop-after { box-shadow: 4px 0 0 -1px #007AFF; }
+    .ti-island.drop-before { box-shadow: 0 -3px 0 #007AFF; }
+    .ti-island.drop-after { box-shadow: 0 3px 0 #007AFF; }
+    #tagShelfList .ti-island.drop-before { box-shadow: -5px 0 0 -2px #007AFF; }
+    #tagShelfList .ti-island.drop-after { box-shadow: 5px 0 0 -2px #007AFF; }
+    .ti-island.drop-into, .ti-chip.drop-into { outline: 2px solid #007AFF; outline-offset: 3px; background: rgba(0, 122, 255, 0.07); }
+    [data-drop-label]::after { content: attr(data-drop-label); position: absolute; z-index: 5; right: 4px; top: 4px; padding: 3px 8px; border-radius: 7px; font-size: 11.5px; font-weight: 700; color: #fff; background: #0066D6; white-space: nowrap; pointer-events: none; }
+    .ti-chip[data-drop-label] { position: relative; }
+    .ti-chip[data-drop-label]::after { right: auto; left: 0; top: calc(100% + 4px); }
+    #tagSortMenu { position: fixed; top: 0; left: 0; width: 180px; z-index: 80; }
+    @media (max-width: 1200px) { body.tag-drawer-open #notesSidebar { display: none !important; } }
+    @media (max-width: 840px) {
+      #tagDrawer { position: fixed; top: 56px; right: 0; bottom: 0; left: 0; width: auto; z-index: 70; border-left: 0; }
+      #tagShelfList { padding: 12px 14px 8px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+      .ts-foot { padding: 8px 14px; }
+      .td-top { padding-left: 14px; }
+      #tagDrawerList { padding: 4px 14px 20px; }
+      .ts-search input { font-size: 16px; }
+      .ti-head, .ti-chip { height: 36px; }
+    }
+    .it-add.is-open { border-style: solid; border-color: rgba(0, 122, 255, 0.4); color: #007AFF; background: rgba(0, 122, 255, 0.05); }
     .it-tag { display: inline-flex; align-items: center; gap: 2px; padding: 1px 3px 1px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 500; background: rgba(0, 122, 255, 0.08); color: #007AFF; border: 1px solid rgba(0, 122, 255, 0.18); }
     .it-tag button { width: 15px; height: 15px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: rgba(0, 122, 255, 0.6); }
     .it-tag button:hover { background: rgba(0, 122, 255, 0.15); color: #007AFF; }
@@ -759,8 +798,6 @@
     .it-meta { margin-left: 4px; max-width: 320px; }
     .it-meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .it-meta i { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .it-input { height: 21px; width: 110px; padding: 0 8px; border-radius: 7px; border: 1px solid #007AFF; outline: none; font-size: 11px; background: #fff; color: #1D1D1F; }
-    .dark .it-input { background: #2A2A2E; color: #F5F5F5; }
     /* エリア・引用元の吹き出し */
     #inlineMeta {
       position: fixed; z-index: 65; width: 540px; max-width: calc(100vw - 24px); padding: 16px 16px 14px; border-radius: 16px;
@@ -1118,32 +1155,8 @@
       header { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
       header > .w-px { display: none; }
       #areaBtnName, #statusBtnName, #statusBtnCount { display: none; }
-      #mSearchBtn.m-only { display: inline-flex !important; }
-      #mSearchBtn.is-on { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
       #addCardQuickBtn { display: none !important; }
-      /* 検索・タグ・並べ替えは、ヘッダーのすぐ下に開く1行に */
-      #searchWrap { display: none !important; }
-      body.m-search-open #searchWrap {
-        display: flex !important; position: absolute; top: 100%; left: 0; right: 0; z-index: 29;
-        padding: 8px 10px; gap: 6px; justify-content: stretch;
-        background: rgba(248, 248, 250, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-      }
-      .dark body.m-search-open #searchWrap, body.m-search-open.dark #searchWrap { background: rgba(24, 24, 27, 0.94); border-bottom-color: rgba(255, 255, 255, 0.08); }
-      #searchBox { max-width: none !important; flex: 1 1 0; width: auto !important; min-width: 0; }
-      #searchTagChips { max-width: 50% !important; }
       html, body { overflow-x: clip; } /* 何かがはみ出しても、画面全体が横にずれないように */
-      #searchKbd { display: none !important; }
-      body.m-search-open #searchWrap { flex-wrap: wrap; row-gap: 8px; }
-      #searchBox { flex-basis: 60% !important; }
-      #searchInput { font-size: 16px !important; } /* 16px 未満だと、iPhone は入力のたびに画面を拡大する */
-      /* タグの枠・並べ替えのメニューは、画面の幅に合わせる */
-      #searchWrap > .relative { position: static; }
-      .tag-popover { left: 10px; right: 10px; width: auto; top: calc(100% + 6px); transform: scale(0.97); transform-origin: 70% 0; }
-      .tag-popover.open { transform: none; }
-      .tag-popover::before { display: none; }
-      #tagChipList { max-height: 46vh; }
-      #sortMenu { right: 10px !important; top: calc(100% + 6px) !important; }
       /* 右下の新規カードボタン */
       #fabAddBtn.m-only {
         display: flex !important; position: fixed; right: 18px; bottom: calc(22px + env(safe-area-inset-bottom)); z-index: 45;
@@ -1434,7 +1447,7 @@
     .dark .fp-row:hover { color: #4DA3FF; }
     .fp-more, .fp-empty { padding: 4px 8px 5px; font-size: 11.5px; color: #8E8E93; }
     @media (max-width: 1100px) { #flipFab:not(.is-back) #flipFabLabel { display: none; } }
-    @media (max-width: 760px) { #areaBtn > svg, #statusBtn > svg { display: none; } #areaBtn, #statusBtn { padding: 0 6px; } header .tb-seg-btn { padding: 5px 7px; } header > .w-px { display: none; } #searchWrap { min-width: 40px; } #searchBox { flex: 1 1 0; width: auto !important; min-width: 0; } }
+    @media (max-width: 760px) { #areaBtn > svg, #statusBtn > svg { display: none; } #areaBtn, #statusBtn { padding: 0 6px; } header .tb-seg-btn { padding: 5px 7px; } header > .w-px { display: none; } }
     @media (max-width: 374px) { header { gap: 4px !important; padding-left: 5px !important; padding-right: 5px !important; } #flipFabLabel { display: none; } #flipFab.is-back, .dark #flipFab.is-back { padding: 0 9px; } }
 
     /* 裏面：表とは違う紙にして、いま裏にいることが一目でわかるように */
@@ -1446,6 +1459,31 @@
       /* iPhone：一覧にはまだ開いたカードがないので出さない */
       body.notes-layout:not(.notes-detail) #flipFabWrap { display: none; }
       #flipPeek { display: none !important; }
+    }
+
+    /* 幅が狭いときは、検索・タグ・並べ替えを検索ボタンの下に開く1行にする（ヘッダーに収めるため） */
+    @media (max-width: 840px) {
+      #mSearchBtn.m-only { display: inline-flex !important; }
+      #mSearchBtn.is-on { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
+      /* 検索・タグ・並べ替えは、ヘッダーのすぐ下に開く1行に */
+      #searchWrap { display: none !important; }
+      body.m-search-open #searchWrap {
+        display: flex !important; position: absolute; top: 100%; left: 0; right: 0; z-index: 29;
+        padding: 8px 10px; gap: 6px; justify-content: stretch;
+        background: rgba(248, 248, 250, 0.94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      }
+      .dark body.m-search-open #searchWrap, body.m-search-open.dark #searchWrap { background: rgba(24, 24, 27, 0.94); border-bottom-color: rgba(255, 255, 255, 0.08); }
+      #searchBox { max-width: none !important; flex: 1 1 0; width: auto !important; min-width: 0; }
+      #searchTagChips { max-width: 50% !important; }
+      #searchKbd { display: none !important; }
+      body.m-search-open #searchWrap { flex-wrap: wrap; row-gap: 8px; }
+      #searchBox { flex-basis: 60% !important; }
+      #searchInput { font-size: 16px !important; } /* 16px 未満だと、iPhone は入力のたびに画面を拡大する */
+      /* タグの枠・並べ替えのメニューは、画面の幅に合わせる */
+      #searchWrap > .relative { position: static; }
+      #sortMenu { right: 10px !important; top: calc(100% + 6px) !important; }
+      header > div:last-child { margin-left: auto; }
     }
 
     /* ===== カードの状態（Permanent / Project / Fleeting / Archive） ===== */
@@ -1655,7 +1693,7 @@
       </button>
     </div>
 
-    <!-- 検索 + タグ（iPhone では虫眼鏡ボタンで、ヘッダーの下に開く） -->
+    <!-- 検索 + タグ（幅が狭いときは虫眼鏡ボタンで、ヘッダーの下に開く） -->
     <div id="searchWrap" class="flex-1 flex justify-center items-center gap-1.5 min-w-0">
       <div id="searchBox" class="flex items-center gap-2 w-full max-w-[420px] h-[34px] px-2.5 rounded-[10px] bg-black/[0.055] dark:bg-white/[0.08] border border-transparent focus-within:bg-white dark:focus-within:bg-neutral-900 focus-within:border-appleBlue/50 focus-within:ring-[3px] focus-within:ring-appleBlue/15 transition cursor-text">
         <i data-lucide="search" class="w-4 h-4 text-neutral-400 shrink-0"></i>
@@ -1671,21 +1709,6 @@
           <i data-lucide="tag" class="w-[17px] h-[17px]"></i>
           <span id="tagFilterDot" class="hidden absolute top-[5px] right-[5px] w-2 h-2 rounded-full bg-appleBlue ring-[1.5px] ring-white dark:ring-neutral-900"></span>
         </button>
-        <div id="tagPopover" class="tag-popover" role="dialog" aria-label="タグで絞り込む">
-          <div class="flex items-center justify-between mb-2.5 text-[11px] font-semibold tracking-wide text-neutral-400">
-            <span>タグで絞り込む</span>
-            <button id="tagClearBtn" class="text-appleBlue font-medium tracking-normal hover:underline disabled:opacity-40 disabled:no-underline">すべて解除</button>
-          </div>
-          <div class="flex items-center gap-1.5 h-[30px] px-2.5 mb-3 rounded-lg bg-black/5 dark:bg-white/[0.08]">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
-            <input id="tagSearchInput" type="text" autocomplete="off" placeholder="タグを探す…" class="flex-1 min-w-0 bg-transparent outline-none text-xs text-neutral-900 dark:text-white placeholder-neutral-400">
-          </div>
-          <div id="tagChipList" class="flex flex-wrap gap-1.5 max-h-[260px] overflow-y-auto"></div>
-          <div class="mt-3 pt-2.5 border-t border-black/[0.06] dark:border-white/[0.08] flex justify-between text-[11px] text-neutral-400">
-            <span id="tagMatchCount"></span>
-            <span>esc で閉じる</span>
-          </div>
-        </div>
       </div>
       <!-- 並べ替え -->
       <div class="relative shrink-0">
@@ -1716,6 +1739,19 @@
       </button>
     </div>
   </header>
+
+  <!-- タグの棚（絞り込む）：ヘッダーのすぐ下に開いて、下のカードが押すたびに変わる -->
+  <section id="tagShelf" aria-label="タグで絞り込む">
+    <div id="tagShelfList"></div>
+    <div class="ts-foot">
+      <div class="ts-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagSearchInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す" aria-label="タグを探す"></div>
+      <div id="tagMatchSeg" class="src-seg" role="group" aria-label="複数のタグの扱い"><button type="button" data-val="all">すべて含む</button><button type="button" data-val="any">いずれか</button></div>
+      <span id="tagMatchCount" class="ts-count"></span>
+      <button id="tagShelfSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
+      <button id="tagClearBtn" type="button" class="ts-btn is-accent">解除</button>
+      <button id="tagShelfClose" type="button" class="ts-btn">棚を閉じる</button>
+    </div>
+  </section>
 
   <div class="flex flex-1 overflow-hidden relative">
 
@@ -1759,6 +1795,18 @@
 
 
     </main>
+
+    <!-- タグの棚（カードに付ける）：本文を読みながら選べるように、右に開く -->
+    <aside id="tagDrawer" aria-label="タグを選ぶ">
+      <div class="td-top">
+        <div class="ts-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg><input id="tagDrawerInput" type="text" autocomplete="off" spellcheck="false" placeholder="タグを探す・作る" aria-label="タグを探す・作る"></div>
+        <button id="tagDrawerSort" type="button" class="ts-btn is-fill"><span class="tag-sort-label">任意の順</span> ⌄</button>
+        <button id="tagDrawerClose" type="button" class="ts-btn td-x" aria-label="棚を閉じる">×</button>
+      </div>
+      <div id="tagDrawerList"></div>
+      <div class="td-hint">「親/子」と入力すると親子で作れます。札を見出しへドラッグして親を変えることもできます</div>
+    </aside>
+    <div id="tagSortMenu" class="area-menu" role="menu"></div>
   </div>
 
   <!-- Area Editor Modal -->
@@ -2299,7 +2347,6 @@
 
   <div id="inlineBar" aria-label="書式ツールバー"></div>
   <div id="inlineMeta" aria-label="エリアと引用元"></div>
-  <datalist id="inlineTagList"></datalist>
 
   <div id="copyMenu" role="menu" aria-label="コピーの種類"></div>
   <div id="statusMenu" role="menu" aria-label="カードの状態"></div>
@@ -2360,6 +2407,31 @@
       }, true);
     })();
 
+    // ---------- 親子タグ ----------
+    // 子は「親/子」という名前で持つ。2段まで。子を付けると親も付く
+    function tagNormName(raw) {
+      const t = String(raw || '').replace(/／/g, '/').trim().replace(/^#/, '').replace(/\s*\/\s*/g, '/').replace(/^\/+|\/+$/g, '');
+      const i = t.indexOf('/');
+      return i < 0 ? t : t.slice(0, i) + '/' + t.slice(i + 1).replace(/\//g, '・');
+    }
+    function tagParent(t) { const i = t.indexOf('/'); return i < 0 ? null : t.slice(0, i); }
+    function tagLeaf(t) { const i = t.indexOf('/'); return i < 0 ? t : t.slice(i + 1); }
+    function tagLabel(t) { return t.replace('/', ' / '); }
+    function tagsWithParents(tags) {
+      const out = [];
+      (tags || []).map(tagNormName).filter(Boolean).forEach(t => {
+        const p = tagParent(t);
+        if (p && !out.includes(p)) out.push(p);
+        if (!out.includes(t)) out.push(t);
+      });
+      return out;
+    }
+    // カードに表示するタグ（子があるときは「親 / 子」にまとめる）
+    function tagsForDisplay(tags) {
+      const list = tags || [];
+      return list.filter(t => !list.some(x => tagParent(x) === t));
+    }
+
     const DEFAULT_CONFIG = {
       charsPerLine: 26,
       linesCount: 12,
@@ -2368,6 +2440,9 @@
       flipAnimation: true,  // カード ⇄ リンク の裏返しアニメーション
       copyWithSource: true, // コピーに引用元を付ける
       listHidden: false,    // リストビューの左の一覧を隠している
+      tagSort: 'custom',    // タグの並び：custom（任意の順）/ name（名前順）/ count（よく使う順）
+      tagOrder: [],         // 任意の順
+      tagMatch: 'all',      // タグの絞り込み：all（すべて含む）/ any（いずれか）
       sortOrder: 'updated', // 並べ替え：updated / created / createdAsc / title
       mdLayout: 'area',     // Markdown書き出しの分け方：area / flat / single
       mdHardBreak: false,   // Markdownで、段落内の改行の行末に「\」を付ける（GitHub など向け）
@@ -4239,6 +4314,9 @@
       pick('accentTheme', Object.keys(CARD_ACCENT_HEX));
       pick('sortOrder', Object.keys(SORT_ORDERS));
       pick('mdLayout', ['area', 'flat', 'single']);
+      pick('tagSort', ['custom', 'name', 'count']);
+      pick('tagMatch', ['all', 'any']);
+      c.tagOrder = Array.isArray(c.tagOrder) ? c.tagOrder.filter(t => typeof t === 'string') : [];
       pick('theme', ['light', 'dark', 'auto']);
       pick('imageSize', Object.keys(IMG_SIZES));
       pick('imageDisplay', Object.keys(IMG_DISPLAY));
@@ -4393,7 +4471,7 @@
             ...c,
             id,
             title: typeof c.title === 'string' ? c.title : String(c.title || ''),
-            tags: Array.isArray(c.tags) ? c.tags.filter(t => typeof t === 'string' && t.trim()).map(t => t.trim()) : [],
+            tags: Array.isArray(c.tags) ? tagsWithParents(c.tags.filter(t => typeof t === 'string' && t.trim()).map(t => t.trim())) : [],
             body: typeof c.body === 'string' ? c.body : '',
             html: typeof c.html === 'string' ? c.html : rtPlainToHtml(c.body),
             date,
@@ -5033,7 +5111,7 @@
             const card = {
               id: pc.id || `card-md-${stamp}-${fi}-${k}`,
               title: pc.title,
-              tags: pc.tags,
+              tags: tagsWithParents(pc.tags),
               accent: this.config.accentTheme,
               areas,
               source: pc.source,
@@ -5202,11 +5280,6 @@
         this.searchKbd = document.getElementById('searchKbd');
         this.tagFilterBtn = document.getElementById('tagFilterBtn');
         this.tagFilterDot = document.getElementById('tagFilterDot');
-        this.tagPopover = document.getElementById('tagPopover');
-        this.tagSearchInput = document.getElementById('tagSearchInput');
-        this.tagChipList = document.getElementById('tagChipList');
-        this.tagClearBtn = document.getElementById('tagClearBtn');
-        this.tagMatchCount = document.getElementById('tagMatchCount');
 
         this.sumChars = document.getElementById('sumChars');
         this.sumLines = document.getElementById('sumLines');
@@ -5269,7 +5342,6 @@
           }
           if (mod && !e.shiftKey && e.key.toLowerCase() === 'f' && !this.isModalOpen()) {
             e.preventDefault();
-            this.closeTagPopover();
             this.searchInput.focus();
             this.searchInput.select();
             return;
@@ -5289,7 +5361,8 @@
             if (this.isTrashOpen()) { e.preventDefault(); this.hideTrash(); return; }
             if (this.isAreaMenuOpen()) { e.preventDefault(); this.closeAreaMenu(); return; }
             if (this.isAreaEditorOpen()) { e.preventDefault(); this.hideAreaEditor(); return; }
-            if (this.isTagPopoverOpen()) { e.preventDefault(); this.closeTagPopover(true); return; }
+            if (this.isTagPickOpen()) { e.preventDefault(); this.closeTagPick(); return; }
+            if (this.isTagPopoverOpen() && !this.inlineEditId) { e.preventDefault(); this.closeTagPopover(true); return; }
             if (this.isLinkPickerOpen()) { e.preventDefault(); this.hideLinkPicker(); return; }
             if (this.inlineEditId && !this.isModalOpen()) {
               // esc では編集をやめない（日本語入力の取り消しで押すキーなので、書いた文字を失わないように）
@@ -5304,7 +5377,7 @@
               return;
             }
           }
-          if (this.isModalOpen() || this.isTagPopoverOpen() || this.inlineEditId) return;
+          if (this.isModalOpen() || this.inlineEditId) return;
           const t = e.target;
           if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
           // ⌘A：ギャラリーで表示中のカードをすべて選ぶ
@@ -7705,15 +7778,14 @@
         const box = this.inlineHome && this.inlineHome.tagBox;
         if (!box) return;
         box.innerHTML = '';
-        this.inlineTags.forEach((t, i) => {
+        tagsForDisplay(this.inlineTags).forEach((t) => {
           const chip = document.createElement('span');
           chip.className = 'it-tag';
-          chip.innerHTML = `#${this.escapeHtml(t)}<button type="button" title="タグを外す"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
+          chip.innerHTML = `#${this.escapeHtml(tagLabel(t))}<button type="button" title="タグを外す"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
           chip.querySelector('button').addEventListener('mousedown', (e) => e.preventDefault());
           chip.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation();
-            this.inlineTags.splice(i, 1);
-            this.renderInlineTags();
+            this.toggleAttachTag(t);
           });
           box.appendChild(chip);
         });
@@ -7721,7 +7793,8 @@
         add.type = 'button';
         add.className = 'it-add';
         add.textContent = '＋ タグ';
-        add.addEventListener('click', (e) => { e.stopPropagation(); this.openInlineTagInput(add); });
+        add.setAttribute('aria-haspopup', 'dialog');
+        add.addEventListener('click', (e) => { e.stopPropagation(); this.isTagPickOpen() ? this.closeTagPick() : this.openTagPick(); });
         box.appendChild(add);
         const meta = document.createElement('button');
         meta.type = 'button';
@@ -7732,41 +7805,432 @@
         box.appendChild(meta);
       }
 
-      openInlineTagInput(addBtn) {
-        const list = document.getElementById('inlineTagList');
-        const all = [...new Set(this.cards.flatMap(c => c.tags || []))].filter(t => !this.inlineTags.includes(t)).sort();
-        list.innerHTML = all.map(t => `<option value="${this.escapeHtml(t)}"></option>`).join('');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'it-input';
-        input.placeholder = 'タグ名';
-        input.setAttribute('list', 'inlineTagList');
-        let done = false;
-        const commit = (again) => {
-          if (done) return;
-          done = true;
-          this.addInlineTag(input.value, false);
-          this.renderInlineTags();
-          if (again) {
-            const b = this.inlineHome && this.inlineHome.tagBox.querySelector('.it-add');
-            if (b) this.openInlineTagInput(b);
-          }
+      // ---------- タグの棚（カードに付ける：右に開く／絞り込む：上に開く） ----------
+      // 親タグ1つを「島」にして、子を札で並べる。子のないタグは最後の島にまとめる
+      tagCompare(counts) {
+        const mode = this.config.tagSort;
+        const name = (a, b) => a.localeCompare(b, 'ja', { numeric: true });
+        const n = (t) => counts.get(t) || 0;
+        if (mode === 'name') return (a, b) => name(tagLeaf(a), tagLeaf(b));
+        if (mode === 'count') return (a, b) => (n(b) - n(a)) || name(a, b);
+        const pos = new Map(this.config.tagOrder.map((t, i) => [t, i]));
+        const at = (t) => pos.has(t) ? pos.get(t) : Infinity;
+        return (a, b) => (at(a) - at(b)) || (n(b) - n(a)) || name(a, b);
+      }
+
+      tagTree(counts) {
+        const names = new Set(counts.keys());
+        [...names].forEach(t => { const p = tagParent(t); if (p) names.add(p); });
+        const cmp = this.tagCompare(counts);
+        const tops = [...names].filter(t => !tagParent(t));
+        const kidsOf = (p) => [...names].filter(t => tagParent(t) === p).sort(cmp);
+        const groups = tops.filter(t => kidsOf(t).length).sort(cmp).map(t => ({ name: t, kids: kidsOf(t) }));
+        const loose = tops.filter(t => !kidsOf(t).length).sort(cmp);
+        return { groups, loose };
+      }
+
+      // 画面に出している順のすべてのタグ名（任意の順を作るときの土台）
+      tagFlatOrder(counts) {
+        const { groups, loose } = this.tagTree(counts);
+        const out = [];
+        groups.forEach(g => { out.push(g.name, ...g.kids); });
+        out.push(...loose);
+        return out;
+      }
+
+      tagIslandsHtml({ counts, stateOf, query, active, create }) {
+        const q = (query || '').toLowerCase();
+        const hit = (t) => !q || t.toLowerCase().includes(q);
+        const { groups, loose } = this.tagTree(counts);
+        const flat = [];
+        const drag = this.canLinkDrag() ? ' draggable="true"' : '';
+        // 探しているときの矢印・Enterは、名前が合うものだけを順に通る（親が合わないのに親を押してしまわない）
+        const chip = (t, label, cls) => {
+          const st = stateOf(t);
+          const nav = hit(t);
+          const isActive = nav && active === flat.length;
+          if (nav) flat.push(t);
+          return `<div role="button" tabindex="-1" class="${cls}${st === 'on' ? ' is-on' : st === 'implied' ? ' is-implied' : ''}${isActive ? ' is-active' : ''}" data-tag="${rtEscape(t)}" aria-pressed="${st === 'on'}"${drag}>${st === 'on' ? '<b>✓</b>' : ''}${this.escapeHtml(label)}<em>${counts.get(t) || 0}</em></div>`;
         };
-        input.addEventListener('keydown', (e) => {
-          if (e.isComposing) return;
-          if (e.key === 'Enter' || e.key === ',' || e.key === '、') { e.preventDefault(); commit(!!input.value.trim()); }
-          else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done = true; this.renderInlineTags(); }
-          else if (e.key === 'Backspace' && !input.value && this.inlineTags.length) { e.preventDefault(); done = true; this.inlineTags.pop(); this.renderInlineTags(); const b = this.inlineHome.tagBox.querySelector('.it-add'); if (b) this.openInlineTagInput(b); }
+        let html = '';
+        groups.forEach(g => {
+          const kids = g.kids.filter(hit);
+          if (!kids.length && !hit(g.name)) return;
+          html += `<div class="ti-island" data-group="${rtEscape(g.name)}">${chip(g.name, g.name, 'ti-head')}<div class="ti-chips">${(q ? kids : g.kids).map(t => chip(t, tagLeaf(t), 'ti-chip')).join('')}</div></div>`;
         });
-        input.addEventListener('blur', () => commit(false));
-        addBtn.replaceWith(input);
-        input.focus();
+        const ls = loose.filter(hit);
+        if (ls.length) html += `<div class="ti-island is-loose"><div class="ti-loose-label">子のないタグ</div><div class="ti-chips">${ls.map(t => chip(t, t, 'ti-chip')).join('')}</div></div>`;
+        if (create) {
+          const isActive = active === flat.length;
+          flat.push({ create });
+          html += `<div role="button" tabindex="-1" class="ti-create${isActive ? ' is-active' : ''}" data-create="${rtEscape(create)}">＋「${this.escapeHtml(tagLabel(create))}」を作成</div>`;
+        }
+        if (!html) html = `<div class="ti-empty">${q ? '一致するタグがありません' : 'タグはまだありません'}</div>`;
+        return { html, flat };
+      }
+
+      // カードに付ける：子を付けると親も付く／親を外すと子も外れる／子を外しても親は残る
+      toggleAttachTag(name) {
+        const has = this.inlineTags.includes(name);
+        if (has) this.inlineTags = this.inlineTags.filter(t => t !== name && tagParent(t) !== name);
+        else this.inlineTags = tagsWithParents([...this.inlineTags, name]);
+        this.renderInlineTags();
+        if (this.isTagPickOpen()) { this.renderTagPick(); this.markTagAddOpen(); }
+      }
+
+      isTagPickOpen() { return document.body.classList.contains('tag-drawer-open'); }
+
+      markTagAddOpen() {
+        const add = this.inlineHome && this.inlineHome.tagBox && this.inlineHome.tagBox.querySelector('.it-add');
+        if (add) add.classList.toggle('is-open', this.isTagPickOpen());
+      }
+
+      openTagPick() {
+        this.bindTagShelves();
+        this.tagPickInput.value = '';
+        this.tagPickActive = -1;
+        document.body.classList.add('tag-drawer-open');
+        this.renderTagPick();
+        this.markTagAddOpen();
+        this.fitWideCards();
+        this.tagPickInput.focus({ preventScroll: true });
+      }
+
+      closeTagPick() {
+        if (!this.isTagPickOpen()) return;
+        document.body.classList.remove('tag-drawer-open');
+        this.markTagAddOpen();
+        this.fitWideCards();
+      }
+
+      tagPickCounts() {
+        const counts = new Map();
+        this.cards.forEach(c => (c.tags || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+        (this.inlineTags || []).forEach(t => { if (!counts.has(t)) counts.set(t, 0); });
+        return counts;
+      }
+
+      renderTagPick() {
+        const raw = this.tagPickInput.value;
+        const name = tagNormName(raw);
+        document.querySelectorAll('.tag-sort-label').forEach(el => { el.textContent = this.tagSortLabel(); });
+        const counts = this.tagPickCounts();
+        const exists = name && (counts.has(name) || [...counts.keys()].some(t => tagParent(t) === name));
+        const on = new Set(this.inlineTags);
+        const box = this.tagPickList;
+        const top = box.scrollTop;
+        const r = this.tagIslandsHtml({ counts, stateOf: (t) => on.has(t) ? 'on' : '', query: name, active: this.tagPickActive, create: name && !exists ? name : null });
+        box.innerHTML = r.html;
+        box.scrollTop = top;
+        this.tagPickFlat = r.flat;
+        const act = box.querySelector('.is-active');
+        if (act) act.scrollIntoView({ block: 'nearest' });
+      }
+
+      commitTagPickItem(item) {
+        if (item === undefined || item === null) return;
+        if (typeof item === 'object') {
+          this.inlineTags = tagsWithParents([...this.inlineTags, item.create]);
+          this.renderInlineTags();
+          this.markTagAddOpen();
+        } else {
+          this.toggleAttachTag(item);
+        }
+        this.tagPickInput.value = '';
+        this.tagPickActive = -1;
+        this.renderTagPick();
+        this.tagPickInput.focus({ preventScroll: true });
+      }
+
+      commitTagPickTyped() {
+        const parts = this.tagPickInput.value.split(/[,、]/).map(tagNormName).filter(Boolean);
+        this.inlineTags = tagsWithParents([...this.inlineTags, ...parts]);
+        this.tagPickInput.value = '';
+        this.tagPickActive = -1;
+        this.renderInlineTags();
+        this.markTagAddOpen();
+        this.renderTagPick();
+      }
+
+      bindTagShelves() {
+        if (this._tagShelvesBound) return;
+        this._tagShelvesBound = true;
+        // ---- 右の棚 ----
+        this.tagPickInput = document.getElementById('tagDrawerInput');
+        this.tagPickList = document.getElementById('tagDrawerList');
+        this.tagPickInput.addEventListener('input', (e) => {
+          if (!e.isComposing && /[,、]/.test(this.tagPickInput.value)) { this.commitTagPickTyped(); return; }
+          this.tagPickActive = this.tagPickInput.value.trim() ? 0 : -1;
+          this.renderTagPick();
+        });
+        this.tagPickInput.addEventListener('compositionend', () => { if (/[,、]/.test(this.tagPickInput.value)) this.commitTagPickTyped(); });
+        this.tagPickInput.addEventListener('keydown', (e) => {
+          const n = (this.tagPickFlat || []).length;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !this.tagPickInput.value)) {
+            e.preventDefault();
+            if (n) { const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1; this.tagPickActive = (Math.max(this.tagPickActive, d < 0 ? 0 : -1) + d + n) % n; this.renderTagPick(); }
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.metaKey || e.ctrlKey) { this.finishInlineEdit(true); return; }
+            if (this.tagPickActive >= 0) this.commitTagPickItem(this.tagPickFlat[this.tagPickActive]);
+          } else if (e.key === 'Backspace' && !this.tagPickInput.value && this.inlineTags.length) {
+            e.preventDefault();
+            const shown = tagsForDisplay(this.inlineTags);
+            this.toggleAttachTag(shown[shown.length - 1]);
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            this.closeTagPick();
+          }
+        });
+        this.tagPickList.addEventListener('click', (e) => {
+          const c = e.target.closest('[data-create]');
+          if (c) { this.commitTagPickItem({ create: c.dataset.create }); return; }
+          const t = e.target.closest('[data-tag]');
+          if (t) { this.commitTagPickItem(t.dataset.tag); }
+        });
+        document.getElementById('tagDrawerClose').addEventListener('click', () => this.closeTagPick());
+        document.getElementById('tagDrawerSort').addEventListener('click', (e) => { e.stopPropagation(); this.openTagSortMenu(e.currentTarget); });
+        this.bindTagDrag(this.tagPickList, 'column');
+        // ---- 上の棚 ----
+        this.tagPopover = document.getElementById('tagShelf');
+        this.tagShelfList = document.getElementById('tagShelfList');
+        this.tagSearchInput = document.getElementById('tagSearchInput');
+        this.tagSearchInput.addEventListener('input', (e) => { this.tagSearchQuery = e.target.value.toLowerCase().trim(); this.renderTagPopover(); });
+        this.tagSearchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); const first = this.tagShelfList.querySelector('[data-tag]'); if (first) first.click(); }
+        });
+        this.tagShelfList.addEventListener('click', (e) => { const t = e.target.closest('[data-tag]'); if (t) this.toggleTag(t.dataset.tag); });
+        document.getElementById('tagClearBtn').addEventListener('click', () => { this.selectedTags.clear(); this.currentIndex = 0; this.renderAll(); });
+        document.getElementById('tagShelfClose').addEventListener('click', () => this.closeTagPopover(true));
+        document.getElementById('tagShelfSort').addEventListener('click', (e) => { e.stopPropagation(); this.openTagSortMenu(e.currentTarget); });
+        document.getElementById('tagMatchSeg').addEventListener('click', (e) => {
+          const b = e.target.closest('[data-val]');
+          if (!b || this.config.tagMatch === b.dataset.val) return;
+          this.config.tagMatch = b.dataset.val;
+          this.saveConfig();
+          this.currentIndex = 0;
+          this.renderAll();
+        });
+        this.bindTagDrag(this.tagShelfList, 'row');
+        // ---- 並び順のメニュー ----
+        this.tagSortMenu = document.getElementById('tagSortMenu');
+        this.tagSortMenu.addEventListener('click', (e) => {
+          const b = e.target.closest('[data-sort]');
+          if (!b) return;
+          this.config.tagSort = b.dataset.sort;
+          this.saveConfig();
+          this.tagSortMenu.classList.remove('open');
+          this.refreshTagUis();
+        });
+        document.addEventListener('mousedown', (e) => { if (this.tagSortMenu.classList.contains('open') && !this.tagSortMenu.contains(e.target)) this.tagSortMenu.classList.remove('open'); });
+      }
+
+      tagSortLabel() { return { custom: '任意の順', name: '名前順', count: 'よく使う順' }[this.config.tagSort]; }
+
+      openTagSortMenu(anchor) {
+        const cur = this.config.tagSort;
+        this.tagSortMenu.innerHTML = [['custom', '任意の順'], ['name', '名前順'], ['count', 'よく使う順']].map(([k, l]) =>
+          `<button type="button" class="am-item${k === cur ? ' is-on' : ''}" data-sort="${k}"><span class="am-check">${k === cur ? '✓' : ''}</span><span>${l}</span></button>`).join('');
+        const r = anchor.getBoundingClientRect();
+        this.tagSortMenu.style.left = `${Math.max(8, Math.min(r.right - 180, window.innerWidth - 188))}px`;
+        const below = r.bottom + 150 < window.innerHeight;
+        this.tagSortMenu.style.top = below ? `${r.bottom + 6}px` : `${r.top - 134}px`;
+        this.tagSortMenu.classList.add('open');
+      }
+
+      // タグが変わったあと、見えているものをすべて描き直す（編集中の本文には触らない）
+      refreshTagUis() {
+        document.querySelectorAll('.tag-sort-label').forEach(el => { el.textContent = this.tagSortLabel(); });
+        if (this.inlineEditId) {
+          this.renderInlineTags();
+          this.markTagAddOpen();
+          if (this.isTagPickOpen()) this.renderTagPick();
+          this.renderToolbar();
+        } else {
+          this.renderAll();
+        }
+      }
+
+      // ---------- タグを動かす ----------
+      // from → to に名前を変える（すべてのカード・ゴミ箱・編集中のカード）。古い親に子がなくなったら親も外す
+      renameTagEverywhere(from, to) {
+        const oldP = tagParent(from);
+        const fix = (tags) => {
+          if (!tags.includes(from)) return tags;
+          let next = tags.map(t => t === from ? to : t);
+          if (oldP && !next.some(t => tagParent(t) === oldP)) next = next.filter(t => t !== oldP);
+          return tagsWithParents(next);
+        };
+        let n = 0;
+        this.cards.forEach(c => { if ((c.tags || []).includes(from)) { c.tags = fix(c.tags); n++; } });
+        (this.trash || []).forEach(c => { if ((c.tags || []).includes(from)) c.tags = fix(c.tags); });
+        if (this.inlineTags) this.inlineTags = fix(this.inlineTags);
+        if (this.selectedTags.has(from)) { this.selectedTags.delete(from); this.selectedTags.add(to); }
+        return n;
+      }
+
+      tagSnapshot() {
+        return {
+          cards: new Map(this.cards.map(c => [c.id, [...(c.tags || [])]])),
+          trash: new Map((this.trash || []).map(c => [c.id, [...(c.tags || [])]])),
+          order: [...this.config.tagOrder], sort: this.config.tagSort,
+          inline: this.inlineTags ? [...this.inlineTags] : null,
+          selected: [...this.selectedTags]
+        };
+      }
+
+      restoreTagSnapshot(snap) {
+        this.cards.forEach(c => { if (snap.cards.has(c.id)) c.tags = snap.cards.get(c.id); });
+        (this.trash || []).forEach(c => { if (snap.trash.has(c.id)) c.tags = snap.trash.get(c.id); });
+        this.config.tagOrder = snap.order;
+        this.config.tagSort = snap.sort;
+        if (this.inlineEditId && snap.inline) this.inlineTags = snap.inline;
+        this.selectedTags = new Set(snap.selected);
+        this.saveCards();
+        this.saveTrash();
+        this.saveConfig();
+        this.refreshTagUis();
+      }
+
+      // 動かした結果を任意の順として覚える
+      placeInTagOrder(tag, anchor, side, base) {
+        const list = base.filter(t => t !== tag);
+        let at = anchor ? list.indexOf(anchor) : -1;
+        if (at < 0) at = list.length; else if (side === 'after') at += 1;
+        list.splice(at, 0, tag);
+        this.config.tagOrder = list;
+        this.config.tagSort = 'custom';
+      }
+
+      applyTagDrop(plan) {
+        const { tag } = plan;
+        const snap = this.tagSnapshot();
+        const counts = this.tagAllCounts();
+        const base = this.tagFlatOrder(counts);
+        let msg = null, n = 0, name = tag;
+        if (plan.type === 'order' || plan.type === 'group') {
+          // 島を動かすときは、子も一緒に動いて見えるよう親の位置だけを変える
+          this.placeInTagOrder(tag, plan.anchor, plan.side, base);
+        } else {
+          if (plan.type === 'into' || plan.type === 'nest') name = `${plan.parent}/${tagLeaf(tag)}`;
+          else if (plan.type === 'out') name = tagLeaf(tag);
+          if (name === tag) return;
+          n = this.renameTagEverywhere(tag, name);
+          this.placeInTagOrder(name, plan.anchor, plan.side, base.map(t => t === tag ? name : t));
+          if (plan.type === 'out') msg = `「${tagLeaf(tag)}」を親から外しました（${n}枚）`;
+          else msg = `「${tagLeaf(tag)}」を「${plan.parent}」の子にしました（${n}枚）`;
+        }
+        this.saveCards();
+        this.saveTrash();
+        this.saveConfig();
+        this.refreshTagUis();
+        if (msg) this.showToast(msg, '元に戻す', () => this.restoreTagSnapshot(snap));
+      }
+
+      tagAllCounts() {
+        const counts = new Map();
+        this.cards.forEach(c => (c.tags || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+        (this.inlineTags || []).forEach(t => { if (!counts.has(t)) counts.set(t, 0); });
+        return counts;
+      }
+
+      bindTagDrag(list, axis) {
+        if (!this.canLinkDrag()) return;
+        let plan = null;
+        const clear = () => {
+          list.querySelectorAll('.drop-before, .drop-after, .drop-into').forEach(el => el.classList.remove('drop-before', 'drop-after', 'drop-into'));
+          list.querySelectorAll('[data-drop-label]').forEach(el => el.removeAttribute('data-drop-label'));
+          plan = null;
+        };
+        const mark = (el, cls, label) => { el.classList.add(cls); if (label) el.dataset.dropLabel = label; };
+        list.addEventListener('dragstart', (e) => {
+          const el = e.target.closest && e.target.closest('[data-tag]');
+          if (!el) return;
+          const island = el.closest('.ti-island');
+          const isHead = el.classList.contains('ti-head');
+          this._tagDrag = { tag: el.dataset.tag, isHead, el };
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', el.dataset.tag);
+          requestAnimationFrame(() => (isHead ? island : el).classList.add('is-drag-source'));
+        });
+        const end = () => {
+          const d = this._tagDrag;
+          if (d) { const s = list.querySelector('.is-drag-source'); if (s) s.classList.remove('is-drag-source'); }
+          this._tagDrag = null;
+          clear();
+        };
+        list.addEventListener('dragend', end);
+        document.addEventListener('dragend', end);
+        list.addEventListener('dragover', (e) => {
+          const d = this._tagDrag;
+          if (!d) return;
+          e.preventDefault();
+          clear();
+          const island = e.target.closest('.ti-island');
+          const over = e.target.closest('[data-tag]');
+          const S = d.tag, sp = tagParent(S);
+          const sideOf = (el, useAxis) => {
+            const r = el.getBoundingClientRect();
+            return (useAxis === 'column' ? e.clientY < r.top + r.height / 2 : e.clientX < r.left + r.width / 2) ? 'before' : 'after';
+          };
+          if (d.isHead) {
+            // 親タグ：島ごとの並び替えだけ（2段までなので、別のタグの子にはならない）
+            if (!island || !island.dataset.group || island.dataset.group === S) { e.dataTransfer.dropEffect = 'none'; return; }
+            const side = sideOf(island, axis);
+            plan = { type: 'group', tag: S, anchor: island.dataset.group, side };
+            mark(island, side === 'before' ? 'drop-before' : 'drop-after');
+            e.dataTransfer.dropEffect = 'move';
+            return;
+          }
+          if (over && over.dataset.tag !== S) {
+            const T = over.dataset.tag;
+            const tp = tagParent(T);
+            if (over.classList.contains('ti-head')) {
+              if (sp !== T) { plan = { type: 'into', tag: S, parent: T }; mark(island, 'drop-into', `「${T}」の子にする`); }
+            } else if (tp) {
+              const side = sideOf(over, 'row');
+              if (tp === sp) plan = { type: 'order', tag: S, anchor: T, side };
+              else plan = { type: 'into', tag: S, parent: tp, anchor: `${tp}/${tagLeaf(T)}`, side };
+              mark(over, side === 'before' ? 'drop-before' : 'drop-after');
+              if (tp !== sp) mark(island, 'drop-into', `「${tp}」の子にする`);
+            } else {
+              // 子のないタグの上：真ん中なら、そのタグの子にする（親が生まれる）／端なら並び替え
+              const r = over.getBoundingClientRect();
+              const x = (e.clientX - r.left) / r.width;
+              if (x > 0.25 && x < 0.75) {
+                plan = { type: 'nest', tag: S, parent: T };
+                mark(over, 'drop-into', `「${T}」の子にする`);
+              } else {
+                const side = x <= 0.25 ? 'before' : 'after';
+                plan = sp ? { type: 'out', tag: S, anchor: T, side } : { type: 'order', tag: S, anchor: T, side };
+                mark(over, side === 'before' ? 'drop-before' : 'drop-after');
+              }
+            }
+          } else if (island && !over) {
+            if (island.dataset.group) {
+              if (island.dataset.group !== sp) { plan = { type: 'into', tag: S, parent: island.dataset.group }; mark(island, 'drop-into', `「${island.dataset.group}」の子にする`); }
+            } else if (sp) {
+              plan = { type: 'out', tag: S };
+              mark(island, 'drop-into', '親から外す');
+            }
+          }
+          e.dataTransfer.dropEffect = plan ? 'move' : 'none';
+        });
+        list.addEventListener('dragleave', (e) => { if (!list.contains(e.relatedTarget)) clear(); });
+        list.addEventListener('drop', (e) => {
+          if (!this._tagDrag) return;
+          e.preventDefault();
+          const p = plan;
+          end();
+          if (p) this.applyTagDrop(p);
+        });
       }
 
       addInlineTag(raw, render = true) {
-        String(raw || '').split(/[,、]/).map(t => t.trim().replace(/^#/, '')).filter(Boolean).forEach(t => {
-          if (!this.inlineTags.includes(t)) this.inlineTags.push(t);
-        });
+        const parts = String(raw || '').split(/[,、]/).map(tagNormName).filter(Boolean);
+        this.inlineTags = tagsWithParents([...this.inlineTags, ...parts]);
         if (render) this.renderInlineTags();
       }
 
@@ -7829,7 +8293,7 @@
         const card = {
           id: 'card-' + Date.now(),
           title: '',
-          tags: [...this.selectedTags],
+          tags: tagsWithParents([...this.selectedTags]),
           accent: this.config.accentTheme,
           areas: [this.currentArea !== ALL_AREAS ? this.currentArea : this.areas[0].id],
           source: fromFilter ? { type: 'book', title: fromFilter.title, author: fromFilter.author, page: '' } : null,
@@ -8080,8 +8544,7 @@
         let changed = false;
         this.closeInlineMeta();
         this.deselectFigure();
-        const tagInput = home.tagBox && home.tagBox.querySelector('.it-input');
-        if (tagInput) this.addInlineTag(tagInput.value, false);
+        this.closeTagPick();
         const card = this.cards.find(c => c.id === id);
         let removeNew = false;
         if (save && card) {
@@ -8538,7 +9001,6 @@
       isStatusFilterOpen() { return !!(this.statusFilterMenu && this.statusFilterMenu.classList.contains('open')); }
 
       openStatusFilter() {
-        this.closeTagPopover();
         this.renderStatusFilterMenu();
         this.statusFilterMenu.classList.add('open');
         this.statusBtn.classList.add('is-open');
@@ -8655,7 +9117,8 @@
             card.tags.some(t => t.toLowerCase().includes(this.searchQuery)) ||
             this.sourceSearchText(card.source).includes(this.searchQuery);
           // 選んだタグをすべて含むカードに絞り込む
-          const matchTag = [...this.selectedTags].every(t => card.tags.includes(t));
+          const picked = [...this.selectedTags];
+          const matchTag = !picked.length || (this.config.tagMatch === 'any' ? picked.some(t => card.tags.includes(t)) : picked.every(t => card.tags.includes(t)));
           const matchSource = !this.sourceFilter || this.sourceKey(card.source) === this.sourceFilter.key;
           return this.isInCurrentArea(card) && this.matchStatus(card) && matchQuery && matchTag && matchSource;
         });
@@ -8709,7 +9172,7 @@
           btn.classList.toggle('is-on', open);
           btn.setAttribute('aria-expanded', String(open));
           if (open) setTimeout(() => this.searchInput.focus({ preventScroll: true }), 30);
-          else { this.closeTagPopover(); this.closeSortMenu(); this.searchInput.blur(); }
+          else { this.closeSortMenu(); this.searchInput.blur(); }
         });
         document.getElementById('fabAddBtn').addEventListener('click', (e) => {
           e.currentTarget.blur();
@@ -8723,7 +9186,7 @@
           window.visualViewport.addEventListener('scroll', follow);
         }
         window.addEventListener('resize', () => {
-          if (!this.isPhone()) {
+          if (window.innerWidth > 840) {
             document.body.classList.remove('m-search-open');
             btn.classList.remove('is-on');
           }
@@ -8764,7 +9227,6 @@
       }
       isSortMenuOpen() { return !!(this.sortMenu && this.sortMenu.classList.contains('open')); }
       openSortMenu() {
-        this.closeTagPopover();
         this.closeAreaMenu();
         const cur = this.config.sortOrder;
         let html = '<div class="px-2.5 pt-1 pb-1.5 text-[11px] font-semibold text-neutral-400">並べ替え</div>';
@@ -9084,9 +9546,9 @@
 
             <div class="card-sub flex items-center gap-3 mt-2">
               <div class="card-tags flex flex-wrap gap-1.5 flex-1 min-w-0">
-              ${card.tags.map(tag => `
+              ${tagsForDisplay(card.tags).map(tag => `
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border backdrop-blur-md ${themePill}">
-                  #${this.escapeHtml(tag)}
+                  #${this.escapeHtml(tagLabel(tag))}
                 </span>
               `).join('')}
               </div>
@@ -10180,7 +10642,7 @@
         let k = 0;
         cards.forEach(c => {
           const before = c.tags.length;
-          tags.forEach(t => { if (!c.tags.includes(t)) c.tags.push(t); });
+          c.tags = tagsWithParents([...c.tags, ...tags.map(tagNormName)]);
           if (c.tags.length !== before) { this.touchCard(c); k++; }
         });
         this.afterBulkChange();
@@ -10191,7 +10653,7 @@
         const cards = this.selectedCards();
         let k = 0;
         cards.forEach(c => {
-          if (c.tags.includes(tag)) { c.tags = c.tags.filter(t => t !== tag); this.touchCard(c); k++; }
+          if (c.tags.includes(tag)) { c.tags = c.tags.filter(t => t !== tag && tagParent(t) !== tag); this.touchCard(c); k++; }
         });
         this.afterBulkChange();
         this.showToast(`${k}枚から #${tag} を外しました`);
@@ -10616,7 +11078,6 @@
       isAreaMenuOpen() { return this.areaMenu && this.areaMenu.classList.contains('open'); }
 
       openAreaMenu() {
-        this.closeTagPopover();
         this.renderAreaMenu();
         this.areaMenu.classList.add('open');
         this.areaBtn.classList.add('is-open');
@@ -10941,7 +11402,6 @@
       showLinkPicker(cardId) {
         const card = this.cards.find(c => c.id === cardId);
         if (!card) return;
-        this.closeTagPopover();
         this.linkPickerCardId = cardId;
         this.linkPickerSelection = new Set(this.getLinkedCards(card).map(c => c.id));
         this.linkPickerInitial = new Set(this.linkPickerSelection);
@@ -11052,55 +11512,42 @@
           e.stopPropagation();
           this.isTagPopoverOpen() ? this.closeTagPopover() : this.openTagPopover();
         });
-        this.tagPopover.addEventListener('mousedown', (e) => e.stopPropagation());
-        document.addEventListener('mousedown', (e) => {
-          if (this.isTagPopoverOpen() && !this.tagPopover.contains(e.target) && !this.tagFilterBtn.contains(e.target)) {
-            this.closeTagPopover();
-          }
-        });
-        this.tagSearchInput.addEventListener('input', (e) => {
-          this.tagSearchQuery = e.target.value.toLowerCase().trim();
-          this.renderTagPopover();
-        });
-        this.tagSearchInput.addEventListener('keydown', (e) => {
-          // Enter で候補の先頭を選択
-          if (e.key === 'Enter') {
-            const first = this.tagChipList.querySelector('.tp-chip');
-            if (first) first.click();
-          }
-        });
-        this.tagClearBtn.addEventListener('click', () => {
-          this.selectedTags.clear();
-          this.renderAll();
-        });
+        this.bindTagShelves();
       }
 
       isTagPopoverOpen() {
-        return this.tagPopover.classList.contains('open');
+        return document.body.classList.contains('tag-shelf-open');
       }
 
       openTagPopover() {
         this.tagSearchInput.value = '';
         this.tagSearchQuery = '';
+        document.body.classList.add('tag-shelf-open');
         this.renderTagPopover();
-        this.tagPopover.classList.add('open');
         this.tagFilterBtn.setAttribute('aria-expanded', 'true');
         this.tagFilterBtn.classList.add('is-on');
-        setTimeout(() => this.tagSearchInput.focus({ preventScroll: true }), 60);
+        if (this.currentView === 'single') this.fitWideCards();
       }
 
       closeTagPopover(returnFocus = false) {
         if (!this.isTagPopoverOpen()) return;
-        this.tagPopover.classList.remove('open');
+        document.body.classList.remove('tag-shelf-open');
         this.tagFilterBtn.setAttribute('aria-expanded', 'false');
         this.tagFilterBtn.classList.toggle('is-on', this.selectedTags.size > 0);
         if (returnFocus) this.tagFilterBtn.focus({ preventScroll: true });
-        else if (this.tagPopover.contains(document.activeElement)) document.activeElement.blur();
+        if (this.currentView === 'single') this.fitWideCards();
       }
 
+      // 絞り込むタグを選ぶ。親を選ぶと子も含む（親で絞ると子を付けたカードも出る）。親と子は同時に選ばない
       toggleTag(tag) {
-        if (this.selectedTags.has(tag)) this.selectedTags.delete(tag);
-        else this.selectedTags.add(tag);
+        if (this.selectedTags.has(tag)) {
+          this.selectedTags.delete(tag);
+        } else {
+          const p = tagParent(tag);
+          if (p) this.selectedTags.delete(p);
+          [...this.selectedTags].forEach(t => { if (tagParent(t) === tag) this.selectedTags.delete(t); });
+          this.selectedTags.add(tag);
+        }
         this.currentIndex = 0;
         this.renderAll();
       }
@@ -11113,32 +11560,23 @@
 
       renderTagPopover() {
         const tagMap = this.getTagCounts();
+        document.querySelectorAll('.tag-sort-label').forEach(el => { el.textContent = this.tagSortLabel(); });
         // 存在しなくなったタグは選択から外す
         [...this.selectedTags].forEach(t => { if (!tagMap.has(t)) this.selectedTags.delete(t); });
-
-        const q = this.tagSearchQuery;
-        const tags = [...tagMap.entries()].filter(([t]) => !q || t.toLowerCase().includes(q));
-        this.tagChipList.innerHTML = '';
-        if (!tags.length) {
-          this.tagChipList.innerHTML = `<div class="w-full py-4 text-center text-xs text-neutral-400">${tagMap.size ? '一致するタグがありません' : 'タグはまだありません'}</div>`;
-        }
-        tags.forEach(([tag, count]) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = `tp-chip${this.selectedTags.has(tag) ? ' is-on' : ''}`;
-          btn.innerHTML = `${this.escapeHtml(tag)} <em>${count}</em>`;
-          btn.addEventListener('click', () => {
-            this.toggleTag(tag);
-            this.tagSearchInput.focus({ preventScroll: true });
-          });
-          this.tagChipList.appendChild(btn);
-        });
-
+        const sel = this.selectedTags;
+        const box = this.tagShelfList;
+        const top = box.scrollTop;
+        box.innerHTML = this.tagIslandsHtml({
+          counts: tagMap,
+          stateOf: (t) => sel.has(t) ? 'on' : (tagParent(t) && sel.has(tagParent(t)) ? 'implied' : ''),
+          query: this.tagSearchQuery
+        }).html;
+        box.scrollTop = top;
+        document.querySelectorAll('#tagMatchSeg [data-val]').forEach(b => b.classList.toggle('is-on', b.dataset.val === this.config.tagMatch));
         const n = this.getFilteredCards().length;
-        this.tagMatchCount.textContent = this.selectedTags.size || this.searchQuery
-          ? `${n}件のカードが該当`
-          : `${tagMap.size}個のタグ`;
-        this.tagClearBtn.disabled = this.selectedTags.size === 0;
+        const names = [...sel].map(tagLabel).join(this.config.tagMatch === 'any' ? ' または ' : ' ＋ ');
+        document.getElementById('tagMatchCount').textContent = sel.size ? `${names}：${n}枚` : `${tagMap.size}個のタグ`;
+        document.getElementById('tagClearBtn').disabled = sel.size === 0;
       }
 
       renderToolbar() {
@@ -11152,7 +11590,7 @@
         this.selectedTags.forEach(tag => {
           const chip = document.createElement('span');
           chip.className = 'search-chip';
-          chip.innerHTML = `#${this.escapeHtml(tag)}<button type="button" title="この絞り込みを外す"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
+          chip.innerHTML = `#${this.escapeHtml(tagLabel(tag))}<button type="button" title="この絞り込みを外す"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
           chip.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation();
             this.toggleTag(tag);
@@ -11432,7 +11870,6 @@
         this.renderExportInfo();
         this.renderMdExportPanel();
         if (this.importPanel) this.cancelImport();
-        this.closeTagPopover();
         this.closeSortMenu();
         this.closeAreaMenu();
         this.settingsShell.classList.remove('is-sub');
@@ -11493,7 +11930,7 @@
     const DRIVE_UPLOAD = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,createdTime';
     const IMG_CLEAN_GRACE = 3 * 86400000; // どのカードも使っていない画像を、ドライブから消すまでの日数（ほかの端末の書きかけを消さないように）
     // 端末をまたいで同じにする設定（外観・ギャラリーの列数・並べ替え・表示中のエリアなどは端末ごと）
-    const SYNC_SHARED_KEYS = ['charsPerLine', 'linesCount', 'accentTheme', 'statusColors', 'autoArchive', 'autoArchiveDays',
+    const SYNC_SHARED_KEYS = ['tagSort', 'tagOrder', 'charsPerLine', 'linesCount', 'accentTheme', 'statusColors', 'autoArchive', 'autoArchiveDays',
       'copyWithSource', 'mdHardBreak', 'mdLayout', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap', 'flipAnimation'];
 
     // キーの順番によらない JSON（同じ中身なら同じ文字になる）
@@ -12017,7 +12454,7 @@
       // 受け取ったカードの形を整える（足りない項目だけ補う。あるものは変えない）
       fixCard(c) {
         const card = { ...c };
-        if (!Array.isArray(card.tags)) card.tags = [];
+        card.tags = Array.isArray(card.tags) ? tagsWithParents(card.tags) : [];
         if (!Array.isArray(card.links)) card.links = [];
         if (!Array.isArray(card.areas)) card.areas = [];
         if (typeof card.html !== 'string') card.html = rtPlainToHtml(card.body || '');
