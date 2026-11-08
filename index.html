@@ -1775,7 +1775,23 @@
       /* カードを開いたとき・裏面：1段の帯（‹ 一覧・裏返す・…・編集） */
       body.notes-layout.notes-detail #mNav, body.link-view #mNav { display: flex; flex-shrink: 0; align-items: center; gap: 2px; padding: env(safe-area-inset-top) 6px 0 2px; min-height: 52px; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
       .dark body.notes-layout.notes-detail #mNav, .dark body.link-view #mNav, body.dark #mNav { background: #1E1E22; border-bottom-color: rgba(255, 255, 255, 0.08); }
-      body.is-inline-editing #mNav { display: none !important; }
+      /* 編集中：アプリ全体を「見えている範囲」（キーボードを除いた高さ）に合わせ、上の帯・本文・書式の帯を縦に並べる（重ねない） */
+      body.m-kbfit { position: fixed !important; left: 0; right: 0; width: 100%; }
+      body.is-inline-editing.notes-layout #mNav { display: flex !important; }
+      #mNav .m-nav-edit { display: none; }
+      body.is-inline-editing #mNav .m-nav-edit { display: inline-flex; align-items: center; }
+      body.is-inline-editing #mNav > :not(.m-nav-edit):not(.mn-gap) { display: none !important; }
+      .mn-done { height: 36px; margin-left: 4px; padding: 0 16px; border-radius: 18px; background: #007AFF; color: #fff; font-size: 16px; font-weight: 700; }
+      body.is-inline-editing.notes-layout .is-wide .card-head-row { display: none !important; }
+      body.is-inline-editing #inlineBar { position: static; order: 2; flex-shrink: 0; }
+      body.is-inline-editing #mFormat.open { position: static; order: 3; flex-shrink: 0; }
+      /* カードは1枚の紙として、タイトル・タグ・本文をまとめて流す（本文だけの小さな窓にしない） */
+      body.notes-layout .card-carousel-panel { height: 100%; }
+      body.notes-layout .card-carousel-panel > .is-wide { height: 100%; overflow-y: auto !important; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+      body.notes-layout .is-wide .card-body-box { display: block !important; }
+      body.notes-layout .is-wide .card-body-scroll, body.notes-layout .is-wide .rt-editor.rt-inline { width: 100% !important; max-width: none !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+      body.notes-layout .is-wide .rt-editor.rt-inline { padding-bottom: 32px; }
+      body.notes-layout .is-wide .card-foot { padding-bottom: 24px !important; }
       body.link-view #mNav .m-nav-card { display: none; }
       .mn-back { height: 44px; display: inline-flex; align-items: center; padding: 0 10px 0 2px; font-size: 17px; color: #007AFF; }
       .mn-gap { flex: 1; }
@@ -1935,11 +1951,15 @@
   </div>
   <!-- iPhone だけ：カードを開いたときの帯 -->
   <div id="mNav">
+    <button type="button" id="mEdCancel" class="mn-back m-nav-edit" style="padding-left:10px">キャンセル</button>
     <button type="button" id="mBackBtn" class="mn-back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span id="mBackLabel">一覧</span></button>
     <span class="mn-gap"></span>
     <span id="mFlipSlot"></span>
     <button type="button" id="mMoreBtn" class="mn-icon m-nav-card" aria-label="そのほかの操作"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="7.5" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="16.5" cy="12" r="0.6" fill="currentColor"/></svg></button>
     <button type="button" id="mEditBtn" class="mn-text m-nav-card">編集</button>
+    <button type="button" id="mEdDelete" class="mn-icon m-nav-edit" aria-label="このカードを削除"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+    <button type="button" id="mEdLink" class="mn-icon m-nav-edit" aria-label="リンクを追加・削除"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+    <button type="button" id="mEdDone" class="m-nav-edit mn-done">完了</button>
   </div>
 
   <!-- タグのポップアップ（絞り込む）：タグボタンの下に重ねて開く -->
@@ -8849,16 +8869,17 @@
         if (!this.inlineEditId || !this.inlineHome || this.inlineHome.docked) return;
         // iPhone：画面の下、キーボードが出ていればそのすぐ上
         if (this.isPhone()) {
-          // キーボード（書式パネルを開いているときはパネル）のすぐ上に、すき間なく置く
+          // アプリ全体を、キーボードを除いた「見えている範囲」にぴったり合わせる。
+          // 上の帯・本文・書式の帯は縦に並んでいるので、書式の帯はいつもキーボードのすぐ上に来て、本文とは重ならない
           const vv = window.visualViewport;
-          const panel = document.getElementById('mFormat');
-          const pOpen = !!(panel && panel.classList.contains('open'));
+          const b = document.body;
+          const pOpen = this.isMFormatOpen();
           const kb = !!(vv && vv.height < window.innerHeight - 80);
+          b.classList.add('m-kbfit');
+          b.style.top = `${vv ? Math.round(vv.offsetTop) : 0}px`;
+          b.style.height = `${vv ? Math.round(vv.height) : window.innerHeight}px`;
           bar.classList.toggle('m-nokb', !kb && !pOpen);
-          const h = bar.offsetHeight || 44;
-          const bottom = pOpen ? panel.getBoundingClientRect().top : (vv ? vv.offsetTop + vv.height : window.innerHeight);
-          bar.style.top = `${Math.max(8, bottom - h)}px`;
-          this.fitPhoneEditor(Math.max(8, bottom - h));
+          this.keepCaretVisible();
           return;
         }
         const r = this.inlineHome.wrap.getBoundingClientRect();
@@ -8939,6 +8960,7 @@
         if (home.tagBox) home.tagBox.remove();
         (home.metaParts || []).slice().reverse().forEach(p => p.parent.insertBefore(p.el, p.next));
         document.body.classList.remove('is-inline-editing');
+        if (document.body.classList.contains('m-kbfit')) { document.body.classList.remove('m-kbfit'); document.body.style.top = ''; document.body.style.height = ''; }
         home.wrap.classList.remove('inline-editing');
         home.shown.style.display = '';
         const wasNew = this.inlineIsNew;
@@ -9551,6 +9573,12 @@
           if (id && this.currentView === 'single') this.startInlineEdit(id);
         });
         document.getElementById('mMoreBtn').addEventListener('click', () => this.openMoreSheet());
+        const keep = (el) => el.addEventListener('mousedown', (e) => e.preventDefault());
+        ['mEdCancel', 'mEdDone', 'mEdDelete', 'mEdLink'].forEach(id => keep(document.getElementById(id)));
+        document.getElementById('mEdCancel').addEventListener('click', () => this.finishInlineEdit(false));
+        document.getElementById('mEdDone').addEventListener('click', () => this.finishInlineEdit(true));
+        document.getElementById('mEdDelete').addEventListener('click', () => this.deleteInlineCard());
+        document.getElementById('mEdLink').addEventListener('click', () => { if (this.inlineEditId) this.showLinkPicker(this.inlineEditId); });
         document.querySelectorAll('#mBar [data-mview]').forEach(b => b.addEventListener('click', () => {
           (b.dataset.mview === 'grid' ? this.gridModeBtn : this.listModeBtn).click();
         }));
@@ -9712,16 +9740,6 @@
       }
 
       // ---------- 編集中：本文の下端を書式の帯の上に合わせ、カーソルをいつも見える位置に ----------
-      fitPhoneEditor(barTop) {
-        const ed = this.editCardBody;
-        if (!ed || !this.inlineEditId || !document.body.contains(ed)) return;
-        const top = ed.getBoundingClientRect().top;
-        const h = Math.max(60, Math.floor(barTop - top - 6));
-        ed.style.height = `${h}px`;
-        ed.style.maxHeight = `${h}px`;
-        this.keepCaretVisible();
-      }
-
       keepCaretVisible() {
         if (!this.isPhone() || !this.inlineEditId) return;
         const ed = this.editCardBody;
@@ -9734,9 +9752,11 @@
           const n = r.startContainer.nodeType === 1 ? (r.startContainer.childNodes[r.startOffset] || r.startContainer) : r.startContainer.parentElement;
           rect = (n.nodeType === 1 ? n : n.parentElement).getBoundingClientRect();
         }
-        const box = ed.getBoundingClientRect();
-        if (rect.bottom > box.bottom - 6) ed.scrollTop += rect.bottom - box.bottom + 28;
-        else if (rect.top < box.top + 2) ed.scrollTop -= box.top - rect.top + 10;
+        // 送るのはカード全体（1枚の紙）。書式の帯はその下に並んでいるので、紙の下端より下に入らなければ見えている
+        const scroller = ed.closest('.is-wide') || ed;
+        const box = scroller.getBoundingClientRect();
+        if (rect.bottom > box.bottom - 12) scroller.scrollTop += rect.bottom - box.bottom + 36;
+        else if (rect.top < box.top + 4) scroller.scrollTop -= box.top - rect.top + 12;
       }
 
       // 開いたカードの「…」：ピン留め・コピー・リンク・削除
@@ -9795,7 +9815,10 @@
           this.rtCommand(btn.dataset.mf, btn.dataset.val);
           this.updateMFormatState();
         });
-        document.addEventListener('selectionchange', () => { if (this.isMFormatOpen()) this.updateMFormatState(); });
+        document.addEventListener('selectionchange', () => {
+          if (this.isMFormatOpen()) this.updateMFormatState();
+          if (this.inlineEditId && this.isPhone() && document.activeElement === this.editCardBody) { clearTimeout(this._caretTimer); this._caretTimer = setTimeout(() => this.keepCaretVisible(), 60); }
+        });
       }
 
       openMFormat() {
@@ -9867,7 +9890,13 @@
         });
         // キーボードの出し入れに合わせて、書式ツールバーの位置を直す
         if (window.visualViewport) {
-          const follow = () => { if (this.inlineEditId && this.isPhone()) this.placeInlineBar(); };
+          // キーボードは動きながら出てくるので、出終わったころにもう一度合わせる
+          const follow = () => {
+            if (!this.inlineEditId || !this.isPhone()) return;
+            this.placeInlineBar();
+            clearTimeout(this._kbTimer);
+            this._kbTimer = setTimeout(() => this.placeInlineBar(), 350);
+          };
           window.visualViewport.addEventListener('resize', follow);
           window.visualViewport.addEventListener('scroll', follow);
         }
@@ -10701,6 +10730,14 @@
       }
 
       bindDblClickToEdit(wrap, body, cardId) {
+        body.addEventListener('click', (e) => {
+          if (!this.isPhone() || this.inlineEditId) return;
+          if (e.target.closest('button, a, img, figure, input, summary, .rt-code')) return;
+          const li = e.target.closest('li[data-checked]');
+          if (li && e.clientX - li.getBoundingClientRect().left <= (parseFloat(getComputedStyle(li).fontSize) || 16) * 1.5) return;
+          if (String(window.getSelection() || '').length) return; // 文字を選んでいるときは書き始めない
+          this.startInlineEdit(cardId, { x: e.clientX, y: e.clientY });
+        });
         body.addEventListener('dblclick', (e) => {
           if (this.inlineEditId || e.target.closest('button, a, img, figure, input, summary, .rt-code')) return;
           const r = body.getBoundingClientRect();
