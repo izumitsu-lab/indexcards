@@ -1648,6 +1648,164 @@
       transition: opacity 0.2s, transform 0.2s;
     }
     #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ===== iPhone（幅 640px 未満）だけの画面の作り。Mac では何も出ない ===== */
+    #mHead, #mNav, #mBar { display: none; }
+    .m-lbl { display: none; }
+    @media (min-width: 640px) { .rt-m-only { display: none !important; } }
+    /* 下から出るシート（エリアと状態・カードの操作） */
+    #mSheet { position: fixed; inset: 0; z-index: 90; display: none; }
+    #mSheet.open { display: block; }
+    #mSheet .ms-back { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); }
+    #mSheet .ms-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; box-sizing: border-box; padding: 8px 16px calc(20px + env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0; background: #F2F2F7; color: #1D1D1F; animation: ms-up 0.22s cubic-bezier(0.2, 0.8, 0.3, 1); }
+    .dark #mSheet .ms-panel { background: #1C1C1E; color: #F5F5F7; }
+    @keyframes ms-up { from { transform: translateY(40%); opacity: 0.6; } to { transform: none; opacity: 1; } }
+    .ms-grab { display: block; width: 36px; height: 5px; margin: 0 auto; border-radius: 3px; background: #C7C7CC; }
+    .ms-head { display: flex; align-items: center; justify-content: space-between; height: 48px; }
+    .ms-head b { font-size: 17px; }
+    .ms-head span, .ms-head button { width: 64px; }
+    .ms-head button { height: 44px; text-align: right; font-size: 17px; font-weight: 700; color: #007AFF; }
+    .ms-label { padding: 12px 4px 6px; font-size: 13px; color: #6E6E73; }
+    .ms-list { border-radius: 12px; overflow: hidden; background: #fff; }
+    .dark .ms-list { background: #2C2C2E; }
+    .ms-list + .ms-list { margin-top: 10px; }
+    .ms-row { width: 100%; min-height: 50px; display: flex; align-items: center; gap: 12px; padding: 0 14px; font-size: 17px; text-align: left; color: inherit; }
+    .ms-row + .ms-row { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    .dark .ms-row + .ms-row { border-top-color: rgba(255, 255, 255, 0.1); }
+    .ms-row .area-ico { width: 22px; height: 22px; }
+    .ms-row .ms-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ms-row .ms-n { font-size: 15px; color: #8E8E93; font-variant-numeric: tabular-nums; }
+    .ms-row .ms-check { width: 20px; color: #007AFF; font-weight: 800; text-align: center; }
+    .ms-row.is-on .ms-name { font-weight: 700; }
+    .ms-row.is-danger { color: #FF3B30; }
+    .ms-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .ms-st { height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 12px; border-radius: 12px; background: #fff; font-size: 16px; font-weight: 600; color: inherit; }
+    .dark .ms-st { background: #2C2C2E; }
+    .ms-st .st-pill { height: 26px; font-size: 13px; padding: 0 10px 0 8px; }
+    .ms-st em { font-style: normal; font-size: 14px; font-weight: 500; color: #8E8E93; font-variant-numeric: tabular-nums; }
+    .ms-st.is-on { box-shadow: 0 0 0 2px #007AFF; color: #007AFF; }
+    .ms-acts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .ms-act { height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 12px; background: #fff; font-size: 13px; color: inherit; }
+    .dark .ms-act { background: #2C2C2E; }
+    .ms-act svg { color: #007AFF; }
+    .ms-act.is-danger, .ms-act.is-danger svg { color: #FF3B30; }
+    .ms-cancel { display: block; width: 100%; height: 50px; margin-top: 10px; border-radius: 12px; background: #fff; font-size: 17px; font-weight: 700; color: #007AFF; }
+    .dark .ms-cancel { background: #2C2C2E; }
+    /* 書式パネル（キーボードの場所に出す） */
+    #mFormat { position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; display: none; box-sizing: border-box; padding: 4px 12px calc(14px + env(safe-area-inset-bottom)); background: #F2F2F7; border-top: 1px solid rgba(0, 0, 0, 0.12); color: #1D1D1F; }
+    #mFormat.open { display: block; }
+    .dark #mFormat { background: #1C1C1E; border-top-color: rgba(255, 255, 255, 0.12); color: #F5F5F7; }
+    .mf-head { display: flex; align-items: center; justify-content: space-between; height: 44px; padding-left: 4px; font-size: 17px; font-weight: 700; }
+    .mf-head button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #6E6E73; }
+    .mf-row { display: grid; gap: 6px; margin-bottom: 8px; }
+    .mf-row.c4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .mf-row.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mf-row.c2 { grid-template-columns: 3fr 2fr; }
+    .mf-btn { height: 46px; border-radius: 10px; background: #fff; font-size: 14px; color: inherit; }
+    .dark .mf-btn { background: #2C2C2E; }
+    .mf-btn.is-on { box-shadow: 0 0 0 2px #007AFF; color: #007AFF; }
+    .mf-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 10px; overflow: hidden; background: #fff; }
+    .dark .mf-seg { background: #2C2C2E; }
+    .mf-seg .mf-btn { border-radius: 0; background: transparent; font-size: 18px; }
+    .mf-seg .mf-btn.is-on { box-shadow: none; background: rgba(0, 122, 255, 0.12); }
+    .mf-colors { display: flex; align-items: center; justify-content: space-around; border-radius: 10px; background: #fff; }
+    .dark .mf-colors { background: #2C2C2E; }
+    .mf-colors button { width: 44px; height: 46px; display: inline-flex; align-items: center; justify-content: center; }
+    .mf-colors i { width: 26px; height: 26px; border-radius: 50%; }
+
+    @media (max-width: 639px) {
+      /* 上の帯はやめて、一覧の上に大きな見出し・検索・札を置く */
+      header { display: none !important; }
+      #mHead { display: block; flex-shrink: 0; padding-top: env(safe-area-inset-top); background: #F4F4F6; }
+      .dark #mHead { background: #1A1A1D; }
+      .mh-top { display: flex; justify-content: flex-end; gap: 2px; min-height: 44px; padding: 4px 8px 0; }
+      #mHead #syncBtn, #mHead #openSettingsBtn { width: 44px; height: 44px; border-radius: 22px; color: #007AFF; }
+      #mHead #syncBtn svg, #mHead #openSettingsBtn svg { width: 22px; height: 22px; }
+      #mHead #syncBtn .sync-dot { right: 9px; bottom: 11px; box-shadow: 0 0 0 2px #F4F4F6; }
+      .mh-title { padding: 0 12px; }
+      #mHead #areaBtn { width: auto !important; max-width: 100%; height: 46px; padding: 0 4px; gap: 6px; background: transparent !important; box-shadow: none !important; font-size: 28px; font-weight: 800; color: inherit; }
+      #mHead #areaBtnIcon { width: 28px; height: 28px; }
+      #mHead #areaBtnIcon svg { width: 26px; height: 26px; }
+      #mHead #areaBtnName { display: block; }
+      #mHead #areaBtn > svg { display: block; width: 18px; height: 18px; }
+      #mHead #areaMenu, #mHead #statusFilterMenu { display: none !important; }
+      .mh-search { padding: 6px 16px 0; }
+      #mHead #searchBox { height: 38px !important; border-radius: 11px !important; }
+      .mh-chips { display: flex; gap: 8px; padding: 10px 16px 10px; overflow-x: auto; scrollbar-width: none; }
+      .mh-chips::-webkit-scrollbar { display: none; }
+      .mh-chips > * { flex-shrink: 0; }
+      #mHead #statusBtn, #mHead #tagFilterBtn, #mHead #sortBtn {
+        width: auto !important; height: 36px !important; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px 0 10px !important; border-radius: 18px !important;
+        background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); font-size: 14px; font-weight: 600; color: #1D1D1F; white-space: nowrap;
+      }
+      .dark #mHead #statusBtn, .dark #mHead #tagFilterBtn, .dark #mHead #sortBtn { background: #2C2C2E; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); color: #F5F5F7; }
+      #mHead #statusBtnName, #mHead #statusBtnCount { display: inline; }
+      #mHead #statusBtn > svg { display: block; }
+      #mHead #statusBtn.is-filtered, #mHead #tagFilterBtn.is-on, #mHead #sortBtn.is-on { color: #007AFF; box-shadow: 0 0 0 1.5px #007AFF; }
+      #mHead #tagFilterBtn svg, #mHead #sortBtn svg { width: 15px; height: 15px; }
+      #mHead #tagFilterDot { display: none !important; }
+      #mHead .m-lbl { display: inline; }
+      #notesSidebar .nl-head { display: none; }
+      #notesList { padding-bottom: 20px; }
+
+      /* 下の帯：リスト／ギャラリー・枚数・新規カード（右下の丸いボタンの代わり） */
+      #mBar { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; padding: 6px 12px calc(6px + env(safe-area-inset-bottom)); background: rgba(249, 249, 249, 0.97); border-top: 1px solid rgba(0, 0, 0, 0.1); }
+      .dark #mBar { background: rgba(28, 28, 30, 0.97); border-top-color: rgba(255, 255, 255, 0.1); }
+      body.notes-layout.notes-detail #mBar, body.link-view #mBar, body.is-inline-editing #mBar, body.is-selecting #mBar { display: none; }
+      body.notes-layout.notes-detail #mHead, body.link-view #mHead, body.is-inline-editing #mHead { display: none; }
+      .mb-seg { display: flex; padding: 2px; border-radius: 10px; background: rgba(118, 118, 128, 0.12); }
+      .mb-seg button { height: 40px; padding: 0 14px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #48484A; }
+      .dark .mb-seg button { color: #D4D4D4; }
+      .mb-seg button.is-on { background: #fff; color: #007AFF; font-weight: 700; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+      .dark .mb-seg button.is-on { background: #3A3A3F; color: #4DA3FF; }
+      .mb-count { font-size: 13px; color: #6E6E73; font-variant-numeric: tabular-nums; }
+      #mComposeBtn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #007AFF; }
+      #fabAddBtn.m-only { display: none !important; }
+
+      /* カードを開いたとき・裏面：1段の帯（‹ 一覧・裏返す・…・編集） */
+      body.notes-layout.notes-detail #mNav, body.link-view #mNav { display: flex; flex-shrink: 0; align-items: center; gap: 2px; padding: env(safe-area-inset-top) 6px 0 2px; min-height: 52px; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+      .dark body.notes-layout.notes-detail #mNav, .dark body.link-view #mNav, body.dark #mNav { background: #1E1E22; border-bottom-color: rgba(255, 255, 255, 0.08); }
+      body.is-inline-editing #mNav { display: none !important; }
+      body.link-view #mNav .m-nav-card { display: none; }
+      .mn-back { height: 44px; display: inline-flex; align-items: center; padding: 0 10px 0 2px; font-size: 17px; color: #007AFF; }
+      .mn-gap { flex: 1; }
+      .mn-icon { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #007AFF; }
+      .mn-text { height: 44px; padding: 0 10px; font-size: 17px; font-weight: 700; color: #007AFF; }
+      .dark .mn-back, .dark .mn-icon, .dark .mn-text { color: #4DA3FF; }
+      #mNav #flipFabWrap { display: block; }
+      #mNav #flipFabWrap.is-off { display: none; }
+      #mNav #flipFab { height: 36px; border-radius: 18px; padding: 0 6px 0 12px; font-size: 15px; }
+      #mNav #flipFab.is-back { padding: 0 14px 0 12px; }
+      #mNav #flipFab #flipFabLabel { display: inline; }
+      body.notes-layout #notesBackBtn { display: none !important; }
+      body.notes-layout #linkViewContainer { padding-top: 10px !important; }
+      body.notes-layout .is-wide .card-head-row { padding-left: 14px; }
+      body.notes-layout .is-wide .card-head-row .card-areas { display: inline-flex; }
+      .card-tools { display: none !important; }
+
+      /* ギャラリー・裏面：1列で、本文が読める大きさに */
+      #gridCardsContainer, #linkCardsContainer { grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; }
+      #gridViewContainer, #linkViewContainer { padding-bottom: 20px !important; }
+
+      /* 編集中の書式の帯：キーボードのすぐ上に貼り付けた1本の帯。ボタンは7つだけ */
+      #inlineBar { left: 0; right: 0; max-width: none; padding: 3px 4px; border-radius: 0; box-shadow: none; border-top: 1px solid rgba(0, 0, 0, 0.12); background: #F7F7F8; -webkit-backdrop-filter: none; backdrop-filter: none; overflow: hidden; transform: none !important; }
+      .dark #inlineBar { background: #2C2C2E; box-shadow: none; border-top-color: rgba(255, 255, 255, 0.12); }
+      #inlineBar.m-nokb { padding-bottom: calc(3px + env(safe-area-inset-bottom)); }
+      #inlineBar #rtToolbar { width: 100%; justify-content: space-between; gap: 0; }
+      #inlineBar #rtToolbar .rt-grp, #inlineBar #rtToolbar .rt-menu, #inlineBar #rtToolbar .rt-pop { display: contents; }
+      #inlineBar #rtToolbar .rt-btn, #inlineBar #rtToolbar .rt-menu-btn, #inlineBar #rtToolbar .rt-sep, #inlineBar #rtToolbar .rt-pop-sep { display: none; }
+      #inlineBar #rtToolbar .rt-btn:is([data-rt="mformat"], [data-rt="todo"], [data-rt="insertUnorderedList"], [data-rt="table"], [data-rt="image"], [data-rt="undo"], [data-rt="mkbd"]) { display: inline-flex; width: 48px; min-width: 48px; height: 44px; border-radius: 10px; color: #3A3A3C; }
+      .dark #inlineBar #rtToolbar .rt-btn { color: #E5E5EA; }
+      #inlineBar #rtToolbar .rt-btn svg { width: 21px; height: 21px; }
+      #inlineBar #rtToolbar [data-rt="mformat"] { order: 1; font-size: 18px; font-weight: 800; }
+      #inlineBar #rtToolbar [data-rt="todo"] { order: 2; }
+      #inlineBar #rtToolbar [data-rt="insertUnorderedList"] { order: 3; }
+      #inlineBar #rtToolbar [data-rt="table"] { order: 4; }
+      #inlineBar #rtToolbar [data-rt="image"] { order: 5; }
+      #inlineBar #rtToolbar [data-rt="undo"] { order: 6; }
+      #inlineBar #rtToolbar [data-rt="mkbd"] { order: 7; }
+      #inlineBar #rtToolbar .rt-btn.is-active { background: rgba(0, 122, 255, 0.14); color: #007AFF; }
+    }
   </style>
   <!-- 見た目（Tailwind CSS を書き出して埋め込み済み。ネットにつながっていなくても崩れません。CDN 版と同じく、アプリのスタイルのあとに置く） -->
   <script>
@@ -1722,6 +1880,7 @@
       <div class="relative shrink-0">
         <button id="tagFilterBtn" class="tb-icon relative !w-[34px] !h-[34px] !rounded-[10px]" title="タグで絞り込む" aria-haspopup="true" aria-expanded="false">
           <i data-lucide="tag" class="w-[17px] h-[17px]"></i>
+          <span class="m-lbl">タグ</span>
           <span id="tagFilterDot" class="hidden absolute top-[5px] right-[5px] w-2 h-2 rounded-full bg-appleBlue ring-[1.5px] ring-white dark:ring-neutral-900"></span>
         </button>
       </div>
@@ -1754,6 +1913,22 @@
       </button>
     </div>
   </header>
+
+  <!-- iPhone だけ：一覧の上の見出し（エリア）・検索・札。部品は上の帯から移して使う -->
+  <div id="mHead">
+    <div id="mTopSlot" class="mh-top"></div>
+    <div id="mTitleSlot" class="mh-title"></div>
+    <div id="mSearchSlot" class="mh-search"></div>
+    <div id="mChips" class="mh-chips"></div>
+  </div>
+  <!-- iPhone だけ：カードを開いたときの帯 -->
+  <div id="mNav">
+    <button type="button" id="mBackBtn" class="mn-back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span id="mBackLabel">一覧</span></button>
+    <span class="mn-gap"></span>
+    <span id="mFlipSlot"></span>
+    <button type="button" id="mMoreBtn" class="mn-icon m-nav-card" aria-label="そのほかの操作"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="7.5" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="16.5" cy="12" r="0.6" fill="currentColor"/></svg></button>
+    <button type="button" id="mEditBtn" class="mn-text m-nav-card">編集</button>
+  </div>
 
   <!-- タグのポップアップ（絞り込む）：タグボタンの下に重ねて開く -->
   <section id="tagShelf" class="tag-pop" role="dialog" aria-label="タグで絞り込む">
@@ -1830,6 +2005,15 @@
 
     <div id="tagSortMenu" class="area-menu" role="menu"></div>
   </div>
+
+  <!-- iPhone だけ：下の帯 -->
+  <div id="mBar">
+    <div class="mb-seg" role="group" aria-label="表示"><button type="button" data-mview="single">リスト</button><button type="button" data-mview="grid">ギャラリー</button></div>
+    <span id="mBarCount" class="mb-count"></span>
+    <button type="button" id="mComposeBtn" aria-label="新規カード"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></button>
+  </div>
+  <div id="mSheet" role="dialog" aria-modal="true"><div class="ms-back"></div><div id="mSheetPanel" class="ms-panel"></div></div>
+  <div id="mFormat" role="toolbar" aria-label="書式"></div>
 
   <!-- Area Editor Modal -->
   <div id="areaEditorModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
@@ -2358,6 +2542,8 @@
 
       </div>
             <div id="rtToolbar" class="flex flex-wrap items-center gap-0.5 px-1.5 py-1 border-b border-black/[0.06] dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.04]">
+              <button type="button" class="rt-btn rt-m-only" data-rt="mformat" title="書式（見出し・太字・色など）">Aa</button>
+              <button type="button" class="rt-btn rt-m-only" data-rt="mkbd" title="キーボードを閉じる"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="12" rx="2"/><path d="M6 7h.01M10 7h.01M14 7h.01M18 7h.01M7 11h10"/><path d="m9 19 3 3 3-3"/></svg></button>
               <button type="button" class="rt-btn" data-rt="undo" title="元に戻す (⌘Z)"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="undo-2" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"></path></svg></button>
               <button type="button" class="rt-btn" data-rt="redo" title="やり直す (⌘⇧Z)"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="redo-2" aria-hidden="true"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"></path></svg></button>
               <span class="rt-sep"></span>
@@ -5365,6 +5551,7 @@
         this.bindSortMenu();
         this.bindStatus();
         this.bindPhoneUi();
+        this.bindPhoneChrome();
         this.bindImages();
         this.bindTrash();
         this.bindSelection();
@@ -5529,6 +5716,8 @@
           if (!btn) return;
           this.closeRtMenus();
           if (btn.dataset.rt === 'image') { this.openImagePicker(); return; }
+          if (btn.dataset.rt === 'mformat') { this.isMFormatOpen() ? this.closeMFormat(true) : this.openMFormat(); return; }
+          if (btn.dataset.rt === 'mkbd') { this.closeMFormat(false); this.editCardBody.blur(); return; }
           this.rtCommand(btn.dataset.rt, btn.dataset.val);
         });
 
@@ -7540,6 +7729,8 @@
           const cmd = btn.dataset.rt;
           let active = false;
           try {
+            if (cmd === 'mformat') { btn.classList.toggle('is-active', this.isMFormatOpen()); return; }
+            if (cmd === 'mkbd') return;
             if (cmd === 'undo') { btn.classList.toggle('is-disabled', !(this.undoStack && this.undoStack.length)); return; }
             if (cmd === 'redo') { btn.classList.toggle('is-disabled', !(this.redoStack && this.redoStack.length)); return; }
             if (['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript', 'insertUnorderedList', 'insertOrderedList'].includes(cmd)) {
@@ -7936,7 +8127,7 @@
       // 下の端までは伸ばさない（外をクリックして閉じられる余白を必ず残す）
       positionTagFilter() {
         const pop = document.getElementById('tagShelf');
-        const top = document.querySelector('header').getBoundingClientRect().bottom + 8;
+        const top = (this.isPhone() ? this.tagFilterBtn.getBoundingClientRect().bottom : document.querySelector('header').getBoundingClientRect().bottom) + 8;
         pop.style.top = `${top}px`;
         pop.style.maxHeight = `${Math.max(180, window.innerHeight - top - TAG_POP_BOTTOM_GAP)}px`;
         const btn = this.tagFilterBtn.getBoundingClientRect();
@@ -8138,7 +8329,7 @@
           if (this.isTagPopoverOpen()) {
             this.closeTagPopover();
             // 下のカードは開かない。ヘッダーの操作だけはそのまま効かせる
-            if (!e.target.closest('header')) { swallow(e); swallowed = { x: e.clientX, y: e.clientY, until: Date.now() + 450 }; }
+            if (!e.target.closest('header, #mHead')) { swallow(e); swallowed = { x: e.clientX, y: e.clientY, until: Date.now() + 450 }; }
           }
         }, true);
         document.addEventListener('dblclick', (e) => { if (isSecondClick(e)) swallow(e); }, true);
@@ -8645,11 +8836,15 @@
         if (!this.inlineEditId || !this.inlineHome || this.inlineHome.docked) return;
         // iPhone：画面の下、キーボードが出ていればそのすぐ上
         if (this.isPhone()) {
+          // キーボード（書式パネルを開いているときはパネル）のすぐ上に、すき間なく置く
           const vv = window.visualViewport;
+          const panel = document.getElementById('mFormat');
+          const pOpen = !!(panel && panel.classList.contains('open'));
+          const kb = !!(vv && vv.height < window.innerHeight - 80);
+          bar.classList.toggle('m-nokb', !kb && !pOpen);
           const h = bar.offsetHeight || 44;
-          const bottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
-          const safe = vv && vv.height < window.innerHeight - 80 ? 8 : 20; // キーボードがないときは、画面の端から少し離す
-          bar.style.top = `${Math.max(8, bottom - h - safe)}px`;
+          const bottom = pOpen ? panel.getBoundingClientRect().top : (vv ? vv.offsetTop + vv.height : window.innerHeight);
+          bar.style.top = `${Math.max(8, bottom - h)}px`;
           return;
         }
         const r = this.inlineHome.wrap.getBoundingClientRect();
@@ -8662,6 +8857,7 @@
       finishInlineEdit(save, opts = {}) {
         const id = this.inlineEditId;
         if (!id || !this.inlineHome) return;
+        this.closeMFormat(false);
         this.closeCalloutMenu();
         this.closeRtMenus();
         const ed = this.editCardBody;
@@ -9049,6 +9245,7 @@
         this.statusMenu = document.getElementById('statusMenu');
         this.statusBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          if (this.isPhone()) { this.openFilterSheet(); return; }
           this.isStatusFilterOpen() ? this.closeStatusFilter() : this.openStatusFilter();
         });
         this.statusFilterMenu.addEventListener('mousedown', (e) => e.stopPropagation());
@@ -9288,6 +9485,239 @@
         return list.sort((a, b) => cmp(a, b) || pos.get(a.id) - pos.get(b.id));
       }
 
+      // ============================================================
+      // iPhone（幅 640px 未満）だけの画面の作り
+      // 上の帯の部品（エリア・検索・状態・タグ・並べ替え・同期・設定・裏返す）を、iPhone の場所へ移して使う。
+      // 幅が広くなったら元の場所へ戻すので、Mac の画面は何も変わらない
+      // ============================================================
+      applyPhoneLayout() {
+        if (!this._mMoves) {
+          const pairs = [
+            [document.getElementById('syncBtn'), 'mTopSlot'],
+            [this.openSettingsBtn, 'mTopSlot'],
+            [document.getElementById('areaBtn').parentElement, 'mTitleSlot'],
+            [this.searchBox, 'mSearchSlot'],
+            [document.getElementById('statusBtn').parentElement, 'mChips'],
+            [this.tagFilterBtn.parentElement, 'mChips'],
+            [this.sortBtn.parentElement, 'mChips'],
+            [this.flipFabWrap, 'mFlipSlot']
+          ];
+          this._mMoves = pairs.map(([el, slot]) => ({ el, slot: document.getElementById(slot), mark: document.createComment('iPhone') }));
+        }
+        const phone = this.isPhone();
+        if (phone === this._mPhone) return false;
+        this._mPhone = phone;
+        this._mMoves.forEach(m => {
+          if (phone) { m.el.before(m.mark); m.slot.appendChild(m.el); }
+          else if (m.mark.parentNode) m.mark.replaceWith(m.el);
+        });
+        return true;
+      }
+
+      bindPhoneChrome() {
+        this.applyPhoneLayout();
+        const mq = window.matchMedia('(max-width: 639px)');
+        const onChange = () => {
+          if (!this.applyPhoneLayout()) return;
+          this.closeMSheet();
+          this.closeMFormat(false);
+          if (!this.inlineEditId) this.renderAll();
+        };
+        if (mq.addEventListener) mq.addEventListener('change', onChange); else if (mq.addListener) mq.addListener(onChange);
+        document.getElementById('mBackBtn').addEventListener('click', () => this.mGoBack());
+        document.getElementById('mEditBtn').addEventListener('click', () => {
+          const id = this.currentCardId();
+          if (id && this.currentView === 'single') this.startInlineEdit(id);
+        });
+        document.getElementById('mMoreBtn').addEventListener('click', () => this.openMoreSheet());
+        document.querySelectorAll('#mBar [data-mview]').forEach(b => b.addEventListener('click', () => {
+          (b.dataset.mview === 'grid' ? this.gridModeBtn : this.listModeBtn).click();
+        }));
+        document.getElementById('mComposeBtn').addEventListener('click', () => this.createCardInline());
+        const sheet = document.getElementById('mSheet');
+        sheet.querySelector('.ms-back').addEventListener('click', () => this.closeMSheet());
+        document.getElementById('mSheetPanel').addEventListener('click', (e) => {
+          const b = e.target.closest('[data-ms]');
+          if (b && this._mSheetClick) this._mSheetClick(b);
+        });
+        this.bindMFormat();
+      }
+
+      // 下の帯の件数・表示の切り替え、「‹」の名前
+      updatePhoneChrome() {
+        const count = document.getElementById('mBarCount');
+        if (!count) return;
+        document.querySelectorAll('#mBar [data-mview]').forEach(b => b.classList.toggle('is-on', (b.dataset.mview === 'grid') === (this.currentView === 'grid')));
+        count.textContent = `${this.getFilteredCards().length}枚`;
+        document.getElementById('mBackLabel').textContent = this.mBackTarget() === 'grid' ? 'ギャラリー' : '一覧';
+      }
+
+      mBackTarget() {
+        return (this.currentView === 'link' ? this.linkReturn : this._detailFrom) === 'grid' ? 'grid' : 'list';
+      }
+
+      mGoBack() {
+        if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
+        if (this.mBackTarget() === 'grid') { this.switchView('grid', { animate: false }); return; }
+        if (this.currentView === 'link') this.switchView('single', { animate: false });
+        this.setNotesDetail(false);
+        this.renderNotesList();
+      }
+
+      // ---------- 下から出るシート ----------
+      openMSheet(html, onClick) {
+        document.getElementById('mSheetPanel').innerHTML = html;
+        this._mSheetClick = onClick;
+        document.getElementById('mSheet').classList.add('open');
+      }
+
+      closeMSheet() {
+        const s = document.getElementById('mSheet');
+        if (s) s.classList.remove('open');
+        this._mSheetClick = null;
+      }
+
+      // エリアと状態（見出しのエリア名・状態の札を押したとき）
+      openFilterSheet() {
+        const render = () => {
+          const info = this.statusFilterInfo();
+          const cur = this.statusFilterKey();
+          const area = (id, name, icon, n) => {
+            const on = this.currentArea === id;
+            return `<button type="button" class="ms-row${on ? ' is-on' : ''}" data-ms="area" data-id="${rtEscape(id)}"><span class="area-ico">${areaIconSvg(icon, 20)}</span><span class="ms-name">${this.escapeHtml(name)}</span><span class="ms-n">${n}</span><span class="ms-check">${on ? '✓' : ''}</span></button>`;
+          };
+          const areas = area(ALL_AREAS, 'すべて', 'all', this.cards.length)
+            + this.areas.map(a => area(a.id, a.name, a.icon, this.cards.filter(c => c.areas.includes(a.id)).length)).join('');
+          const st = (k) => `<button type="button" class="ms-st${k === cur ? ' is-on' : ''}" data-ms="status" data-id="${k}">${CARD_STATUS[k] ? this.statusPillHtml({ status: k }) : `<span>${info[k].label}</span>`}<em>${info[k].n}</em></button>`;
+          return `<span class="ms-grab"></span>
+            <div class="ms-head"><span></span><b>表示するカード</b><button type="button" data-ms="done">完了</button></div>
+            <div class="ms-label">エリア</div>
+            <div class="ms-list">${areas}</div>
+            <div class="ms-list"><button type="button" class="ms-row" data-ms="edit-areas"><span class="ms-name">エリアを編集…</span></button><button type="button" class="ms-row" data-ms="trash"><span class="ms-name">ゴミ箱</span><span class="ms-n">${this.trash.length || ''}</span></button></div>
+            <div class="ms-label">状態</div>
+            <div class="ms-grid">${['all', 'active', ...STATUS_ORDER].map(st).join('')}</div>`;
+        };
+        const onClick = (b) => {
+          const act = b.dataset.ms;
+          if (act === 'area') this.setArea(b.dataset.id);
+          else if (act === 'status') this.setStatusFilter(b.dataset.id);
+          else if (act === 'edit-areas') { this.closeMSheet(); this.showAreaEditor(false); return; }
+          else if (act === 'trash') { this.closeMSheet(); this.showTrash(); return; }
+          else if (act === 'done') { this.closeMSheet(); return; }
+          document.getElementById('mSheetPanel').innerHTML = render();
+        };
+        this.openMSheet(render(), onClick);
+      }
+
+      // 開いたカードの「…」：ピン留め・コピー・リンク・削除
+      openMoreSheet() {
+        const id = this.currentCardId();
+        const card = this.cards.find(c => c.id === id);
+        if (!card) return;
+        const ico = (d) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+        const html = `<span class="ms-grab"></span>
+          <div class="ms-head"><span></span><b>${this.escapeHtml(card.title || '無題のカード')}</b><span></span></div>
+          <div class="ms-acts">
+            <button type="button" class="ms-act" data-ms="pin">${pinIconSvg(22, !!card.pinnedAt)}${card.pinnedAt ? 'ピンを外す' : 'ピン留め'}</button>
+            <button type="button" class="ms-act" data-ms="copy">${ico('<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>')}コピー</button>
+            <button type="button" class="ms-act" data-ms="link">${ico('<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>')}リンク</button>
+            <button type="button" class="ms-act is-danger" data-ms="delete">${ico('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>')}削除</button>
+          </div>
+          <button type="button" class="ms-cancel" data-ms="cancel">キャンセル</button>`;
+        this.openMSheet(html, (b) => {
+          const act = b.dataset.ms;
+          this.closeMSheet();
+          if (act === 'pin') this.setPinned([id], !card.pinnedAt);
+          else if (act === 'copy') setTimeout(() => this.openCopyMenu(id, document.getElementById('mMoreBtn')), 0);
+          else if (act === 'link') this.showLinkPicker(id);
+          else if (act === 'delete') this.deleteCard(id);
+        });
+      }
+
+      // ---------- 書式パネル（「Aa」で、キーボードの場所に出す） ----------
+      // 書いている場所（カーソル）は本文に残したまま、inputmode="none" でキーボードだけを隠す
+      isMFormatOpen() {
+        const p = document.getElementById('mFormat');
+        return !!(p && p.classList.contains('open'));
+      }
+
+      bindMFormat() {
+        const p = document.getElementById('mFormat');
+        const b = (cmd, label, val, cls = '') => `<button type="button" class="mf-btn ${cls}" data-mf="${cmd}"${val ? ` data-val="${val}"` : ''}>${label}</button>`;
+        p.innerHTML = `
+          <div class="mf-head"><span>書式</span><button type="button" data-mf="close" aria-label="書式を閉じてキーボードに戻る"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          <div class="mf-row c4">${b('block', '本文', 'div')}${b('block', '<b style="font-size:18px">見出し1</b>', 'h1')}${b('block', '<b style="font-size:16px">見出し2</b>', 'h2')}${b('block', '<b>見出し3</b>', 'h3')}</div>
+          <div class="mf-row c2">
+            <div class="mf-seg">${b('bold', '<b>B</b>')}${b('italic', '<i>I</i>')}${b('underline', '<u>U</u>')}${b('strikeThrough', '<s>S</s>')}</div>
+            <div class="mf-colors"><button type="button" data-mf="color" data-val="default" aria-label="文字色なし"><i style="border:1.5px solid #C7C7CC"></i></button><button type="button" data-mf="color" data-val="red" aria-label="赤"><i style="background:rgb(212, 76, 71)"></i></button><button type="button" data-mf="color" data-val="green" aria-label="緑"><i style="background:rgb(68, 131, 97)"></i></button><button type="button" data-mf="color" data-val="blue" aria-label="青"><i style="background:rgb(51, 126, 169)"></i></button></div>
+          </div>
+          <div class="mf-row c3">
+            ${b('insertOrderedList', '番号付き')}${b('block', '引用', 'blockquote')}${b('callout', 'コールアウト')}
+            ${b('bubble', '吹き出し')}${b('hr', '区切り線')}${b('codeblock', 'コードブロック')}
+            ${b('link', 'リンク')}${b('code', 'インラインコード')}${b('superscript', '上付き')}
+            ${b('subscript', '下付き')}${b('clear', '書式をクリア')}${b('redo', 'やり直す')}
+          </div>`;
+        p.addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
+        p.addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-mf]');
+          if (!btn) return;
+          if (btn.dataset.mf === 'close') { this.closeMFormat(true); return; }
+          this.rtCommand(btn.dataset.mf, btn.dataset.val);
+          this.updateMFormatState();
+        });
+        document.addEventListener('selectionchange', () => { if (this.isMFormatOpen()) this.updateMFormatState(); });
+      }
+
+      openMFormat() {
+        if (!this.inlineEditId) return;
+        const ed = this.editCardBody;
+        const sel = window.getSelection();
+        const r = sel.rangeCount && ed.contains(sel.anchorNode) ? sel.getRangeAt(0).cloneRange() : null;
+        ed.blur();
+        ed.setAttribute('inputmode', 'none');
+        ed.focus({ preventScroll: true });
+        if (r) { sel.removeAllRanges(); sel.addRange(r); }
+        document.getElementById('mFormat').classList.add('open');
+        this.updateMFormatState();
+        this.updateToolbarState();
+        requestAnimationFrame(() => this.placeInlineBar());
+      }
+
+      closeMFormat(refocus) {
+        const ed = this.editCardBody;
+        if (ed) ed.removeAttribute('inputmode');
+        if (!this.isMFormatOpen()) return;
+        document.getElementById('mFormat').classList.remove('open');
+        if (refocus && this.inlineEditId) {
+          // キーボードを出し直す（書いていた場所はそのまま）
+          const sel = window.getSelection();
+          const r = sel.rangeCount && ed.contains(sel.anchorNode) ? sel.getRangeAt(0).cloneRange() : null;
+          ed.blur();
+          ed.focus({ preventScroll: true });
+          if (r) { sel.removeAllRanges(); sel.addRange(r); }
+        }
+        this.updateToolbarState();
+        requestAnimationFrame(() => this.placeInlineBar());
+      }
+
+      updateMFormatState() {
+        const p = document.getElementById('mFormat');
+        if (!p) return;
+        const block = this.currentBlockTag();
+        p.querySelectorAll('[data-mf]').forEach(btn => {
+          const cmd = btn.dataset.mf;
+          let on = false;
+          try {
+            if (cmd === 'block') on = btn.dataset.val === 'div' ? !/^(h1|h2|h3|blockquote)$/.test(block) : btn.dataset.val === block;
+            else if (['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript', 'insertOrderedList'].includes(cmd)) on = document.queryCommandState(cmd);
+            else if (cmd === 'callout') on = !!this.caretIn('aside[data-callout]');
+            else if (cmd === 'bubble') on = !!this.caretIn('aside[data-bubble]');
+            else if (cmd === 'codeblock') on = !!this.caretIn('pre');
+          } catch (e) { on = false; }
+          btn.classList.toggle('is-on', !!on);
+        });
+      }
+
       // iPhone だけの部品：検索ボタン（検索・タグ・並べ替えの行を開く）と、右下の新規カードボタン
       bindPhoneUi() {
         const btn = document.getElementById('mSearchBtn');
@@ -9389,6 +9819,7 @@
         const k = SORT_ORDERS[this.config.sortOrder] ? this.config.sortOrder : 'updated';
         this.sortBtn.innerHTML = sortIconSvg(k, 16);
         this.sortBtn.title = `並べ替え：${SORT_ORDERS[k].label}`;
+        this.sortBtn.insertAdjacentHTML('beforeend', `<span class="m-lbl">${SORT_ORDERS[k].label}</span>`);
         this.sortBtn.classList.toggle('is-on', this.isSortMenuOpen());
       }
       setSortOrder(key) {
@@ -9406,6 +9837,9 @@
       switchView(view, opts = {}) {
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: view !== 'single' });
         const from = this.currentView;
+        // iPhone の「‹」で戻る先（ギャラリーから開いたカードはギャラリーへ）
+        if (view === 'single' && from === 'grid') this._detailFrom = 'grid';
+        else if (view === 'grid') this._detailFrom = null;
         if (this.flipping) return;
         // カード（表）⇄ リンク（裏）は、カードを裏返すアニメーションで切り替える
         const isFlip = from !== view && (from === 'link' || view === 'link');
@@ -9617,9 +10051,9 @@
        * カードHTMLの生成
        * 一覧用(isMini=true)では余分なパディングを削り、カード自体の情報を最大限活かす
        */
-      createCardInnerHtml(card, index, isMini = false) {
-        const chars = this.config.charsPerLine;
-        const lines = this.config.linesCount;
+      createCardInnerHtml(card, index, isMini = false, dims = null) {
+        const chars = dims ? dims.chars : this.config.charsPerLine;
+        const lines = dims ? dims.lines : this.config.linesCount;
         
         const bodyWidth = `${chars}em`;
         const bodyHeight = `${lines * 1.75}em`;
@@ -10063,11 +10497,13 @@
         b.classList.toggle('notes-list-hidden', !!this.config.listHidden);
         this.gridModeBtn.classList.toggle('is-on', v === 'grid');
         this.listModeBtn.classList.toggle('is-on', v === 'single');
+        this.updatePhoneChrome();
       }
 
       // iPhone：開いたカードを前に出す（false で一覧へ戻る）
       setNotesDetail(on) {
         document.body.classList.toggle('notes-detail', !!on);
+        this.updatePhoneChrome();
       }
 
       bindListView() {
@@ -10118,6 +10554,7 @@
 
       // 一覧の行を押したとき
       openNote(id) {
+        this._detailFrom = 'list';
         this.setNotesDetail(true);
         let edited = false;
         if (this.inlineEditId) {
@@ -10846,8 +11283,13 @@
 
       // 縮小表示のカード1枚（ギャラリー・リンクビュー共通）
       createMiniCell(card, idx) {
-        const ORIGINAL_WIDTH = Math.max(460, Math.round(this.config.charsPerLine * 15.5 + 80));
-        const ORIGINAL_HEIGHT = Math.max(420, Math.round(this.config.linesCount * (15.5 * 1.75) + 160));
+        let dims = null;
+        if (this.isPhone()) {
+          const w = window.innerWidth - 20;
+          dims = { chars: Math.max(10, Math.min(this.config.charsPerLine, Math.floor((w - 84) / 15.5))), lines: Math.min(this.config.linesCount, 8) };
+        }
+        const ORIGINAL_WIDTH = dims ? Math.round(dims.chars * 15.5 + 80) : Math.max(460, Math.round(this.config.charsPerLine * 15.5 + 80));
+        const ORIGINAL_HEIGHT = dims ? Math.round(dims.lines * (15.5 * 1.75) + 160) : Math.max(420, Math.round(this.config.linesCount * (15.5 * 1.75) + 160));
         const cell = document.createElement('div');
         cell.className = 'grid-cell relative w-full overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300';
         const scaledCard = document.createElement('div');
@@ -10857,7 +11299,7 @@
         this.statusColorClass(card).split(' ').filter(Boolean).forEach(k => scaledCard.classList.add(k));
         scaledCard.dataset.origWidth = ORIGINAL_WIDTH;
         scaledCard.dataset.origHeight = ORIGINAL_HEIGHT;
-        scaledCard.innerHTML = this.createCardInnerHtml(card, idx, true);
+        scaledCard.innerHTML = this.createCardInnerHtml(card, idx, true, dims);
         const unpin = scaledCard.querySelector('[data-action="unpin"]');
         if (unpin) {
           unpin.addEventListener('click', (e) => {
@@ -11195,6 +11637,7 @@
 
         this.areaBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          if (this.isPhone()) { this.openFilterSheet(); return; }
           this.isAreaMenuOpen() ? this.closeAreaMenu() : this.openAreaMenu();
         });
         this.areaMenu.addEventListener('mousedown', (e) => e.stopPropagation());
@@ -11767,6 +12210,7 @@
       }
 
       renderToolbar() {
+        this.updatePhoneChrome();
         this.renderAreaButton();
         this.renderStatusBtn();
         this.renderSortButton();
