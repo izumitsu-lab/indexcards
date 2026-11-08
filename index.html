@@ -387,6 +387,16 @@
     .dark .src-ac { background: #2A2A2E; }
     .src-ac-item { width: 100%; display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; text-align: left; }
     .src-ac-item.is-active { background: rgba(0, 122, 255, 0.1); }
+    .src-ai-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .src-ai-chip { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 8px; border: 1.5px solid rgba(0, 0, 0, 0.1); font-size: 12px; font-weight: 600; color: #525252; background: #fff; }
+    .dark .src-ai-chip { border-color: rgba(255, 255, 255, 0.14); color: #D4D4D4; background: transparent; }
+    .src-ai-chip:hover { border-color: rgba(162, 132, 94, 0.5); }
+    .src-ai-chip.is-on { border-color: #A2845E; background: rgba(162, 132, 94, 0.12); color: #6B5232; }
+    .dark .src-ai-chip.is-on { border-color: #C9AD86; background: rgba(196, 164, 120, 0.18); color: #E3CBA6; }
+    .src-ai-chip.is-on::before { content: "✓"; font-weight: 800; }
+    .src-ai-add { width: 120px; height: 28px; padding: 0 9px; border-radius: 8px; border: 1.5px dashed rgba(0, 0, 0, 0.16); background: transparent; outline: none; font-size: 12px; color: #1D1D1F; }
+    .dark .src-ai-add { border-color: rgba(255, 255, 255, 0.2); color: #F5F5F7; }
+    .src-ai-add:focus { border-style: solid; border-color: #A2845E; }
     .src-ac-cover { width: 20px; height: 26px; border-radius: 3px; flex-shrink: 0; background: linear-gradient(135deg, #C9B08A, #A2845E); }
 
     /* ===== リンク ===== */
@@ -1489,16 +1499,18 @@
       header > div:last-child { margin-left: auto; }
     }
 
-    /* ===== カードの状態（Permanent / Project / Fleeting / Archive） ===== */
+    /* ===== カードの状態（Permanent / Project / Fleeting / Reference / Archive） ===== */
     .ss-n { font-size: 10.5px; font-weight: 500; color: #8E8E93; font-variant-numeric: tabular-nums; }
     .st-pill { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px 0 6px; border-radius: 9999px; font-size: 10.5px; font-weight: 600; line-height: 1; white-space: nowrap; letter-spacing: 0; text-transform: none; }
     .st-pill.is-permanent { background: rgba(88, 86, 214, 0.1); color: #5856D6; }
     .st-pill.is-project { background: rgba(15, 138, 125, 0.13); color: #0B7A6E; }
     .st-pill.is-fleeting { background: rgba(255, 149, 0, 0.14); color: #B26500; }
+    .st-pill.is-reference { background: rgba(162, 132, 94, 0.15); color: #84653D; }
     .st-pill.is-archive { background: rgba(142, 142, 147, 0.15); color: #6E6E73; }
     .dark .st-pill.is-permanent { background: rgba(94, 92, 230, 0.22); color: #A5A3FF; }
     .dark .st-pill.is-project { background: rgba(45, 212, 191, 0.16); color: #5EEAD4; }
     .dark .st-pill.is-fleeting { background: rgba(255, 159, 10, 0.18); color: #FFB340; }
+    .dark .st-pill.is-reference { background: rgba(196, 164, 120, 0.2); color: #D4B98F; }
     .dark .st-pill.is-archive { background: rgba(142, 142, 147, 0.2); color: #AEAEB2; }
     button.st-pill { cursor: pointer; transition: box-shadow 0.12s, filter 0.12s; }
     button.st-pill:hover { filter: brightness(0.96); box-shadow: 0 0 0 1px currentColor; }
@@ -1664,7 +1676,7 @@
       </button>
       <div id="areaMenu" class="area-menu" role="menu"></div>
     </div>
-    <!-- カードの状態：すべて・アクティブ（アーカイブ以外）・Permanent・Project・Fleeting・Archive -->
+    <!-- カードの状態：すべて・アクティブ（アーカイブ以外）・Permanent・Project・Fleeting・Reference・Archive -->
     <div class="relative shrink-0">
       <button id="statusBtn" class="area-btn" aria-haspopup="true" aria-expanded="false" title="カードの状態で絞り込む">
         <span id="statusBtnIcon" class="status-ico"></span>
@@ -2280,6 +2292,7 @@
               <button type="button" data-type="none">なし</button>
               <button type="button" data-type="book">本</button>
               <button type="button" data-type="web">Web</button>
+              <button type="button" data-type="ai">AI</button>
               <button type="button" data-type="other">その他</button>
             </div>
           </div>
@@ -2311,6 +2324,20 @@
                 <div class="flex-1 min-w-0">
                   <div class="text-[11px] text-neutral-400 mb-1">URL</div>
                   <input id="srcWebUrl" type="url" autocomplete="off" placeholder="https://" class="src-field text-neutral-900">
+                </div>
+              </div>
+            </div>
+            <div data-src="ai" class="hidden">
+              <div class="text-[11px] text-neutral-400 mb-1">AI（複数選べます）</div>
+              <div id="srcAiChips" class="src-ai-chips"></div>
+              <div class="flex gap-2 mt-2.5">
+                <div class="flex-1 min-w-0">
+                  <div class="text-[11px] text-neutral-400 mb-1">バージョン（なくてもよい）</div>
+                  <input id="srcAiVersion" type="text" autocomplete="off" placeholder="例: Opus 5.5" class="src-field text-neutral-900">
+                </div>
+                <div class="w-32 shrink-0">
+                  <div class="text-[11px] text-neutral-400 mb-1">日付</div>
+                  <input id="srcAiDate" type="text" autocomplete="off" placeholder="2026.11.08" class="src-field text-neutral-900 font-mono">
                 </div>
               </div>
             </div>
@@ -2466,11 +2493,11 @@
       imageDisplay: 'm',           // 画像を入れたときの表示の大きさ：s / m / l
       imageScreenshotBoost: true,  // スクリーンショット（文字の多い画像）は、にじまないよう容量の上限を2倍に
       codeWrap: false,             // コードブロックを端で折り返す（最初の状態。ブロックごとに切り替えられる）
-      statusFilter: 'active',      // カードの状態の絞り込み：all（すべて）/ active（アーカイブ以外）/ permanent / project / fleeting / archive
+      statusFilter: 'active',      // カードの状態の絞り込み：all（すべて）/ active（アーカイブ以外）/ permanent / project / fleeting / reference / archive
       autoArchive: true,           // Fleeting を、最後の編集から一定の日数がたったら自動でアーカイブにする
       autoArchiveDays: 30,         // その日数
       groupByStatus: true,         // すべて・アクティブのとき、状態ごとに分けて並べる
-      statusColors: { permanent: 'none', project: 'none', fleeting: 'none', archive: 'gray' } // 状態の色：none / gray / blue ほか
+      statusColors: { permanent: 'none', project: 'none', fleeting: 'none', reference: 'none', archive: 'gray' } // 状態の色：none / gray / blue ほか
     };
 
     const INITIAL_CARDS = [
@@ -4038,8 +4065,9 @@
       const src = data.source;
       let source = null;
       if (src && typeof src === 'object' && !Array.isArray(src)) {
-        const type = ['book', 'web', 'other'].includes(src.type) ? src.type : (src.url ? 'web' : src.title ? 'book' : 'other');
-        source = type === 'book' ? { type, title: String(src.title || ''), author: String(src.author || ''), page: String(src.page || '') }
+        const type = ['book', 'web', 'ai', 'other'].includes(src.type) ? src.type : (src.url ? 'web' : src.title ? 'book' : 'other');
+        source = type === 'ai' ? { type, ais: [...new Set(mdAsList(src.ai).map(x => x.trim()).filter(Boolean))], version: String(src.version || ''), date: (() => { const d = mdParseDate(src.date); return d ? fmtDotDate(d) : String(src.date || ''); })() }
+          : type === 'book' ? { type, title: String(src.title || ''), author: String(src.author || ''), page: String(src.page || '') }
           : type === 'web' ? { type, title: String(src.title || ''), url: String(src.url || '') }
           : { type, text: String(src.text || src.title || '') };
       } else if (typeof src === 'string' && src.trim()) {
@@ -4244,9 +4272,10 @@
       permanent: { label: 'Permanent', desc: '長期で残す知識・アイデア', icon: '<path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/>' },
       project: { label: 'Project', desc: '期間や目的があるもの。終わったらArchiveへ', icon: '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/>' },
       fleeting: { label: 'Fleeting', desc: '一時的なメモ。処理したら消すか昇格', icon: '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/>' },
+      reference: { label: 'Reference', desc: '本・Web・AIの回答など、ほかから得た資料', icon: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>' },
       archive: { label: 'Archive', desc: 'もう使わないが、消さずに残すもの', icon: '<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>' }
     };
-    const STATUS_ORDER = ['permanent', 'project', 'fleeting', 'archive'];
+    const STATUS_ORDER = ['permanent', 'project', 'fleeting', 'reference', 'archive'];
     const PIN_ICON = '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>';
     function pinIconSvg(size = 15, filled = false) {
       return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PIN_ICON}</svg>`;
@@ -4260,7 +4289,7 @@
     function cardStatusNorm(v) {
       const k = String(v == null ? '' : v).trim().toLowerCase().replace(/[\s_-]*notes?$/, '');
       if (CARD_STATUS[k]) return k;
-      const alias = { floating: 'fleeting', fleet: 'fleeting', draft: 'fleeting', inbox: 'fleeting', seed: 'fleeting', evergreen: 'permanent', done: 'permanent', archived: 'archive', projects: 'project' };
+      const alias = { floating: 'fleeting', fleet: 'fleeting', draft: 'fleeting', inbox: 'fleeting', seed: 'fleeting', evergreen: 'permanent', done: 'permanent', archived: 'archive', projects: 'project', references: 'reference', literature: 'reference', resource: 'reference', resources: 'reference' };
       return alias[k] || null;
     }
 
@@ -4692,6 +4721,10 @@
           } else if (src.type === 'web') {
             if (src.title) fm.push(`  title: ${yamlStr(src.title)}`);
             if (src.url) fm.push(`  url: ${yamlStr(src.url)}`);
+          } else if (src.type === 'ai') {
+            fm.push(`  ai: ${yamlList(src.ais)}`);
+            if (src.version) fm.push(`  version: ${yamlStr(src.version)}`);
+            if (src.date) fm.push(`  date: ${src.date.replace(/\./g, '-')}`);
           } else {
             fm.push(`  text: ${yamlStr(src.text)}`);
           }
@@ -8398,7 +8431,7 @@
           status: this.statusFilterKey() === 'project' ? 'project' : 'fleeting' // Project を見ているときは Project として作る
         };
         this.cards.unshift(card);
-        // 新しいカードは Fleeting。Permanent・Archive だけを見ているときは「アクティブ」に戻す
+        // 新しいカードは Fleeting。Permanent・Reference・Archive だけを見ているときは「アクティブ」に戻す
         if (!['all', 'active', 'fleeting', 'project'].includes(this.statusFilterKey())) { this.config.statusFilter = 'active'; this.saveConfig(); this.renderToolbar(); }
         // 検索語で隠れないように、検索欄だけ空にする
         if (this.searchQuery) { this.searchQuery = ''; this.searchInput.value = ''; this.renderToolbar(); }
@@ -8933,7 +8966,7 @@
       }
 
       // ============================================================
-      // カードの状態（Permanent / Project / Fleeting / Archive）
+      // カードの状態（Permanent / Project / Fleeting / Reference / Archive）
       // ============================================================
       cardStatus(card) {
         return card && CARD_STATUS[card.status] ? card.status : 'permanent';
@@ -8949,7 +8982,7 @@
       matchStatus(card) {
         const st = this.cardStatus(card), k = this.statusFilterKey();
         if (k === 'all') return true;              // すべて：アーカイブも含む
-        if (k === 'active') return st !== 'archive'; // アクティブ：Permanent・Project・Fleeting
+        if (k === 'active') return st !== 'archive'; // アクティブ：Permanent・Project・Fleeting・Reference
         return st === k;
       }
 
@@ -9041,7 +9074,7 @@
         });
         window.addEventListener('keydown', (e) => {
           if (!this.isStatusMenuOpen() || e.metaKey || e.ctrlKey || e.altKey || e.isComposing) return;
-          const map = { p: 'permanent', j: 'project', f: 'fleeting', a: 'archive' };
+          const map = { p: 'permanent', j: 'project', f: 'fleeting', r: 'reference', a: 'archive' };
           const k = e.key.toLowerCase();
           if (map[k]) { e.preventDefault(); e.stopPropagation(); const id = this.statusMenuCardId; this.closeStatusMenu(); this.setCardsStatus([id], map[k]); }
           else if (k === 'escape') { e.preventDefault(); e.stopPropagation(); this.closeStatusMenu(); }
@@ -9065,14 +9098,15 @@
       }
 
       statusFilterInfo() {
-        const cnt = { permanent: 0, project: 0, fleeting: 0, archive: 0 };
+        const cnt = { permanent: 0, project: 0, fleeting: 0, reference: 0, archive: 0 };
         this.getAreaCards().forEach(c => { cnt[this.cardStatus(c)]++; });
         return {
-          all: { label: 'すべて', sub: 'アーカイブも含む', n: cnt.permanent + cnt.project + cnt.fleeting + cnt.archive },
-          active: { label: 'アクティブ', sub: 'アーカイブ以外', n: cnt.permanent + cnt.project + cnt.fleeting },
+          all: { label: 'すべて', sub: 'アーカイブも含む', n: cnt.permanent + cnt.project + cnt.fleeting + cnt.reference + cnt.archive },
+          active: { label: 'アクティブ', sub: 'アーカイブ以外', n: cnt.permanent + cnt.project + cnt.fleeting + cnt.reference },
           permanent: { label: CARD_STATUS.permanent.label, n: cnt.permanent },
           project: { label: CARD_STATUS.project.label, n: cnt.project },
           fleeting: { label: CARD_STATUS.fleeting.label, n: cnt.fleeting },
+          reference: { label: CARD_STATUS.reference.label, n: cnt.reference },
           archive: { label: CARD_STATUS.archive.label, n: cnt.archive }
         };
       }
@@ -9170,7 +9204,7 @@
         const card = this.cards.find(c => c.id === cardId);
         if (!card) return;
         const cur = this.cardStatus(card);
-        const keys = { permanent: 'P', project: 'J', fleeting: 'F', archive: 'A' };
+        const keys = { permanent: 'P', project: 'J', fleeting: 'F', reference: 'R', archive: 'A' };
         this.statusMenuCardId = cardId;
         this.statusMenuAnchor = anchor;
         this.statusMenu.innerHTML = STATUS_ORDER.map(st => `
@@ -9331,7 +9365,7 @@
         const gOn = this.config.groupByStatus !== false;
         const gWorks = ['all', 'active'].includes(this.statusFilterKey()) && !this.sourceFilter;
         html += `<div class="am-sep"></div><button type="button" class="am-switch${gWorks ? '' : ' is-dim'}" data-group="1" role="switch" aria-checked="${gOn}">
-          <span>状態ごとに分ける<small>${gWorks ? 'Permanent → Project → Fleeting → Archive の順に' : '「すべて」「アクティブ」のときに効きます'}</small></span><span class="tsw${gOn ? ' on' : ''}"></span></button>`;
+          <span>状態ごとに分ける<small>${gWorks ? 'Permanent → Project → Fleeting → Reference → Archive の順に' : '「すべて」「アクティブ」のときに効きます'}</small></span><span class="tsw${gOn ? ' on' : ''}"></span></button>`;
         if (this.sourceFilter) html += '<div class="am-sep"></div><div class="px-2.5 py-1 text-[11px] text-neutral-400">引用元で絞り込み中は、ページ順に並びます</div>';
         this.sortMenu.innerHTML = html;
         this.sortMenu.querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => this.setSortOrder(b.dataset.sort)));
@@ -10879,6 +10913,7 @@
         if (src.type === 'book') return !!(src.title || '').trim();
         if (src.type === 'web') return !!((src.title || '').trim() || (src.url || '').trim());
         if (src.type === 'other') return !!(src.text || '').trim();
+        if (src.type === 'ai') return Array.isArray(src.ais) && src.ais.some(x => String(x || '').trim());
         return false;
       }
 
@@ -10887,6 +10922,7 @@
         if (!this.hasSource(src)) return null;
         if (src.type === 'book') return 'book:' + src.title.trim().toLowerCase();
         if (src.type === 'web') return 'web:' + (this.webHost(src.url) || (src.title || '').trim().toLowerCase());
+        if (src.type === 'ai') return 'ai'; // AI のカードは、どのAIでもまとめて集める
         return 'other:' + src.text.trim().toLowerCase();
       }
 
@@ -10894,12 +10930,18 @@
         if (!this.hasSource(src)) return '';
         if (src.type === 'book') return src.title.trim();
         if (src.type === 'web') return this.webHost(src.url) || src.title.trim();
+        if (src.type === 'ai') return this.aiNames(src);
         return src.text.trim();
       }
 
       sourceSearchText(src) {
         if (!this.hasSource(src)) return '';
-        return [src.title, src.author, src.url, src.text].filter(Boolean).join(' ').toLowerCase();
+        return [src.title, src.author, src.url, src.text, ...(src.ais || []), src.version].filter(Boolean).join(' ').toLowerCase();
+      }
+
+      // 「Claude・Gemini」
+      aiNames(src) {
+        return (src.ais || []).map(x => String(x || '').trim()).filter(Boolean).join('・');
       }
 
       webHost(url) {
@@ -10921,12 +10963,17 @@
           return `（${src.title.trim()}${pg ? '、' + pg : ''}）`;
         }
         if (src.type === 'web') return `（${[(src.title || '').trim(), (src.url || '').trim()].filter(Boolean).join(' ')}）`;
+        if (src.type === 'ai') {
+          const who = this.aiNames(src) + ((src.version || '').trim() ? ' ' + src.version.trim() : '');
+          return `（${who}${(src.date || '').trim() ? '、' + src.date.trim() : ''}）`;
+        }
         return `（${src.text.trim()}）`;
       }
 
       sourceIconSvg(type, size) {
         const paths = {
           book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+          ai: '<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/>',
           web: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',
           other: '<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>'
         };
@@ -10948,6 +10995,10 @@
           const host = this.webHost(src.url);
           inner = `<span class="src-main truncate">${esc(src.title || host)}</span>`
             + (host && src.title && !isMini ? `<span class="src-sub truncate">${esc(host)}</span>` : '');
+        } else if (t === 'ai') {
+          inner = `<span class="src-main truncate">${esc(this.aiNames(src))}</span>`
+            + (src.version && !isMini ? `<span class="src-sub truncate">${esc(src.version)}</span>` : '')
+            + (src.date ? `<span class="src-page shrink-0">${esc(src.date)}</span>` : '');
         } else {
           inner = `<span class="src-main truncate">${esc(src.text)}</span>`;
         }
@@ -10964,7 +11015,7 @@
           window.open(src.url, '_blank', 'noopener');
           return;
         }
-        this.sourceFilter = { key: this.sourceKey(src), label: this.sourceLabel(src), type: src.type };
+        this.sourceFilter = { key: this.sourceKey(src), label: src.type === 'ai' ? 'AI' : this.sourceLabel(src), type: src.type };
         this.currentIndex = 0;
         if (this.currentView === 'link') this.switchView('grid', { animate: false });
         else this.renderAll();
@@ -10981,6 +11032,25 @@
         this.srcWebTitle = document.getElementById('srcWebTitle');
         this.srcWebUrl = document.getElementById('srcWebUrl');
         this.srcOtherText = document.getElementById('srcOtherText');
+        this.srcAiChips = document.getElementById('srcAiChips');
+        this.srcAiVersion = document.getElementById('srcAiVersion');
+        this.srcAiDate = document.getElementById('srcAiDate');
+        this.srcAiNames = [];
+        this.srcAiChips.addEventListener('click', (e) => {
+          const b = e.target.closest('[data-ai]');
+          if (!b) return;
+          const n = b.dataset.ai;
+          this.srcAiNames = this.srcAiNames.includes(n) ? this.srcAiNames.filter(x => x !== n) : [...this.srcAiNames, n];
+          this.renderAiChips();
+        });
+        this.srcAiChips.addEventListener('keydown', (e) => {
+          const inp = e.target.closest('.src-ai-add');
+          if (!inp || e.isComposing || e.key !== 'Enter') return;
+          e.preventDefault();
+          const n = inp.value.replace(/\s+/g, ' ').trim();
+          if (n && !this.srcAiNames.some(x => x.toLowerCase() === n.toLowerCase())) this.srcAiNames = [...this.srcAiNames, n];
+          this.renderAiChips(true);
+        });
 
         this.srcTypeSeg.addEventListener('click', (e) => {
           const b = e.target.closest('[data-type]');
@@ -11016,6 +11086,7 @@
         this.srcBox.classList.toggle('hidden', type === 'none');
         this.srcBox.querySelectorAll('[data-src]').forEach(el => el.classList.toggle('hidden', el.dataset.src !== type));
         if (focus) {
+          if (type === 'ai' && !this.srcAiDate.value.trim()) this.srcAiDate.value = fmtDotDate(new Date());
           const first = { book: this.srcBookTitle, web: this.srcWebTitle, other: this.srcOtherText }[type];
           if (first) setTimeout(() => first.focus(), 20);
         }
@@ -11029,6 +11100,10 @@
         this.srcWebTitle.value = s.type === 'web' ? (s.title || '') : '';
         this.srcWebUrl.value = s.type === 'web' ? (s.url || '') : '';
         this.srcOtherText.value = s.type === 'other' ? (s.text || '') : '';
+        this.srcAiNames = s.type === 'ai' ? [...(s.ais || [])] : [];
+        this.srcAiVersion.value = s.type === 'ai' ? (s.version || '') : '';
+        this.srcAiDate.value = s.type === 'ai' ? (s.date || '') : '';
+        this.renderAiChips();
         this.srcBookAc.classList.add('hidden');
         this.setSourceType(this.hasSource(src) ? src.type : 'none');
       }
@@ -11043,7 +11118,26 @@
           src = { type: 'web', title: this.srcWebTitle.value.trim(), url };
         }
         if (t === 'other') src = { type: 'other', text: this.srcOtherText.value.trim() };
+        if (t === 'ai') {
+          // 欄に書いたまま Enter を押していない名前も、選んだものとして扱う
+          const pending = this.srcAiChips.querySelector('.src-ai-add');
+          const extra = pending && pending.value.trim();
+          const ais = [...this.srcAiNames];
+          if (extra && !ais.some(x => x.toLowerCase() === extra.toLowerCase())) ais.push(extra);
+          src = { type: 'ai', ais, version: this.srcAiVersion.value.trim(), date: this.srcAiDate.value.trim() };
+        }
         return this.hasSource(src) ? src : null;
+      }
+
+      // AI の札：よく使う4つと、これまでに使った名前と、いま選んでいる名前
+      renderAiChips(focusAdd = false) {
+        const names = ['Claude', 'ChatGPT', 'Gemini', 'Grok'];
+        const add = (n) => { if (n && !names.some(x => x.toLowerCase() === n.toLowerCase())) names.push(n); };
+        this.cards.forEach(c => { if (c.source && c.source.type === 'ai') (c.source.ais || []).forEach(add); });
+        this.srcAiNames.forEach(add);
+        this.srcAiChips.innerHTML = names.map(n => `<button type="button" class="src-ai-chip${this.srcAiNames.includes(n) ? ' is-on' : ''}" data-ai="${rtEscape(n)}" aria-pressed="${this.srcAiNames.includes(n)}">${this.escapeHtml(n)}</button>`).join('')
+          + '<input type="text" class="src-ai-add" autocomplete="off" spellcheck="false" placeholder="＋ ほかのAI" aria-label="ほかのAIの名前（Enterで追加）">';
+        if (focusAdd) this.srcAiChips.querySelector('.src-ai-add').focus();
       }
 
       // これまでに使った本（書名ごとに1冊、枚数付き）
