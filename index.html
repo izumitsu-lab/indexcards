@@ -1362,7 +1362,7 @@
     }
 
     /* 表示の切り替えが3つになった分、狭い画面ではヘッダーの文字を省く */
-    @media (max-width: 960px) { #listModeBtn span, #gridModeBtn span { display: none; } }
+    @media (max-width: 960px) { #listModeBtn span, #gridModeBtn span, #graphModeBtn span { display: none; } }
     @media (max-width: 900px) { #addCardQuickBtn span, #statusBtnName, #areaBtnName { display: none; } }
     @media (max-width: 720px) { header { gap: 4px !important; padding-left: 8px !important; padding-right: 8px !important; } #searchKbd { display: none; } #statusBtnCount { display: none; } }
 
@@ -1649,6 +1649,77 @@
     }
     #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+    /* ===== つながり（カードを点、リンクを線にした図） ===== */
+    :root { --gv-canvas: #F6F6F8; --gv-edge: rgba(60, 60, 80, 0.22); --gv-accent: #007AFF; --gv-label: #3A3A3C;
+      --gv-permanent: #5856D6; --gv-project: #0F8A7D; --gv-fleeting: #E08600; --gv-reference: #9A7A50; --gv-archive: #A1A1A6; }
+    .dark { --gv-canvas: #141417; --gv-edge: rgba(220, 220, 240, 0.2); --gv-accent: #4DA3FF; --gv-label: #E5E5EA;
+      --gv-permanent: #8E8CFF; --gv-project: #3DD6C3; --gv-fleeting: #FFB340; --gv-reference: #D4B98F; --gv-archive: #8E8E93; }
+    #graphViewContainer:not(.hidden) { display: flex; }
+    .gv-stage { position: relative; flex: 1; min-width: 0; background: var(--gv-canvas); }
+    #gvCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+    #gvCanvas.is-dragging { cursor: grabbing; }
+    #gvCanvas.on-node { cursor: pointer; }
+    .gv-tools { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; pointer-events: none; }
+    .gv-tools > * { pointer-events: auto; }
+    .gv-seg { display: inline-flex; padding: 2px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 14px -6px rgba(0, 0, 0, 0.18); }
+    .dark .gv-seg { background: #1C1C1F; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+    .gv-seg button { height: 30px; padding: 0 12px; border-radius: 8px; font-size: 12.5px; font-weight: 500; color: #6E6E73; }
+    .dark .gv-seg button { color: #A1A1A6; }
+    .gv-seg button.on { background: rgba(0, 122, 255, 0.12); color: #007AFF; font-weight: 700; }
+    .dark .gv-seg button.on { background: rgba(77, 163, 255, 0.18); color: #4DA3FF; }
+    .gv-chk { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); font-size: 12.5px; color: #1D1D1F; cursor: pointer; user-select: none; }
+    .dark .gv-chk { background: #1C1C1F; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); color: #F5F5F7; }
+    .gv-chk input { accent-color: #007AFF; }
+    .gv-legend { position: absolute; left: 12px; bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 80px); pointer-events: none; }
+    .gv-legend span { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 8px; border-radius: 13px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); font-size: 11.5px; font-weight: 600; color: #1D1D1F; }
+    .dark .gv-legend span { background: #1C1C1F; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); color: #F5F5F7; }
+    .gv-legend i { width: 9px; height: 9px; border-radius: 50%; }
+    .gv-legend em { font-style: normal; font-weight: 500; color: #8E8E93; font-variant-numeric: tabular-nums; }
+    .gv-zoom { position: absolute; right: 12px; bottom: 12px; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 14px -6px rgba(0, 0, 0, 0.18); }
+    .dark .gv-zoom { background: #1C1C1F; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+    .gv-zoom button { width: 38px; height: 38px; display: grid; place-items: center; color: #3A3A3C; }
+    .dark .gv-zoom button { color: #E5E5EA; }
+    .gv-zoom button + button { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    .dark .gv-zoom button + button { border-top-color: rgba(255, 255, 255, 0.1); }
+    .gv-zoom button:hover { background: rgba(0, 122, 255, 0.1); color: #007AFF; }
+    .gv-panel { flex: none; width: 320px; overflow-y: auto; padding: 20px 20px 28px; display: flex; flex-direction: column; gap: 14px; background: #fff; border-left: 1px solid rgba(0, 0, 0, 0.08); color: #1D1D1F; }
+    .dark .gv-panel { background: #1C1C1F; border-left-color: rgba(255, 255, 255, 0.08); color: #F5F5F7; }
+    .gv-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #8E8E93; }
+    .gv-title { font-size: 19px; font-weight: 800; line-height: 1.38; text-wrap: balance; overflow-wrap: anywhere; }
+    .gv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .gv-tags span { font-size: 11.5px; color: #007AFF; background: rgba(0, 122, 255, 0.08); border-radius: 10px; padding: 2px 9px; }
+    .dark .gv-tags span { color: #4DA3FF; background: rgba(77, 163, 255, 0.14); }
+    .gv-body { font-size: 13.5px; line-height: 1.75; color: #3A3A3C; overflow-wrap: anywhere; }
+    .dark .gv-body { color: #D4D4D8; }
+    .gv-muted { font-size: 12.5px; line-height: 1.6; color: #8E8E93; }
+    .gv-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .gv-btn { height: 32px; padding: 0 13px; border-radius: 9px; font-size: 12.5px; font-weight: 700; background: #007AFF; color: #fff; }
+    .gv-btn:hover { background: #0A6CE0; }
+    .gv-btn.ghost { background: rgba(0, 122, 255, 0.1); color: #007AFF; }
+    .dark .gv-btn.ghost { background: rgba(77, 163, 255, 0.16); color: #4DA3FF; }
+    .gv-links { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); }
+    .dark .gv-links { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+    .gv-links button { display: flex; align-items: center; gap: 9px; padding: 9px 12px; text-align: left; font-size: 13px; color: inherit; }
+    .gv-links button + button { border-top: 1px solid rgba(0, 0, 0, 0.07); }
+    .dark .gv-links button + button { border-top-color: rgba(255, 255, 255, 0.08); }
+    .gv-links button:hover { background: rgba(0, 122, 255, 0.08); }
+    .gv-links i { flex: none; width: 9px; height: 9px; border-radius: 50%; }
+    .gv-links span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gv-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .gv-stats div { border-radius: 12px; padding: 10px 12px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08); }
+    .dark .gv-stats div { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+    .gv-stats b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+    .gv-stats span { font-size: 11px; color: #8E8E93; }
+    .gv-how { display: grid; gap: 8px; font-size: 12.5px; line-height: 1.55; }
+    .gv-how div { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+    .gv-how kbd { font: 600 11px ui-monospace, "SF Mono", Menlo, monospace; color: #8E8E93; }
+    @media (max-width: 760px) {
+      #graphViewContainer:not(.hidden) { flex-direction: column; }
+      .gv-panel { width: auto; height: 38%; border-left: 0; border-top: 1px solid rgba(0, 0, 0, 0.08); padding: 14px 16px 20px; }
+      .dark .gv-panel { border-top-color: rgba(255, 255, 255, 0.08); }
+      .gv-chk { display: none; }
+    }
+
     /* ===== iPhone（幅 640px 未満）だけの画面の作り。Mac では何も出ない ===== */
     #mHead, #mNav, #mBar { display: none; }
     .m-lbl { display: none; }
@@ -1880,6 +1951,9 @@
       <button id="gridModeBtn" class="tb-seg-btn" title="ギャラリービュー">
         <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">ギャラリー</span>
       </button>
+      <button id="graphModeBtn" class="tb-seg-btn" title="つながり（カードとリンクを点と線で見る）">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="6" r="2.5"/><circle cx="18" cy="5" r="2.5"/><circle cx="12" cy="18" r="2.5"/><circle cx="19" cy="15" r="1.8"/><path d="m7.3 7.2 3.6 8.6"/><path d="M7.4 5.8 15.5 5.2"/><path d="m17.2 7.4-3.9 8.4"/><path d="m14.5 17.3 2.9-1.4"/></svg><span class="hidden sm:inline">つながり</span>
+      </button>
     </div>
 
     <!-- カードを裏返す（このアプリの肝なので、いつも上に）。触れると裏面のリンクを予告する -->
@@ -2026,6 +2100,24 @@
         </div>
       </div>
 
+      <!-- つながり：カードを点、リンクを線にして、ぐりぐり動かせる図 -->
+      <div id="graphViewContainer" class="absolute inset-0 hidden">
+        <div id="gvStage" class="gv-stage">
+          <canvas id="gvCanvas" aria-label="カードのつながりの図"></canvas>
+          <div class="gv-tools">
+            <div class="gv-seg" role="group" aria-label="表示する範囲"><button type="button" data-gmode="all" class="on">全体</button><button type="button" data-gmode="local">選んだカードのまわり</button></div>
+            <label class="gv-chk"><input id="gvOrphans" type="checkbox" checked>つながっていないカードも出す</label>
+          </div>
+          <div id="gvLegend" class="gv-legend" aria-label="点の色（カードの状態）"></div>
+          <div class="gv-zoom">
+            <button type="button" data-gz="in" aria-label="拡大"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button type="button" data-gz="out" aria-label="縮小"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+            <button type="button" data-gz="fit" aria-label="全体が入るように表示"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+          </div>
+        </div>
+        <aside id="gvPanel" class="gv-panel" aria-label="選んだカード"></aside>
+      </div>
+
       <!-- 一覧の行を右側へドラッグしているときの案内 -->
       <div id="linkDropHint" aria-hidden="true"><span id="linkDropHintText"></span></div>
 
@@ -2040,7 +2132,7 @@
 
   <!-- iPhone だけ：下の帯 -->
   <div id="mBar">
-    <div class="mb-seg" role="group" aria-label="表示"><button type="button" data-mview="single">リスト</button><button type="button" data-mview="grid">ギャラリー</button></div>
+    <div class="mb-seg" role="group" aria-label="表示"><button type="button" data-mview="single">リスト</button><button type="button" data-mview="grid">ギャラリー</button><button type="button" data-mview="graph">つながり</button></div>
     <span id="mBarCount" class="mb-count"></span>
     <button type="button" id="mComposeBtn" aria-label="新規カード"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></button>
   </div>
@@ -4612,9 +4704,10 @@
         this.applyListLayout();
         this.applyTypeScale();
         this.runAutoArchive({ render: false });
-        if (this.loadLastView() === 'grid') {
+        const lastView = this.loadLastView();
+        if (lastView === 'grid' || lastView === 'graph') {
           this.renderToolbar();
-          this.switchView('grid', { animate: false, instant: true });
+          this.switchView(lastView, { animate: false, instant: true });
         } else {
           this.renderAll();
         }
@@ -5575,6 +5668,8 @@
         });
         this.updateWideToggle();
         this.gridModeBtn.addEventListener('click', () => this.switchView('grid'));
+        this.graphModeBtn = document.getElementById('graphModeBtn');
+        this.graphModeBtn.addEventListener('click', () => this.switchView('graph'));
         this.bindListView();
         this.bindFlipFab();
         this.bindLinkPicker();
@@ -5671,7 +5766,7 @@
             return;
           }
           // L：カードを裏返す（カードビュー ⇄ リンクビュー）
-          if (!mod && !e.altKey && (e.key === 'l' || e.key === 'L') && this.currentView !== 'grid') {
+          if (!mod && !e.altKey && (e.key === 'l' || e.key === 'L') && this.currentView !== 'grid' && this.currentView !== 'graph') {
             e.preventDefault();
             if (this.currentView === 'link') this.flipBack(); else this.switchView('link');
             return;
@@ -9330,6 +9425,385 @@
       }
 
 
+      // ============================================================
+      // つながり：カードを点、リンクを線にして並べる。点どうしは反発し、リンクはばねのように引き合う（力学モデル）
+      // 表示するカードは、今のエリア・状態・タグ・検索の絞り込みに従う
+      // ============================================================
+      gvInit() {
+        if (this.gv) return this.gv;
+        const g = this.gv = {
+          nodes: [], byId: new Map(), links: [], vis: new Set(), pos: new Map(),
+          cam: { x: 0, y: 0, k: 1 }, alpha: 1, mode: 'all', selected: null, hover: null, orphans: true,
+          W: 0, H: 0, dirty: true, running: false, camAnim: null, drag: null, key: ''
+        };
+        g.cv = document.getElementById('gvCanvas');
+        g.ctx = g.cv.getContext('2d');
+        g.stage = document.getElementById('gvStage');
+        g.panel = document.getElementById('gvPanel');
+        const cv = g.cv;
+        const local = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+        cv.addEventListener('pointerdown', (e) => {
+          cv.setPointerCapture(e.pointerId);
+          const [sx, sy] = local(e);
+          const n = this.gvHit(sx, sy);
+          g.drag = { n, sx, sy, cx: g.cam.x, cy: g.cam.y, moved: false };
+          if (n) { n.fixed = true; this.gvReheat(0.4); }
+          cv.classList.add('is-dragging');
+        });
+        cv.addEventListener('pointermove', (e) => {
+          const [sx, sy] = local(e);
+          const d = g.drag;
+          if (d) {
+            if (Math.hypot(sx - d.sx, sy - d.sy) > 3) d.moved = true;
+            if (d.n) { const [wx, wy] = this.gvToWorld(sx, sy); d.n.x = wx; d.n.y = wy; this.gvReheat(0.3); }
+            else { g.cam.x = d.cx - (sx - d.sx) / g.cam.k; g.cam.y = d.cy - (sy - d.sy) / g.cam.k; }
+            g.dirty = true;
+            return;
+          }
+          const n = this.gvHit(sx, sy);
+          if (n !== g.hover) {
+            g.hover = n;
+            cv.classList.toggle('on-node', !!n);
+            g.dirty = true;
+            if (!g.selected) this.gvRenderPanel();
+          }
+        });
+        const end = () => {
+          const d = g.drag;
+          if (!d) return;
+          if (d.n) d.n.fixed = false;
+          if (!d.moved) this.gvSelect(d.n ? d.n.id : null);
+          g.drag = null;
+          cv.classList.remove('is-dragging');
+        };
+        cv.addEventListener('pointerup', end);
+        cv.addEventListener('pointercancel', end);
+        cv.addEventListener('pointerleave', () => {
+          if (g.drag || !g.hover) return;
+          g.hover = null; cv.classList.remove('on-node'); g.dirty = true;
+          if (!g.selected) this.gvRenderPanel();
+        });
+        cv.addEventListener('dblclick', (e) => {
+          const [sx, sy] = local(e);
+          const n = this.gvHit(sx, sy);
+          if (n) { this.gvSelect(n.id); this.gvSetMode('local'); }
+        });
+        cv.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const [sx, sy] = local(e);
+          const [wx, wy] = this.gvToWorld(sx, sy);
+          g.cam.k = Math.min(4, Math.max(0.2, g.cam.k * Math.exp(-e.deltaY * 0.0015)));
+          const [wx2, wy2] = this.gvToWorld(sx, sy);
+          g.cam.x += wx - wx2; g.cam.y += wy - wy2;
+          g.dirty = true;
+        }, { passive: false });
+        document.querySelectorAll('#graphViewContainer [data-gmode]').forEach(b => b.addEventListener('click', () => this.gvSetMode(b.dataset.gmode)));
+        document.getElementById('gvOrphans').addEventListener('change', (e) => { g.orphans = e.target.checked; this.gvUpdateVisible(); this.gvReheat(0.5); setTimeout(() => this.gvFit(), 350); this.gvRenderPanel(); });
+        document.querySelectorAll('#graphViewContainer [data-gz]').forEach(b => b.addEventListener('click', () => {
+          const z = b.dataset.gz;
+          if (z === 'fit') this.gvFit();
+          else this.gvMoveCam(g.cam.x, g.cam.y, Math.min(4, Math.max(0.2, g.cam.k * (z === 'in' ? 1.35 : 1 / 1.35))));
+        }));
+        g.panel.addEventListener('click', (e) => {
+          const go = e.target.closest('[data-go]');
+          if (go) {
+            this.gvSelect(go.dataset.go);
+            const n = g.byId.get(go.dataset.go);
+            if (n && g.mode === 'all') this.gvMoveCam(n.x, n.y, Math.max(g.cam.k, 1.2));
+            return;
+          }
+          const a = e.target.closest('[data-gact]');
+          if (!a || !g.selected) return;
+          const id = g.selected;
+          if (a.dataset.gact === 'open') this.openInCardView(id);
+          else if (a.dataset.gact === 'back') this.openBack(id);
+          else this.gvSetMode(a.dataset.gact);
+        });
+        new ResizeObserver(() => { if (this.currentView === 'graph') { this.gvResize(); g.dirty = true; } }).observe(g.stage);
+        new MutationObserver(() => { g.dirty = true; }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return g;
+      }
+
+      renderGraphView() {
+        const g = this.gvInit();
+        const cards = this.getFilteredCards();
+        const ids = new Set(cards.map(c => c.id));
+        // 前に置いた場所は覚えておき、描き直しても並びが崩れないようにする
+        g.nodes.forEach(n => g.pos.set(n.id, { x: n.x, y: n.y }));
+        const byId = new Map();
+        const nodes = cards.map((c, i) => {
+          const p = g.pos.get(c.id);
+          const ang = i * 2.399963, r = 40 + Math.sqrt(i) * 38;
+          const n = { id: c.id, card: c, x: p ? p.x : Math.cos(ang) * r, y: p ? p.y : Math.sin(ang) * r, vx: 0, vy: 0, nb: new Set(), fresh: !p };
+          byId.set(c.id, n);
+          return n;
+        });
+        const links = [];
+        nodes.forEach(n => (n.card.links || []).forEach(id => {
+          if (!ids.has(id) || id === n.id) return;
+          const m = byId.get(id);
+          n.nb.add(id); m.nb.add(n.id);
+          if (n.id < id) links.push([n.id, id]);
+        }));
+        // 新しく出てきた点は、つながっている点のそばに置く
+        nodes.forEach(n => {
+          if (!n.fresh) return;
+          const near = [...n.nb].map(id => byId.get(id)).find(m => !m.fresh);
+          if (near) { n.x = near.x + (Math.random() - 0.5) * 60; n.y = near.y + (Math.random() - 0.5) * 60; }
+        });
+        nodes.forEach(n => { n.r = 6 + Math.min(10, n.nb.size * 1.6); });
+        const key = nodes.map(n => n.id).join(',') + '|' + links.length;
+        const changed = key !== g.key;
+        g.nodes = nodes; g.byId = byId; g.links = links; g.key = key;
+        if (g.selected && !byId.has(g.selected)) g.selected = null;
+        if (g.hover && !byId.has(g.hover.id)) g.hover = null;
+        else if (g.hover) g.hover = byId.get(g.hover.id);
+        if (g.mode === 'local' && !g.selected) this.gvSetMode('all', { quiet: true });
+        this.gvUpdateVisible();
+        this.gvResize();
+        if (changed) {
+          // はじめから落ち着いた形で見えるよう、先に計算を進めておく
+          const firstTime = !g.everShown;
+          g.alpha = 1;
+          for (let i = 0; i < (firstTime ? 260 : 120); i++) this.gvTick();
+          g.alpha = 0.06;
+          if (firstTime || nodes.some(n => n.fresh)) this.gvFit(false);
+          g.everShown = true;
+        }
+        this.gvRenderLegend();
+        this.gvRenderPanel();
+        g.dirty = true;
+        this.updatePaginationAndCounter(nodes.length);
+        if (!g.running) {
+          g.running = true;
+          const step = (now) => {
+            if (this.currentView !== 'graph') { g.running = false; return; }
+            if (g.camAnim) { g.camAnim(now); g.dirty = true; }
+            if (g.alpha > 0.021) { this.gvTick(); g.dirty = true; }
+            if (g.dirty) { this.gvDraw(); g.dirty = false; }
+            requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      }
+
+      // 表示する点：つながっていないカード、選んだカードのまわり（2つ先まで）
+      gvUpdateVisible() {
+        const g = this.gv;
+        let list = g.nodes.filter(n => g.orphans || n.nb.size);
+        if (g.mode === 'local' && g.selected) {
+          const keep = new Set([g.selected]);
+          let front = [g.selected];
+          for (let d = 0; d < 2; d++) {
+            const next = [];
+            front.forEach(id => g.byId.get(id).nb.forEach(m => { if (!keep.has(m)) { keep.add(m); next.push(m); } }));
+            front = next;
+          }
+          list = list.filter(n => keep.has(n.id));
+        }
+        g.vis = new Set(list.map(n => n.id));
+        g.dirty = true;
+      }
+
+      gvTick() {
+        const g = this.gv;
+        const nodes = g.nodes.filter(n => g.vis.has(n.id));
+        const a = g.alpha;
+        for (let i = 0; i < nodes.length; i++) {
+          const p = nodes[i];
+          for (let j = i + 1; j < nodes.length; j++) {
+            const q = nodes[j];
+            let dx = q.x - p.x, dy = q.y - p.y;
+            const d2 = dx * dx + dy * dy || 0.01;
+            if (d2 > 250000) continue; // 遠く離れた点どうしは計算しない（カードが多いときも軽く）
+            const d = Math.sqrt(d2), f = 4600 / d2 * a;
+            dx /= d; dy /= d;
+            p.vx -= dx * f; p.vy -= dy * f; q.vx += dx * f; q.vy += dy * f;
+          }
+        }
+        g.links.forEach(([ia, ib]) => {
+          if (!g.vis.has(ia) || !g.vis.has(ib)) return;
+          const p = g.byId.get(ia), q = g.byId.get(ib);
+          const dx = q.x - p.x, dy = q.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 0.01;
+          const f = (d - 125) * 0.035 * a;
+          p.vx += dx / d * f; p.vy += dy / d * f; q.vx -= dx / d * f; q.vy -= dy / d * f;
+        });
+        nodes.forEach(n => {
+          n.vx -= n.x * 0.012 * a; n.vy -= n.y * 0.012 * a;
+          if (n.fixed) { n.vx = n.vy = 0; return; }
+          n.vx *= 0.82; n.vy *= 0.82;
+          n.x += n.vx; n.y += n.vy;
+        });
+        g.alpha = Math.max(g.alpha * 0.985, 0.02);
+      }
+
+      gvReheat(a = 0.6) { this.gv.alpha = Math.max(this.gv.alpha, a); }
+      gvToScreen(x, y) { const g = this.gv; return [g.W / 2 + (x - g.cam.x) * g.cam.k, g.H / 2 + (y - g.cam.y) * g.cam.k]; }
+      gvToWorld(sx, sy) { const g = this.gv; return [(sx - g.W / 2) / g.cam.k + g.cam.x, (sy - g.H / 2) / g.cam.k + g.cam.y]; }
+
+      gvHit(sx, sy) {
+        const g = this.gv;
+        const [wx, wy] = this.gvToWorld(sx, sy);
+        let best = null, bd = Infinity;
+        g.nodes.forEach(n => {
+          if (!g.vis.has(n.id)) return;
+          const d = Math.hypot(n.x - wx, n.y - wy);
+          if (d < n.r + 8 / g.cam.k && d < bd) { bd = d; best = n; }
+        });
+        return best;
+      }
+
+      gvResize() {
+        const g = this.gv;
+        const r = g.stage.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+        g.W = r.width; g.H = r.height;
+        g.cv.width = Math.max(1, Math.round(g.W * dpr)); g.cv.height = Math.max(1, Math.round(g.H * dpr));
+        g.dirty = true;
+      }
+
+      gvFit(animate = true) {
+        const g = this.gv;
+        const nodes = g.nodes.filter(n => g.vis.has(n.id));
+        if (!nodes.length || !g.W) return;
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        nodes.forEach(n => { x0 = Math.min(x0, n.x); y0 = Math.min(y0, n.y); x1 = Math.max(x1, n.x); y1 = Math.max(y1, n.y); });
+        const k = Math.min(1.5, (g.W - 80) / Math.max(1, x1 - x0 + 120), (g.H - 110) / Math.max(1, y1 - y0 + 90));
+        this.gvMoveCam((x0 + x1) / 2, (y0 + y1) / 2, Math.max(0.2, k), animate);
+      }
+
+      gvMoveCam(x, y, k, animate = true) {
+        const g = this.gv;
+        if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { Object.assign(g.cam, { x, y, k }); g.dirty = true; return; }
+        const from = { ...g.cam }, t0 = performance.now();
+        g.camAnim = (now) => {
+          const t = Math.min(1, (now - t0) / 380), e = 1 - Math.pow(1 - t, 3);
+          g.cam.x = from.x + (x - from.x) * e; g.cam.y = from.y + (y - from.y) * e; g.cam.k = from.k + (k - from.k) * e;
+          if (t >= 1) g.camAnim = null;
+        };
+      }
+
+      gvDraw() {
+        const g = this.gv, ctx = g.ctx;
+        const s = getComputedStyle(document.documentElement);
+        const v = (name) => s.getPropertyValue(name).trim();
+        const bg = v('--gv-canvas'), edge = v('--gv-edge'), accent = v('--gv-accent'), label = v('--gv-label');
+        const dpr = window.devicePixelRatio || 1;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, g.W, g.H);
+        const focus = g.hover || (g.selected && g.byId.get(g.selected)) || null;
+        const lit = focus ? new Set([focus.id, ...focus.nb]) : null;
+        // 線
+        g.links.forEach(([ia, ib]) => {
+          if (!g.vis.has(ia) || !g.vis.has(ib)) return;
+          const p = g.byId.get(ia), q = g.byId.get(ib);
+          const on = focus && (ia === focus.id || ib === focus.id);
+          const [ax, ay] = this.gvToScreen(p.x, p.y), [bx, by] = this.gvToScreen(q.x, q.y);
+          ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+          ctx.strokeStyle = on ? accent : edge;
+          ctx.globalAlpha = focus && !on ? 0.35 : 1;
+          ctx.lineWidth = on ? 2 : 1.2;
+          ctx.stroke();
+        });
+        // 点：色は状態、大きさはリンクの数。中が抜けた点はどこにもつながっていないカード
+        const sk = Math.sqrt(g.cam.k);
+        g.nodes.forEach(n => {
+          if (!g.vis.has(n.id)) return;
+          const [x, y] = this.gvToScreen(n.x, n.y), r = n.r * sk;
+          ctx.globalAlpha = lit && !lit.has(n.id) ? 0.18 : 1;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fillStyle = v('--gv-' + this.cardStatus(n.card)); ctx.fill();
+          if (!n.nb.size) { ctx.beginPath(); ctx.arc(x, y, r * 0.45, 0, Math.PI * 2); ctx.fillStyle = bg; ctx.fill(); }
+          if (n.id === g.selected) {
+            ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2);
+            ctx.lineWidth = 2.5; ctx.strokeStyle = accent; ctx.stroke();
+          }
+        });
+        // 名前：近づけたとき・つながりの多いカード・選んだカードとそのまわり
+        ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = bg; ctx.fillStyle = label; ctx.globalAlpha = 1;
+        g.nodes.forEach(n => {
+          if (!g.vis.has(n.id)) return;
+          const near = lit && lit.has(n.id);
+          if (lit ? !near : !(g.cam.k > 1.9 || n.nb.size >= 5)) return;
+          const [x, y] = this.gvToScreen(n.x, n.y), r = n.r * sk;
+          const title = n.card.title || '無題のカード';
+          const t = title.length > 16 ? title.slice(0, 15) + '…' : title;
+          ctx.strokeText(t, x, y + r + 5);
+          ctx.fillText(t, x, y + r + 5);
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      gvSelect(id) {
+        const g = this.gv;
+        g.selected = id;
+        if (g.mode === 'local') {
+          if (!id) { this.gvSetMode('all'); return; }
+          this.gvUpdateVisible(); this.gvReheat(0.8); setTimeout(() => this.gvFit(), 420);
+        }
+        g.dirty = true;
+        this.gvRenderPanel();
+      }
+
+      gvSetMode(m, opts = {}) {
+        const g = this.gv;
+        if (m === 'local' && !g.selected) { if (!opts.quiet) this.showToast('先にカードを1つ選んでください'); return; }
+        g.mode = m;
+        document.querySelectorAll('#graphViewContainer [data-gmode]').forEach(b => b.classList.toggle('on', b.dataset.gmode === m));
+        this.gvUpdateVisible();
+        if (opts.quiet) return;
+        this.gvReheat(0.8);
+        setTimeout(() => this.gvFit(), 420);
+        this.gvRenderPanel();
+      }
+
+      gvRenderLegend() {
+        const g = this.gv;
+        const n = {};
+        g.nodes.forEach(x => { const st = this.cardStatus(x.card); n[st] = (n[st] || 0) + 1; });
+        document.getElementById('gvLegend').innerHTML = STATUS_ORDER.filter(st => n[st])
+          .map(st => `<span><i style="background:var(--gv-${st})"></i>${CARD_STATUS[st].label}<em>${n[st]}</em></span>`).join('');
+      }
+
+      gvRenderPanel() {
+        const g = this.gv;
+        const n = (g.selected && g.byId.get(g.selected)) || g.hover;
+        if (!n) {
+          const orph = g.nodes.filter(x => !x.nb.size).length;
+          g.panel.innerHTML = `
+            <div class="gv-eyebrow">つながり</div>
+            <div class="gv-title">カードのつながりを見る</div>
+            <div class="gv-stats"><div><b>${g.nodes.length}</b><span>カード</span></div><div><b>${g.links.length}</b><span>リンク</span></div><div><b>${orph}</b><span>孤立</span></div></div>
+            <div class="gv-how">
+              <div><kbd>点にのせる</kbd><span>そのカードと、つながっている相手が浮かび上がる</span></div>
+              <div><kbd>点を押す</kbd><span>ここにカードの中身が出る</span></div>
+              <div><kbd>点を引っぱる</kbd><span>つながっている点も一緒についてくる</span></div>
+              <div><kbd>ダブルクリック</kbd><span>そのカードのまわりだけを表示する</span></div>
+              <div><kbd>背景を引っぱる</kbd><span>全体を動かす。ホイールで拡大・縮小</span></div>
+            </div>
+            <div class="gv-muted">点の色は状態、大きさはリンクの数です。中が抜けた点は、どこにもつながっていないカードです。上のエリア・状態・タグ・検索で、表示するカードを絞り込めます。</div>`;
+          return;
+        }
+        const c = n.card;
+        const nbs = [...n.nb].map(id => g.byId.get(id)).filter(Boolean);
+        const body = String(c.body || '').replace(/\s+/g, ' ').trim();
+        const tags = tagsForDisplay(c.tags || []);
+        g.panel.innerHTML = `
+          <div>${this.statusPillHtml(c)}</div>
+          <div class="gv-title">${this.escapeHtml(c.title || '無題のカード')}</div>
+          ${tags.length ? `<div class="gv-tags">${tags.map(t => `<span>#${this.escapeHtml(tagLabel(t))}</span>`).join('')}</div>` : ''}
+          ${body ? `<div class="gv-body">${this.escapeHtml(body.length > 220 ? body.slice(0, 220) + '…' : body)}</div>` : ''}
+          ${g.selected ? `<div class="gv-actions">
+            <button type="button" class="gv-btn" data-gact="open">開く</button>
+            <button type="button" class="gv-btn ghost" data-gact="back">裏返す</button>
+            ${g.mode === 'local' ? '<button type="button" class="gv-btn ghost" data-gact="all">全体に戻る</button>' : '<button type="button" class="gv-btn ghost" data-gact="local">まわりだけ表示</button>'}
+          </div>` : '<div class="gv-muted">押すと、開く・裏返すができます</div>'}
+          <div class="gv-eyebrow">リンク ${nbs.length}件</div>
+          ${nbs.length ? `<div class="gv-links">${nbs.map(m => `<button type="button" data-go="${rtEscape(m.id)}"><i style="background:var(--gv-${this.cardStatus(m.card)})"></i><span>${this.escapeHtml(m.card.title || '無題のカード')}</span></button>`).join('')}</div>`
+            : '<div class="gv-muted">表示しているカードの中には、つながっている相手がいません。</div>'}`;
+      }
+
       // 状態の絞り込み：すべて・アクティブのアイコン（Permanent などは状態のアイコン）
       statusFilterIcon(k, size = 14) {
         if (k === 'all') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>`;
@@ -9587,7 +10061,7 @@
         document.getElementById('mEdDelete').addEventListener('click', () => this.deleteInlineCard());
         document.getElementById('mEdLink').addEventListener('click', () => { if (this.inlineEditId) this.showLinkPicker(this.inlineEditId); });
         document.querySelectorAll('#mBar [data-mview]').forEach(b => b.addEventListener('click', () => {
-          (b.dataset.mview === 'grid' ? this.gridModeBtn : this.listModeBtn).click();
+          ({ grid: this.gridModeBtn, graph: this.graphModeBtn }[b.dataset.mview] || this.listModeBtn).click();
         }));
         document.getElementById('mComposeBtn').addEventListener('click', () => this.createCardInline());
         const sheet = document.getElementById('mSheet');
@@ -9605,19 +10079,22 @@
       updatePhoneChrome() {
         const count = document.getElementById('mBarCount');
         if (!count) return;
-        document.querySelectorAll('#mBar [data-mview]').forEach(b => b.classList.toggle('is-on', (b.dataset.mview === 'grid') === (this.currentView === 'grid')));
+        const mv = this.currentView === 'grid' || this.currentView === 'graph' ? this.currentView : 'single';
+        document.querySelectorAll('#mBar [data-mview]').forEach(b => b.classList.toggle('is-on', b.dataset.mview === mv));
         count.textContent = `${this.getFilteredCards().length}枚`;
-        document.getElementById('mBackLabel').textContent = this.mBackTarget() === 'grid' ? 'ギャラリー' : '一覧';
+        document.getElementById('mBackLabel').textContent = { grid: 'ギャラリー', graph: 'つながり' }[this.mBackTarget()] || '一覧';
         this.scheduleHistorySync();
       }
 
       mBackTarget() {
-        return (this.currentView === 'link' ? this.linkReturn : this._detailFrom) === 'grid' ? 'grid' : 'list';
+        const t = this.currentView === 'link' ? this.linkReturn : this._detailFrom;
+        return t === 'grid' || t === 'graph' ? t : 'list';
       }
 
       mGoBack() {
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
-        if (this.mBackTarget() === 'grid') { this.switchView('grid', { animate: false }); return; }
+        const back = this.mBackTarget();
+        if (back === 'grid' || back === 'graph') { this.switchView(back, { animate: false }); return; }
         if (this.currentView === 'link') this.switchView('single', { animate: false });
         this.setNotesDetail(false);
         this.renderNotesList();
@@ -10005,8 +10482,8 @@
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: view !== 'single' });
         const from = this.currentView;
         // iPhone の「‹」で戻る先（ギャラリーから開いたカードはギャラリーへ）
-        if (view === 'single' && from === 'grid') this._detailFrom = 'grid';
-        else if (view === 'grid') this._detailFrom = null;
+        if (view === 'single' && (from === 'grid' || from === 'graph')) this._detailFrom = from;
+        else if (view === 'grid' || view === 'graph') this._detailFrom = null;
         if (this.flipping) return;
         // カード（表）⇄ リンク（裏）は、カードを裏返すアニメーションで切り替える
         const isFlip = from !== view && (from === 'link' || view === 'link');
@@ -10028,14 +10505,14 @@
         }
         this.currentView = view;
         if (view !== 'link') this.saveLastView(view);
-        if (from === 'grid' && view !== 'grid') this.setNotesDetail(true);
+        if ((from === 'grid' || from === 'graph') && view !== 'grid' && view !== 'graph') this.setNotesDetail(true);
         this.applyListLayout();
         this.updateWideToggle();
         document.body.classList.toggle('link-view', view === 'link');
         if (view !== 'grid') this.exitSelection();
         this.updateBulkBar();
 
-        const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer };
+        const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer, graph: document.getElementById('graphViewContainer') };
         Object.entries(panes).forEach(([k, el]) => {
           if (k === view) return;
           el.classList.add('hidden', 'opacity-0');
@@ -10045,6 +10522,9 @@
           target.classList.remove('hidden', 'opacity-0');
           this.renderSingleDeck();
           this.scrollToIndex(this.currentIndex, false);
+        } else if (view === 'graph') {
+          target.classList.remove('hidden', 'opacity-0');
+          this.renderGraphView();
         } else if (opts.instant || isFlip) {
           target.classList.remove('hidden', 'opacity-0');
           if (view === 'grid') this.renderGridView();
@@ -10078,7 +10558,7 @@
 
       // 裏面から戻る：入ってきた画面へ
       flipBack() {
-        if (this.linkReturn === 'grid') { this.switchView('grid'); return; }
+        if (this.linkReturn === 'grid' || this.linkReturn === 'graph') { this.switchView(this.linkReturn); return; }
         const id = this.linkFocusId;
         if (id && this.cards.some(c => c.id === id)) this.openInCardView(id); else this.switchView('single');
       }
@@ -10087,7 +10567,7 @@
       loadLastView() {
         let v = null;
         try { v = localStorage.getItem('indexcards_last_view'); } catch (e) {}
-        return v === 'single' ? 'single' : 'grid'; // はじめて開くときはギャラリーから
+        return v === 'single' || v === 'graph' ? v : 'grid'; // はじめて開くときはギャラリーから
       }
 
       saveLastView(view) {
@@ -10096,7 +10576,7 @@
 
       // 表の面を90度まで回して隠し、裏の面を-90度から回して見せる
       flipTo(view) {
-        const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer };
+        const panes = { single: this.singleViewContainer, grid: this.gridViewContainer, link: this.linkViewContainer, graph: document.getElementById('graphViewContainer') };
         const fromEl = panes[this.currentView];
         const toEl = panes[view];
         const dir = view === 'link' ? 1 : -1;
@@ -10655,7 +11135,7 @@
       // 「カードビュー」の仕組み（その場編集・裏返し）をそのまま使い、右側にカードを1枚だけ置く
       // ============================================================
       isListLayout() {
-        return this.currentView !== 'grid';
+        return this.currentView !== 'grid' && this.currentView !== 'graph';
       }
 
       applyListLayout() {
@@ -10663,6 +11143,7 @@
         b.classList.toggle('notes-layout', this.isListLayout());
         b.classList.toggle('notes-list-hidden', !!this.config.listHidden);
         this.gridModeBtn.classList.toggle('is-on', v === 'grid');
+        if (this.graphModeBtn) this.graphModeBtn.classList.toggle('is-on', v === 'graph');
         this.listModeBtn.classList.toggle('is-on', v === 'single');
         this.updatePhoneChrome();
       }
@@ -11018,7 +11499,7 @@
         const n = linked.length;
         this.flipFab.classList.toggle('is-back', back);
         this.flipFab.setAttribute('aria-pressed', String(back));
-        const toGrid = back && this.linkReturn === 'grid';
+        const toGrid = back && (this.linkReturn === 'grid' || this.linkReturn === 'graph');
         this.flipFab.title = toGrid ? 'ギャラリーに戻る (L / esc)' : back ? 'カードを表に戻す (L / esc)' : `カードを裏返して、リンク ${n}件を見る (L)`;
         document.getElementById('flipFabLabel').textContent = toGrid ? '戻る' : back ? '表に戻す' : '裏返す';
         const cnt = document.getElementById('flipFabCount');
@@ -12455,6 +12936,8 @@
           requestAnimationFrame(() => this.scrollToIndex(this.currentIndex, false));
         } else if (this.currentView === 'grid') {
           this.renderGridView();
+        } else if (this.currentView === 'graph') {
+          this.renderGraphView();
         } else {
           this.renderLinkView();
         }
