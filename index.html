@@ -8960,7 +8960,14 @@
         if (home.tagBox) home.tagBox.remove();
         (home.metaParts || []).slice().reverse().forEach(p => p.parent.insertBefore(p.el, p.next));
         document.body.classList.remove('is-inline-editing');
-        if (document.body.classList.contains('m-kbfit')) { document.body.classList.remove('m-kbfit'); document.body.style.top = ''; document.body.style.height = ''; }
+        if (document.body.classList.contains('m-kbfit')) {
+          document.body.classList.remove('m-kbfit');
+          document.body.style.top = '';
+          document.body.style.height = '';
+          // キーボードが出ていたあいだに iPhone がずらした画面を、元の位置に戻す
+          window.scrollTo(0, 0);
+          if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+        }
         home.wrap.classList.remove('inline-editing');
         home.shown.style.display = '';
         const wasNew = this.inlineIsNew;
@@ -9811,9 +9818,10 @@
         p.addEventListener('click', (e) => {
           const btn = e.target.closest('[data-mf]');
           if (!btn) return;
-          if (btn.dataset.mf === 'close') { this.closeMFormat(true); return; }
-          this.rtCommand(btn.dataset.mf, btn.dataset.val);
-          this.updateMFormatState();
+          // 選んだら、ほかのボタンと同じくすぐ効かせて、キーボードに戻ってそのまま打ち続けられるようにする
+          // （先にキーボードとカーソルを戻してから書式をかける。逆だと、見出しや太字が次に打つ文字に効かない）
+          this.closeMFormat(true);
+          if (btn.dataset.mf !== 'close') this.rtCommand(btn.dataset.mf, btn.dataset.val);
         });
         document.addEventListener('selectionchange', () => {
           if (this.isMFormatOpen()) this.updateMFormatState();
