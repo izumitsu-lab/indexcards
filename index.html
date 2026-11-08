@@ -1713,16 +1713,26 @@
     .mf-colors button { width: 44px; height: 46px; display: inline-flex; align-items: center; justify-content: center; }
     .mf-colors i { width: 26px; height: 26px; border-radius: 50%; }
 
+
+    /* iPhone：エリアの画面（メモの「フォルダ」の画面と同じく、一覧の手前にある1段上の画面） */
+    #mAreas { position: fixed; inset: 0; z-index: 45; overflow-y: auto; box-sizing: border-box; padding: calc(10px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom)); background: #F2F2F7; color: #1D1D1F; transform: translateX(-100%); visibility: hidden; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0s linear 0.28s; }
+    body.m-areas-open #mAreas { transform: none; visibility: visible; transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1), visibility 0s; }
+    .dark #mAreas { background: #000; color: #F5F5F7; }
+    #mAreas .ma-title { padding: 34px 4px 12px; font-size: 32px; font-weight: 800; }
+    #mAreas .ms-row .ms-chev { color: #C7C7CC; }
+    #mAreas .ms-row.is-on { background: rgba(0, 122, 255, 0.08); }
+    @media (min-width: 640px) { #mAreas { display: none; } }
     @media (max-width: 639px) {
       /* 上の帯はやめて、一覧の上に大きな見出し・検索・札を置く */
       header { display: none !important; }
       #mHead { display: block; flex-shrink: 0; padding-top: env(safe-area-inset-top); background: #F4F4F6; }
       .dark #mHead { background: #1A1A1D; }
-      .mh-top { display: flex; justify-content: flex-end; gap: 2px; min-height: 44px; padding: 4px 8px 0; }
+      .mh-titlerow { display: flex; align-items: center; gap: 4px; padding: 6px 6px 0 0; }
+      .mh-top { flex: none; display: flex; gap: 0; }
       #mHead #syncBtn, #mHead #openSettingsBtn { width: 44px; height: 44px; border-radius: 22px; color: #007AFF; }
       #mHead #syncBtn svg, #mHead #openSettingsBtn svg { width: 22px; height: 22px; }
       #mHead #syncBtn .sync-dot { right: 9px; bottom: 11px; box-shadow: 0 0 0 2px #F4F4F6; }
-      .mh-title { padding: 0 12px; }
+      .mh-title { flex: 1; min-width: 0; padding-left: 12px; }
       #mHead #areaBtn { width: auto !important; max-width: 100%; height: 46px; padding: 0 4px; gap: 6px; background: transparent !important; box-shadow: none !important; font-size: 28px; font-weight: 800; color: inherit; }
       #mHead #areaBtnIcon { width: 28px; height: 28px; }
       #mHead #areaBtnIcon svg { width: 26px; height: 26px; }
@@ -1916,8 +1926,10 @@
 
   <!-- iPhone だけ：一覧の上の見出し（エリア）・検索・札。部品は上の帯から移して使う -->
   <div id="mHead">
-    <div id="mTopSlot" class="mh-top"></div>
-    <div id="mTitleSlot" class="mh-title"></div>
+    <div class="mh-titlerow">
+      <div id="mTitleSlot" class="mh-title"></div>
+      <div id="mTopSlot" class="mh-top"></div>
+    </div>
     <div id="mSearchSlot" class="mh-search"></div>
     <div id="mChips" class="mh-chips"></div>
   </div>
@@ -2014,6 +2026,7 @@
   </div>
   <div id="mSheet" role="dialog" aria-modal="true"><div class="ms-back"></div><div id="mSheetPanel" class="ms-panel"></div></div>
   <div id="mFormat" role="toolbar" aria-label="書式"></div>
+  <div id="mAreas" role="dialog" aria-label="エリア"></div>
 
   <!-- Area Editor Modal -->
   <div id="areaEditorModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
@@ -8845,6 +8858,7 @@
           const h = bar.offsetHeight || 44;
           const bottom = pOpen ? panel.getBoundingClientRect().top : (vv ? vv.offsetTop + vv.height : window.innerHeight);
           bar.style.top = `${Math.max(8, bottom - h)}px`;
+          this.fitPhoneEditor(Math.max(8, bottom - h));
           return;
         }
         const r = this.inlineHome.wrap.getBoundingClientRect();
@@ -9245,7 +9259,7 @@
         this.statusMenu = document.getElementById('statusMenu');
         this.statusBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (this.isPhone()) { this.openFilterSheet(); return; }
+          if (this.isPhone()) { this.openStatusSheet(); return; }
           this.isStatusFilterOpen() ? this.closeStatusFilter() : this.openStatusFilter();
         });
         this.statusFilterMenu.addEventListener('mousedown', (e) => e.stopPropagation());
@@ -9505,6 +9519,13 @@
           this._mMoves = pairs.map(([el, slot]) => ({ el, slot: document.getElementById(slot), mark: document.createComment('iPhone') }));
         }
         const phone = this.isPhone();
+        if (phone && !this._mHist) {
+          this._mHist = true;
+          if (!(history.state && history.state.ic)) {
+            history.replaceState({ ic: 'areas' }, '');
+            history.pushState({ ic: 'list' }, '');
+          }
+        }
         if (phone === this._mPhone) return false;
         this._mPhone = phone;
         this._mMoves.forEach(m => {
@@ -9541,6 +9562,8 @@
           if (b && this._mSheetClick) this._mSheetClick(b);
         });
         this.bindMFormat();
+        this.bindPhoneNavigation();
+        this.editCardBody.addEventListener('input', () => requestAnimationFrame(() => this.keepCaretVisible()));
       }
 
       // 下の帯の件数・表示の切り替え、「‹」の名前
@@ -9550,6 +9573,7 @@
         document.querySelectorAll('#mBar [data-mview]').forEach(b => b.classList.toggle('is-on', (b.dataset.mview === 'grid') === (this.currentView === 'grid')));
         count.textContent = `${this.getFilteredCards().length}枚`;
         document.getElementById('mBackLabel').textContent = this.mBackTarget() === 'grid' ? 'ギャラリー' : '一覧';
+        this.scheduleHistorySync();
       }
 
       mBackTarget() {
@@ -9577,36 +9601,142 @@
         this._mSheetClick = null;
       }
 
-      // エリアと状態（見出しのエリア名・状態の札を押したとき）
-      openFilterSheet() {
+      // ---------- エリアの画面（見出しのエリア名を押す・一覧で左端からスワイプ） ----------
+      isAreaScreenOpen() { return document.body.classList.contains('m-areas-open'); }
+
+      openAreaScreen() {
+        if (!this.isPhone() || this.isAreaScreenOpen()) return;
+        if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
+        if (this.mLevel() === 'detail') this.mGoBack();
+        this.renderAreaScreen();
+        document.body.classList.add('m-areas-open');
+        this.scheduleHistorySync();
+      }
+
+      closeAreaScreen() {
+        if (!this.isAreaScreenOpen()) return;
+        document.body.classList.remove('m-areas-open');
+        this.scheduleHistorySync();
+      }
+
+      renderAreaScreen() {
+        const box = document.getElementById('mAreas');
+        const chev = '<svg class="ms-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
+        const row = (id, name, icon, n) => `<button type="button" class="ms-row${this.currentArea === id ? ' is-on' : ''}" data-area="${rtEscape(id)}"><span class="area-ico">${areaIconSvg(icon, 20)}</span><span class="ms-name">${this.escapeHtml(name)}</span><span class="ms-n">${n}</span>${chev}</button>`;
+        box.innerHTML = `<div class="ma-title">エリア</div>
+          <div class="ms-list">${row(ALL_AREAS, 'すべて', 'all', this.cards.length)}${this.areas.map(a => row(a.id, a.name, a.icon, this.cards.filter(c => c.areas.includes(a.id)).length)).join('')}</div>
+          <div class="ms-list"><button type="button" class="ms-row" data-act="edit"><span class="ms-name">エリアを編集…</span></button><button type="button" class="ms-row" data-act="trash"><span class="ms-name">ゴミ箱</span><span class="ms-n">${this.trash.length || ''}</span>${chev}</button></div>`;
+        if (!box._bound) {
+          box._bound = true;
+          box.addEventListener('click', (e) => {
+            const a = e.target.closest('[data-area]');
+            if (a) { this.setArea(a.dataset.area); this.closeAreaScreen(); return; }
+            const b = e.target.closest('[data-act]');
+            if (!b) return;
+            if (b.dataset.act === 'edit') this.showAreaEditor(false);
+            else this.showTrash();
+          });
+        }
+      }
+
+      // ---------- 状態だけのシート（状態の札を押したとき） ----------
+      openStatusSheet() {
         const render = () => {
           const info = this.statusFilterInfo();
           const cur = this.statusFilterKey();
-          const area = (id, name, icon, n) => {
-            const on = this.currentArea === id;
-            return `<button type="button" class="ms-row${on ? ' is-on' : ''}" data-ms="area" data-id="${rtEscape(id)}"><span class="area-ico">${areaIconSvg(icon, 20)}</span><span class="ms-name">${this.escapeHtml(name)}</span><span class="ms-n">${n}</span><span class="ms-check">${on ? '✓' : ''}</span></button>`;
-          };
-          const areas = area(ALL_AREAS, 'すべて', 'all', this.cards.length)
-            + this.areas.map(a => area(a.id, a.name, a.icon, this.cards.filter(c => c.areas.includes(a.id)).length)).join('');
           const st = (k) => `<button type="button" class="ms-st${k === cur ? ' is-on' : ''}" data-ms="status" data-id="${k}">${CARD_STATUS[k] ? this.statusPillHtml({ status: k }) : `<span>${info[k].label}</span>`}<em>${info[k].n}</em></button>`;
           return `<span class="ms-grab"></span>
-            <div class="ms-head"><span></span><b>表示するカード</b><button type="button" data-ms="done">完了</button></div>
-            <div class="ms-label">エリア</div>
-            <div class="ms-list">${areas}</div>
-            <div class="ms-list"><button type="button" class="ms-row" data-ms="edit-areas"><span class="ms-name">エリアを編集…</span></button><button type="button" class="ms-row" data-ms="trash"><span class="ms-name">ゴミ箱</span><span class="ms-n">${this.trash.length || ''}</span></button></div>
-            <div class="ms-label">状態</div>
+            <div class="ms-head"><span></span><b>状態</b><button type="button" data-ms="done">完了</button></div>
             <div class="ms-grid">${['all', 'active', ...STATUS_ORDER].map(st).join('')}</div>`;
         };
-        const onClick = (b) => {
-          const act = b.dataset.ms;
-          if (act === 'area') this.setArea(b.dataset.id);
-          else if (act === 'status') this.setStatusFilter(b.dataset.id);
-          else if (act === 'edit-areas') { this.closeMSheet(); this.showAreaEditor(false); return; }
-          else if (act === 'trash') { this.closeMSheet(); this.showTrash(); return; }
-          else if (act === 'done') { this.closeMSheet(); return; }
-          document.getElementById('mSheetPanel').innerHTML = render();
-        };
-        this.openMSheet(render(), onClick);
+        this.openMSheet(render(), (b) => {
+          if (b.dataset.ms === 'status') { this.setStatusFilter(b.dataset.id); this.closeMSheet(); }
+          else this.closeMSheet();
+        });
+      }
+
+      // ---------- 画面の段（エリア → 一覧 → メモ）と、ブラウザの「戻る」 ----------
+      // Safari の左端スワイプ（戻る）で1段上の画面へ戻れるよう、段ごとに履歴を積む
+      mLevel() {
+        const b = document.body;
+        if ((b.classList.contains('notes-layout') && b.classList.contains('notes-detail')) || b.classList.contains('link-view')) return 'detail';
+        if (this.isAreaScreenOpen()) return 'areas';
+        return 'list';
+      }
+
+      scheduleHistorySync() {
+        clearTimeout(this._histTimer);
+        this._histTimer = setTimeout(() => this.syncHistory(), 0);
+      }
+
+      syncHistory() {
+        if (!this.isPhone() || !this._mHist) return;
+        const rank = { areas: 0, list: 1, detail: 2 };
+        const want = this.mLevel();
+        const cur = history.state && history.state.ic;
+        if (!(cur in rank) || want === cur) return;
+        if (rank[want] > rank[cur]) {
+          if (want === 'detail' && cur === 'areas') history.pushState({ ic: 'list' }, '');
+          history.pushState({ ic: want }, '');
+        } else {
+          history.go(rank[want] - rank[cur]);
+        }
+      }
+
+      bindPhoneNavigation() {
+        // 戻る（Safari の左端スワイプ・戻るボタン）：履歴の段に画面を合わせる
+        window.addEventListener('popstate', (e) => {
+          if (!this.isPhone()) return;
+          const ic = e.state && e.state.ic;
+          if (ic === 'areas') { if (this.mLevel() === 'detail') this.mGoBack(); this.openAreaScreen(); }
+          else if (ic === 'list') { if (this.mLevel() === 'detail') this.mGoBack(); this.closeAreaScreen(); }
+        });
+        // ホーム画面から開いたとき（Safari の戻るスワイプがない）：左端からのスワイプをアプリで受け取る
+        const standalone = () => navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+        let sw = null;
+        document.addEventListener('touchstart', (e) => {
+          sw = null;
+          if (!this.isPhone() || !standalone() || e.touches.length !== 1) return;
+          const t = e.touches[0];
+          if (t.clientX > 24 || this.isAreaScreenOpen() || this.isModalOpen() || document.getElementById('mSheet').classList.contains('open')) return;
+          sw = { x: t.clientX, y: t.clientY };
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+          if (!sw) return;
+          const t = e.changedTouches[0];
+          const dx = t.clientX - sw.x, dy = Math.abs(t.clientY - sw.y);
+          sw = null;
+          if (dx < 60 || dy > dx * 0.6) return;
+          if (this.mLevel() === 'detail') this.mGoBack(); else this.openAreaScreen();
+        }, { passive: true });
+      }
+
+      // ---------- 編集中：本文の下端を書式の帯の上に合わせ、カーソルをいつも見える位置に ----------
+      fitPhoneEditor(barTop) {
+        const ed = this.editCardBody;
+        if (!ed || !this.inlineEditId || !document.body.contains(ed)) return;
+        const top = ed.getBoundingClientRect().top;
+        const h = Math.max(60, Math.floor(barTop - top - 6));
+        ed.style.height = `${h}px`;
+        ed.style.maxHeight = `${h}px`;
+        this.keepCaretVisible();
+      }
+
+      keepCaretVisible() {
+        if (!this.isPhone() || !this.inlineEditId) return;
+        const ed = this.editCardBody;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || !ed.contains(sel.anchorNode)) return;
+        const r = sel.getRangeAt(0).cloneRange();
+        r.collapse(false);
+        let rect = r.getClientRects()[0];
+        if (!rect) {
+          const n = r.startContainer.nodeType === 1 ? (r.startContainer.childNodes[r.startOffset] || r.startContainer) : r.startContainer.parentElement;
+          rect = (n.nodeType === 1 ? n : n.parentElement).getBoundingClientRect();
+        }
+        const box = ed.getBoundingClientRect();
+        if (rect.bottom > box.bottom - 6) ed.scrollTop += rect.bottom - box.bottom + 28;
+        else if (rect.top < box.top + 2) ed.scrollTop -= box.top - rect.top + 10;
       }
 
       // 開いたカードの「…」：ピン留め・コピー・リンク・削除
@@ -11637,7 +11767,7 @@
 
         this.areaBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (this.isPhone()) { this.openFilterSheet(); return; }
+          if (this.isPhone()) { this.openAreaScreen(); return; }
           this.isAreaMenuOpen() ? this.closeAreaMenu() : this.openAreaMenu();
         });
         this.areaMenu.addEventListener('mousedown', (e) => e.stopPropagation());
@@ -12533,7 +12663,7 @@
     let resizeTimer;
     window.addEventListener('resize', () => {
       if (window.cardApp) window.cardApp.fixHeaderMenuWidths();
-      if (window.cardApp && window.cardApp.inlineEditId) { window.cardApp.placeInlineBar(); window.cardApp.fitWideCards(); return; }
+      if (window.cardApp && window.cardApp.inlineEditId) { window.cardApp.fitWideCards(); window.cardApp.placeInlineBar(); return; }
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         if (window.cardApp) {
