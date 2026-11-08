@@ -2192,7 +2192,7 @@
         </button>
       </div>
       <p class="text-[11.5px] text-neutral-400 mt-1.5 mb-3.5">チェックしたカードと相互にリンクされます（どちらのカードにも表示されます）。カードどうしをドラッグ＆ドロップしてもリンクできます。</p>
-      <div class="flex items-center gap-2 h-[34px] px-2.5 mb-1 rounded-[10px] bg-black/5 dark:bg-white/[0.08]">
+      <div class="flex items-center gap-2 h-[34px] px-2.5 mb-1 rounded-[10px] bg-black/5 dark:bg-white/[0.08] shrink-0">
         <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
         <input id="linkPickerSearch" type="text" autocomplete="off" placeholder="カードを検索…" class="flex-1 min-w-0 bg-transparent outline-none text-[12.5px] text-neutral-900 dark:text-white placeholder-neutral-400">
       </div>
@@ -9570,6 +9570,15 @@
           if (firstTime || nodes.some(n => n.fresh)) this.gvFit(false);
           g.everShown = true;
         }
+        // リスト・裏面で見ていたカードを選び、その点を真ん中に
+        const focus = this._graphFocus;
+        this._graphFocus = null;
+        if (focus && byId.has(focus)) {
+          g.selected = focus;
+          if (g.mode === 'local') this.gvUpdateVisible();
+          const n = byId.get(focus);
+          this.gvMoveCam(n.x, n.y, Math.max(g.cam.k, 1.1), !changed);
+        }
         this.gvRenderLegend();
         this.gvRenderPanel();
         g.dirty = true;
@@ -10481,6 +10490,13 @@
       switchView(view, opts = {}) {
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: view !== 'single' });
         const from = this.currentView;
+        if (view === 'graph' && from !== 'graph') {
+          this._graphFocus = from === 'link' ? this.linkFocusId : (from === 'single' ? this.currentCardId() : null);
+        }
+        if (from === 'graph' && view === 'single' && this.gv && this.gv.selected) {
+          const i = this.getFilteredCards().findIndex(c => c.id === this.gv.selected);
+          if (i >= 0) this.currentIndex = i;
+        }
         // iPhone の「‹」で戻る先（ギャラリーから開いたカードはギャラリーへ）
         if (view === 'single' && (from === 'grid' || from === 'graph')) this._detailFrom = from;
         else if (view === 'grid' || view === 'graph') this._detailFrom = null;
