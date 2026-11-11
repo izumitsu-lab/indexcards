@@ -448,6 +448,38 @@
     .rich li { margin: 0; }
     .rich blockquote { border-left: 2px solid rgba(0, 0, 0, 0.12); padding-left: 0.9em; margin: 0.15em 0; color: #525252; }
     .dark .rich blockquote { border-left-color: rgba(255, 255, 255, 0.16); color: #B4B4B8; }
+    /* 抜き書き：左にページ、茶色の線。本文の「→ 自分のメモ」はふつうの行で書く */
+    .rich blockquote[data-excerpt] { position: relative; border-left: 0; padding-left: 3.3em; margin: 0.45em 0 0.3em; color: #3F3F46; }
+    .rich blockquote[data-excerpt]::after { content: ''; position: absolute; left: 2.75em; top: 0.3em; bottom: 0.3em; width: 3px; border-radius: 2px; background: rgba(162, 132, 94, 0.55); }
+    .rich blockquote[data-excerpt]::before { content: 'p.' attr(data-page); position: absolute; left: 0; top: 0.42em; width: 3.5em; font: 700 0.72em/1.35 ui-monospace, "SF Mono", Menlo, monospace; color: #84653D; word-break: break-all; }
+    .rich blockquote[data-excerpt]:not([data-page])::before { content: ''; }
+    .rt-editor blockquote[data-excerpt]::before { cursor: pointer; border-radius: 4px; }
+    .rt-editor blockquote[data-excerpt]:not([data-page])::before { content: 'p.?'; opacity: 0.55; }
+    .rt-editor blockquote[data-excerpt].is-page-open::before { background: rgba(162, 132, 94, 0.16); }
+    .dark .rich blockquote[data-excerpt] { color: #D4D4D8; }
+    .dark .rich blockquote[data-excerpt]::after { background: rgba(201, 168, 120, 0.5); }
+    .dark .rich blockquote[data-excerpt]::before { color: #C9A878; }
+    .ex-acts { display: flex; align-items: flex-start; justify-content: flex-start; padding-left: 3.3em; margin: 0 0 0.45em; font-size: 0.78em; line-height: 1.5; }
+    .ex-acts button { border: 0; font: inherit; cursor: pointer; border-radius: 999px; padding: 0.15em 0.75em; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    .ex-acts .ex-link { background: rgba(88, 86, 214, 0.09); color: #5856D6; font-weight: 600; }
+    .ex-acts .ex-link:hover { background: rgba(88, 86, 214, 0.16); }
+    .ex-acts .ex-make { background: #5856D6; color: #fff; font-weight: 700; box-shadow: 0 2px 8px -2px rgba(88, 86, 214, 0.45); }
+    .dark .ex-acts .ex-link { background: rgba(140, 138, 255, 0.14); color: #A5A4FF; }
+    .dark .ex-acts .ex-make { background: #6E6CF0; }
+    /* マウスのある端末：書き直すボタンは、抜き書きにマウスを乗せたときだけ右下に出す */
+    @media (hover: hover) {
+      .ex-acts.is-new { height: 0; margin: 0; justify-content: flex-end; position: relative; z-index: 2; }
+      .ex-acts.is-new .ex-make { transform: translateY(-0.15em); opacity: 0; pointer-events: none; transition: opacity 0.15s 0.25s; }
+      .rich blockquote[data-excerpt]:hover + .ex-acts.is-new .ex-make, .ex-acts.is-new:hover .ex-make { opacity: 1; pointer-events: auto; transition-delay: 0s; }
+    }
+    .ex-page-pop { position: fixed; z-index: 9999; display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 10px; border-radius: 12px; background: #fff; box-shadow: 0 8px 28px -8px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.06); font-size: 12px; color: #6E6E73; }
+    .ex-page-pop label { display: flex; align-items: center; gap: 6px; }
+    .ex-page-pop input { width: 72px; height: 28px; box-sizing: border-box; border-radius: 8px; border: 1.5px solid #84653D; padding: 0 8px; font: 600 13px ui-monospace, "SF Mono", Menlo, monospace; color: #1D1D1F; background: #fff; outline: none; }
+    .ex-page-pop .ex-page-ok { height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: rgba(0,122,255,0.1); color: #007AFF; font: inherit; font-weight: 700; cursor: pointer; }
+    .dark .ex-page-pop { background: #2C2C2E; color: #AEAEB2; box-shadow: 0 8px 28px -8px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08); }
+    .dark .ex-page-pop input { background: #1C1C1E; color: #F5F5F7; border-color: #C9A878; }
+    @media (max-width: 639px) { .ex-page-pop input { font-size: 16px; height: 34px; } .ex-page-pop .ex-page-ok { height: 34px; } }
+    @media (hover: none) { .ex-acts .ex-make { background: rgba(88, 86, 214, 0.1); color: #5856D6; box-shadow: none; } }
     .rich hr { border: 0; border-top: 1px solid rgba(0, 0, 0, 0.16); margin: 0.55em 0; }
     .dark .rich hr { border-top-color: rgba(255, 255, 255, 0.18); }
     .rich code {
@@ -2688,7 +2720,7 @@
               <button type="button" class="rt-btn" data-rt="image" title="画像を入れる（貼り付け・ドラッグでも入ります）"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
               <button type="button" class="rt-btn" data-rt="link" title="リンク (⌘K)"><i data-lucide="link" class="w-3.5 h-3.5"></i></button>
               <span class="rt-sep"></span>
-              <span class="rt-menu"><button type="button" class="rt-menu-btn" title="そのほかの書式" aria-haspopup="true" aria-expanded="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg><svg class="rt-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span class="rt-pop rt-pop-list"><button type="button" class="rt-btn" data-label="引用" data-rt="block" data-val="blockquote" title="引用（行頭で「> 」）"><i data-lucide="text-quote" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="コールアウト" data-rt="callout" title="コールアウト（アイコンを押すと種類が変わります：メモ→ヒント→重要→注意→警告）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10v.01"/><path d="M11.5 10H17"/><path d="M11.5 14H17"/></svg></button><button type="button" class="rt-btn" data-label="吹き出し" data-rt="bubble" title="bubble（右寄せの吹き出し。左の丸を押すと色が変わります）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="message-circle" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg></button><button type="button" class="rt-btn" data-label="区切り線" data-rt="hr" title="区切り線（「---」で改行）"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="コードブロック" data-rt="codeblock" title="コードブロック（行頭で「```」＋Enter）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m8 10-2 2 2 2M16 10l2 2-2 2M13 9l-2 6"/></svg></button><span class="rt-pop-sep"></span><button type="button" class="rt-btn" data-label="インラインコード" data-rt="code" title="インラインコード (⌘E)"><i data-lucide="code" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="上付き文字" data-rt="superscript" title="上付き文字（x²）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="superscript" aria-hidden="true"><path d="m4 19 8-8"></path><path d="m12 19-8-8"></path><path d="M20 12h-4c0-1.5.442-2 1.5-2.5S20 8.334 20 7.002c0-.472-.17-.93-.484-1.29a2.105 2.105 0 0 0-2.617-.436c-.42.239-.738.614-.899 1.06"></path></svg></button><button type="button" class="rt-btn" data-label="下付き文字" data-rt="subscript" title="下付き文字（H₂O）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="subscript" aria-hidden="true"><path d="m4 5 8 8"></path><path d="m12 5-8 8"></path><path d="M20 19h-4c0-1.5.44-2 1.5-2.5S20 15.33 20 14c0-.47-.17-.93-.48-1.29a2.11 2.11 0 0 0-2.62-.44c-.42.24-.74.62-.9 1.07"></path></svg></button><button type="button" class="rt-btn" data-label="書式をクリア" data-rt="clear" title="書式をクリア"><i data-lucide="remove-formatting" class="w-3.5 h-3.5"></i></button></span></span>
+              <span class="rt-menu"><button type="button" class="rt-menu-btn" title="そのほかの書式" aria-haspopup="true" aria-expanded="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg><svg class="rt-caret" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span class="rt-pop rt-pop-list"><button type="button" class="rt-btn" data-label="引用" data-rt="block" data-val="blockquote" title="引用（行頭で「> 」）"><i data-lucide="text-quote" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="抜き書き" data-rt="excerpt" title="抜き書き（本などからの引用。左の「p.」を押すとページを入れられます）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></button><button type="button" class="rt-btn" data-label="コールアウト" data-rt="callout" title="コールアウト（アイコンを押すと種類が変わります：メモ→ヒント→重要→注意→警告）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10v.01"/><path d="M11.5 10H17"/><path d="M11.5 14H17"/></svg></button><button type="button" class="rt-btn" data-label="吹き出し" data-rt="bubble" title="bubble（右寄せの吹き出し。左の丸を押すと色が変わります）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="message-circle" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg></button><button type="button" class="rt-btn" data-label="区切り線" data-rt="hr" title="区切り線（「---」で改行）"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="コードブロック" data-rt="codeblock" title="コードブロック（行頭で「```」＋Enter）"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="m8 10-2 2 2 2M16 10l2 2-2 2M13 9l-2 6"/></svg></button><span class="rt-pop-sep"></span><button type="button" class="rt-btn" data-label="インラインコード" data-rt="code" title="インラインコード (⌘E)"><i data-lucide="code" class="w-3.5 h-3.5"></i></button><button type="button" class="rt-btn" data-label="上付き文字" data-rt="superscript" title="上付き文字（x²）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="superscript" aria-hidden="true"><path d="m4 19 8-8"></path><path d="m12 19-8-8"></path><path d="M20 12h-4c0-1.5.442-2 1.5-2.5S20 8.334 20 7.002c0-.472-.17-.93-.484-1.29a2.105 2.105 0 0 0-2.617-.436c-.42.239-.738.614-.899 1.06"></path></svg></button><button type="button" class="rt-btn" data-label="下付き文字" data-rt="subscript" title="下付き文字（H₂O）"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="subscript" aria-hidden="true"><path d="m4 5 8 8"></path><path d="m12 5-8 8"></path><path d="M20 19h-4c0-1.5.44-2 1.5-2.5S20 15.33 20 14c0-.47-.17-.93-.48-1.29a2.11 2.11 0 0 0-2.62-.44c-.42.24-.74.62-.9 1.07"></path></svg></button><button type="button" class="rt-btn" data-label="書式をクリア" data-rt="clear" title="書式をクリア"><i data-lucide="remove-formatting" class="w-3.5 h-3.5"></i></button></span></span>
             </div>
       <div id="editCardBody" class="rt-editor rich p-3 text-[14px] text-neutral-900 dark:text-white outline-none min-h-[240px] max-h-[48vh] overflow-y-auto" contenteditable="true" spellcheck="false" data-placeholder="ここに本文を入力します…　「# 」で見出し、「- 」で箇条書き、「[] 」でチェックリスト。AIの回答のMarkdownも貼り付けられます"></div>
   </div>
@@ -3452,7 +3484,18 @@
           case 'TR': el = document.createElement('tr'); break;
           case 'TH': el = document.createElement('th'); break;
           case 'TD': el = document.createElement('td'); break;
-          case 'BLOCKQUOTE': el = document.createElement('blockquote'); break;
+          case 'BLOCKQUOTE': {
+            el = document.createElement('blockquote');
+            // 抜き書き：ページと、書き直した Permanent カード
+            if (node.hasAttribute('data-excerpt')) {
+              el.setAttribute('data-excerpt', '1');
+              const pg = (node.getAttribute('data-page') || '').replace(/[<>"]/g, '').trim().slice(0, 20);
+              if (pg) el.setAttribute('data-page', pg);
+              const perm = node.getAttribute('data-perm') || '';
+              if (/^[\w-]{1,80}$/.test(perm)) el.setAttribute('data-perm', perm);
+            }
+            break;
+          }
           case 'DIV': case 'P': case 'SECTION': case 'ARTICLE': case 'HEADER': case 'FOOTER':
             el = document.createElement('div'); break;
           case 'A': {
@@ -3702,7 +3745,15 @@
             const title = cm[2] ? `<div><b>${rtMdInline(cm[2])}</b></div>` : '';
             push(`<aside data-callout="${rtCalloutType(cm[1])}">${title}${rtMdToHtml(buf.slice(1).join('\n')) || (title ? '' : '<div><br></div>')}</aside>`);
           } else {
-            push(`<blockquote>${rtMdToHtml(buf.join('\n'))}</blockquote>`);
+            // 最後が「(p.91)」「（p.91-93）」なら抜き書き
+            const last = buf.length - 1;
+            const pm = last >= 0 && buf[last].match(/\s*[(（]\s*p\.\s*([^)）]{1,20}?)\s*[)）]\s*$/);
+            if (pm) {
+              buf[last] = buf[last].slice(0, pm.index);
+              push(`<blockquote data-excerpt="1" data-page="${rtEscape(pm[1])}">${rtMdToHtml(buf.join('\n'))}</blockquote>`);
+            } else {
+              push(`<blockquote>${rtMdToHtml(buf.join('\n'))}</blockquote>`);
+            }
           }
           continue;
         }
@@ -3869,6 +3920,9 @@
             const start = lines.length;
             walk(n, ctx);
             if (cur) flush();
+            // 抜き書きのページは、引用の最後に「(p.91)」と付ける
+            const pg = n.hasAttribute('data-excerpt') && n.getAttribute('data-page');
+            if (pg && lines.length > start) lines[lines.length - 1] += ` (p.${pg})`;
             for (let k = start; k < lines.length; k++) lines[k] = '> ' + lines[k];
             return;
           }
@@ -4011,7 +4065,10 @@
           } else if (t === 'BLOCKQUOTE' || t === 'ASIDE') {
             // アイコンなしは Markdown で表せないので「メモ」として書き出す
             const kind = n.hasAttribute('data-callout') ? (n.getAttribute('data-icon') === 'none' ? 'note' : n.getAttribute('data-callout')) : null;
-            const inner = blocks(n, depth).join('\n\n');
+            let inner = blocks(n, depth).join('\n\n');
+            // 抜き書きのページは、引用の最後に「(p.91)」と付ける（読み込むと抜き書きに戻る）
+            const pg = !kind && n.hasAttribute('data-excerpt') && n.getAttribute('data-page');
+            if (pg) inner += ` (p.${pg})`;
             const quoted = inner.split('\n').map(l => l ? '> ' + l : '>').join('\n');
             out.push(kind ? `> [!${(RT_CALLOUTS[kind] || RT_CALLOUTS.note).md}]\n${quoted}` : quoted);
           } else {
@@ -4472,6 +4529,12 @@
       tpl.content.querySelectorAll('ul[data-type="todo"]').forEach(ul => {
         ul.removeAttribute('data-type');
         ul.setAttribute('style', 'list-style: none; padding-left: 0;');
+      });
+      // 抜き書き：ほかのアプリでは、引用の最後にページを付ける
+      tpl.content.querySelectorAll('blockquote[data-excerpt]').forEach(bq => {
+        const pg = bq.getAttribute('data-page');
+        if (pg) bq.appendChild(document.createTextNode(` (p.${pg})`));
+        ['data-excerpt', 'data-page', 'data-perm'].forEach(k => bq.removeAttribute(k));
       });
       // コールアウト：アプリ間で通じる「引用＋絵文字の見出し」に
       tpl.content.querySelectorAll('aside[data-callout]').forEach(a => {
@@ -6005,6 +6068,18 @@
           }
         });
 
+        // 抜き書きの左の「p.」を押すと、ページを入れる
+        ed.addEventListener('mousedown', (e) => {
+          const bq = e.target.closest('blockquote[data-excerpt]');
+          if (!bq || !ed.contains(bq)) return;
+          const r = bq.getBoundingClientRect();
+          const fs = parseFloat(getComputedStyle(bq).fontSize) || 14;
+          if (e.clientX - r.left <= fs * 2.6 && e.clientY - r.top <= fs * 2.6) {
+            e.preventDefault();
+            this.openExcerptPage(bq);
+          }
+        });
+
         // コールアウトのアイコンを押すと種類が変わる／bubble の左の丸を押すと色が変わる
         ed.addEventListener('mousedown', (e) => {
           const bubble = e.target.closest('aside[data-bubble]');
@@ -6854,6 +6929,9 @@
         const sel = window.getSelection();
         if (sel.rangeCount && !sel.isCollapsed && this.editCardBody.contains(sel.anchorNode)) { this.setBlockOnRange(tag); return; }
         const cur = this.currentBlockTag();
+        // 抜き書きで「引用」を押したら、ふつうの引用に戻す
+        const ex = tag === 'blockquote' && this.caretIn('blockquote[data-excerpt]');
+        if (ex) { this.record('op'); ['data-excerpt', 'data-page', 'data-perm'].forEach(k => ex.removeAttribute(k)); this.updateToolbarState(); return; }
         const target = (cur === tag && tag !== 'div') ? 'div' : tag;
         if (target === 'div' && cur === 'blockquote') { this.unquoteCurrent(); return; }
         document.execCommand('formatBlock', false, `<${target}>`);
@@ -6979,6 +7057,86 @@
         });
       }
 
+      // 抜き書き：今の行を抜き書きにする／抜き書きなら外す
+      toggleExcerpt() {
+        const ed = this.editCardBody;
+        const cur = this.caretIn('blockquote');
+        if (cur && cur.hasAttribute('data-excerpt')) {
+          this.record('op');
+          this.closeExcerptPage();
+          this.unquoteCurrent();
+          this.updateToolbarState();
+          return;
+        }
+        if (cur) {
+          this.record('op');
+          cur.setAttribute('data-excerpt', '1');
+          this.updateToolbarState();
+          return;
+        }
+        const before = new Set(ed.querySelectorAll('blockquote'));
+        this.setBlock('blockquote');
+        let bq = this.caretIn('blockquote');
+        if (!bq) bq = [...ed.querySelectorAll('blockquote')].find(x => !before.has(x));
+        if (bq) {
+          // すぐ前の抜き書きとくっついたときは、切り離す
+          bq.setAttribute('data-excerpt', '1');
+          bq.removeAttribute('data-perm');
+        }
+        this.updateToolbarState();
+      }
+
+      // 抜き書きの「p.」を押すと、ページを入れる小さな欄を出す（打つとそのまま反映。Enter・Esc では閉じない）
+      openExcerptPage(bq) {
+        this.closeExcerptPage();
+        const ed = this.editCardBody;
+        const pop = document.createElement('div');
+        pop.className = 'ex-page-pop';
+        pop.innerHTML = '<label>ページ<input type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="91"></label><button type="button" class="ex-page-ok">OK</button>';
+        document.body.appendChild(pop);
+        const input = pop.querySelector('input');
+        input.value = bq.getAttribute('data-page') || '';
+        const r = bq.getBoundingClientRect();
+        pop.style.left = `${Math.max(8, r.left - 6)}px`;
+        pop.style.top = `${r.top - 46 < 8 ? r.top + 24 : r.top - 46}px`;
+        bq.classList.add('is-page-open');
+        let recorded = false;
+        input.addEventListener('input', () => {
+          if (!recorded) { this.record('op'); recorded = true; }
+          const v = input.value.replace(/[<>"]/g, '').trim().slice(0, 20);
+          if (v) bq.setAttribute('data-page', v); else bq.removeAttribute('data-page');
+        });
+        const back = () => {
+          this.closeExcerptPage();
+          ed.focus();
+          const r2 = document.createRange();
+          r2.selectNodeContents(bq);
+          r2.collapse(false);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(r2);
+        };
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') { e.preventDefault(); back(); }
+        });
+        pop.querySelector('.ex-page-ok').addEventListener('mousedown', (e) => e.preventDefault());
+        pop.querySelector('.ex-page-ok').addEventListener('click', back);
+        const outside = (e) => { if (!pop.contains(e.target)) this.closeExcerptPage(); };
+        setTimeout(() => document.addEventListener('mousedown', outside, true), 0);
+        this._exPage = { pop, bq, outside };
+        input.focus();
+        input.select();
+      }
+
+      closeExcerptPage() {
+        const p = this._exPage;
+        if (!p) return;
+        this._exPage = null;
+        document.removeEventListener('mousedown', p.outside, true);
+        p.pop.remove();
+        p.bq.classList.remove('is-page-open');
+      }
+
       // 引用ブロックを通常の行に戻す（formatBlockでは外れない場合があるため直接置き換え）
       unquoteCurrent() {
         const sel = window.getSelection();
@@ -7060,6 +7218,9 @@
             break;
           case 'todo':
             this.toggleTodo();
+            break;
+          case 'excerpt':
+            this.toggleExcerpt();
             break;
           case 'callout':
             this.toggleBox('callout');
@@ -7868,7 +8029,9 @@
                 if (ul && ul.getAttribute('data-type') === 'todo') active = false;
               }
             } else if (cmd === 'block') {
-              active = btn.dataset.val === block && block !== 'div';
+              active = btn.dataset.val === block && block !== 'div' && !(block === 'blockquote' && this.caretIn('blockquote[data-excerpt]'));
+            } else if (cmd === 'excerpt') {
+              active = !!this.caretIn('blockquote[data-excerpt]');
             } else if (cmd === 'callout') {
               active = !!this.caretIn('aside[data-callout]');
             } else if (cmd === 'bubble') {
@@ -8989,6 +9152,7 @@
         if (!id || !this.inlineHome) return;
         this.closeMFormat(false);
         this.closeCalloutMenu();
+        this.closeExcerptPage();
         this.closeRtMenus();
         const ed = this.editCardBody;
         const home = this.inlineHome;
@@ -9018,6 +9182,8 @@
         }
         if (removeNew) {
           this.cards = this.cards.filter(c => c.id !== id);
+          // 抜き書きから作って何も書かなかったときは、相手のリンクも外す
+          this.cards.forEach(c => { if (Array.isArray(c.links) && c.links.includes(id)) c.links = c.links.filter(x => x !== id); });
           save = false;
         }
         if (save) {
@@ -10295,7 +10461,7 @@
             <div class="mf-colors"><button type="button" data-mf="color" data-val="default" aria-label="文字色なし"><i style="border:1.5px solid #C7C7CC"></i></button><button type="button" data-mf="color" data-val="red" aria-label="赤"><i style="background:rgb(212, 76, 71)"></i></button><button type="button" data-mf="color" data-val="green" aria-label="緑"><i style="background:rgb(68, 131, 97)"></i></button><button type="button" data-mf="color" data-val="blue" aria-label="青"><i style="background:rgb(51, 126, 169)"></i></button></div>
           </div>
           <div class="mf-row c3">
-            ${b('insertOrderedList', '番号付き')}${b('block', '引用', 'blockquote')}${b('callout', 'コールアウト')}
+            ${b('insertOrderedList', '番号付き')}${b('block', '引用', 'blockquote')}${b('excerpt', '抜き書き')}${b('callout', 'コールアウト')}
             ${b('bubble', '吹き出し')}${b('hr', '区切り線')}${b('codeblock', 'コードブロック')}
             ${b('link', 'リンク')}${b('code', 'インラインコード')}${b('superscript', '上付き')}
             ${b('subscript', '下付き')}${b('clear', '書式をクリア')}${b('redo', 'やり直す')}
@@ -10355,8 +10521,9 @@
           const cmd = btn.dataset.mf;
           let on = false;
           try {
-            if (cmd === 'block') on = btn.dataset.val === 'div' ? !/^(h1|h2|h3|blockquote)$/.test(block) : btn.dataset.val === block;
+            if (cmd === 'block') on = btn.dataset.val === 'div' ? !/^(h1|h2|h3|blockquote)$/.test(block) : (btn.dataset.val === block && !(block === 'blockquote' && this.caretIn('blockquote[data-excerpt]')));
             else if (['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript', 'insertOrderedList'].includes(cmd)) on = document.queryCommandState(cmd);
+            else if (cmd === 'excerpt') on = !!this.caretIn('blockquote[data-excerpt]');
             else if (cmd === 'callout') on = !!this.caretIn('aside[data-callout]');
             else if (cmd === 'bubble') on = !!this.caretIn('aside[data-bubble]');
             else if (cmd === 'codeblock') on = !!this.caretIn('pre');
@@ -10710,6 +10877,82 @@
 
       prevCard() { this.scrollToIndex(this.currentIndex - 1); }
 
+      // 抜き書きの下に「Permanent に書き直す」／書き直したカードへのリンクを付ける（表示だけ。保存はしない）
+      decorateExcerpts(html, interactive) {
+        if (!interactive || !/data-excerpt/.test(html)) return html;
+        const tpl = document.createElement('template');
+        tpl.innerHTML = html;
+        tpl.content.querySelectorAll('blockquote[data-excerpt]').forEach((bq, i) => {
+          const perm = this.cards.find(c => c.id === bq.getAttribute('data-perm'));
+          const row = document.createElement('div');
+          row.className = 'ex-acts' + (perm ? '' : ' is-new');
+          row.innerHTML = perm
+            ? `<button type="button" class="ex-link" data-action="ex-open" data-id="${rtEscape(perm.id)}" title="書き直した Permanent カードを開く">Permanent：${this.escapeHtml(perm.title || '無題のカード')}</button>`
+            : `<button type="button" class="ex-make" data-action="ex-perm" data-idx="${i}" title="この抜き書きをもとに、自分の言葉で Permanent カードを書く（本の情報とリンクは自動で入ります）">Permanent に書き直す</button>`;
+          bq.after(row);
+        });
+        const box = document.createElement('div');
+        box.appendChild(tpl.content);
+        return box.innerHTML;
+      }
+
+      // 抜き書きから Permanent カードを作る：引用元（本とページ）とリンクを入れて、すぐ書き始める
+      excerptToPermanent(fromId, idx) {
+        const from = this.cards.find(c => c.id === fromId);
+        if (!from) return;
+        const tpl = document.createElement('template');
+        tpl.innerHTML = rtSanitize(typeof from.html === 'string' ? from.html : rtPlainToHtml(from.body));
+        const bq = tpl.content.querySelectorAll('blockquote[data-excerpt]')[idx];
+        if (!bq) return;
+        if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
+        let source = from.source ? JSON.parse(JSON.stringify(from.source)) : null;
+        if (source && source.type === 'book') source.page = bq.getAttribute('data-page') || '';
+        const now = new Date().toISOString();
+        const card = {
+          id: 'card-' + Date.now(),
+          title: '',
+          tags: [],
+          accent: this.config.accentTheme,
+          areas: [...(from.areas && from.areas.length ? from.areas : [this.areas[0].id])],
+          source,
+          date: fmtDotDate(new Date()),
+          createdAt: now,
+          updatedAt: now,
+          body: '',
+          html: '',
+          links: [from.id],
+          status: 'permanent'
+        };
+        this.cards.unshift(card);
+        from.links = [...new Set([...(from.links || []), card.id])];
+        // 抜き書きに、書き直したカードを覚えさせる
+        bq.setAttribute('data-perm', card.id);
+        const box = document.createElement('div');
+        box.appendChild(tpl.content);
+        from.html = rtSanitize(box.innerHTML);
+        from.body = rtToPlain(from.html);
+        this.touchCard(from);
+        this.saveCards();
+        // 絞り込みで隠れるなら見えるようにして、新しいカードを開いて書き始める
+        if (this.getFilteredCards().findIndex(c => c.id === card.id) === -1) {
+          this.searchQuery = '';
+          this.searchInput.value = '';
+          this.selectedTags.clear();
+          if (!this.matchStatus(card)) { this.config.statusFilter = 'active'; this.saveConfig(); }
+          if (!this.matchStatus(card)) { this.config.statusFilter = 'all'; this.saveConfig(); }
+          if (!this.isInCurrentArea(card)) { this.currentArea = card.areas[0] || ALL_AREAS; this.saveCurrentArea(); }
+          this.renderToolbar();
+          if (this.getFilteredCards().findIndex(c => c.id === card.id) === -1) { this.sourceFilter = null; this.renderToolbar(); }
+        }
+        this.currentIndex = Math.max(0, this.getFilteredCards().findIndex(c => c.id === card.id));
+        this.setNotesDetail(true);
+        this.setListFocus(false);
+        if (this.currentView !== 'single') this.switchView('single', { animate: false, instant: true });
+        else this.renderSingleDeck();
+        this.scrollToIndex(this.currentIndex, false);
+        requestAnimationFrame(() => this.startInlineEdit(card.id, { isNew: true }));
+      }
+
       /**
        * カードHTMLの生成
        * 一覧用(isMini=true)では余分なパディングを削り、カード自体の情報を最大限活かす
@@ -10784,7 +11027,7 @@
           <!-- 本文エリア：CSSによる厳格な文字幅 -->
           <div class="card-body-box relative z-10 ${isMini ? 'p-4 pt-3 pb-6' : 'p-7 lg:p-8 pt-5 lg:pt-6'} flex justify-center items-center">
             <div class="cjk-strict-body rich ${isMini ? '' : 'card-body-scroll'} text-neutral-800 dark:text-neutral-100 font-medium"
-                 style="width: ${bodyWidth}; height: ${bodyHeight}; max-width: ${bodyWidth}; max-height: ${bodyHeight}; font-size: ${fontSize}; line-height: 1.75em;">${rtDecorate(rtSanitize(typeof card.html === 'string' ? card.html : rtPlainToHtml(card.body)), !isMini)}</div>
+                 style="width: ${bodyWidth}; height: ${bodyHeight}; max-width: ${bodyWidth}; max-height: ${bodyHeight}; font-size: ${fontSize}; line-height: 1.75em;">${this.decorateExcerpts(rtDecorate(rtSanitize(typeof card.html === 'string' ? card.html : rtPlainToHtml(card.body)), !isMini), !isMini)}</div>
           </div>
 
           <!-- フッター：引用元（ない場合は何も表示しない） -->
@@ -10962,6 +11205,13 @@
               const on = !codeBlock.classList.contains('is-active');
               document.querySelectorAll('.rt-code.is-active').forEach(b => b.classList.remove('is-active'));
               if (on) codeBlock.classList.add('is-active');
+            }
+            const exBtn = e.target.closest('[data-action="ex-perm"], [data-action="ex-open"]');
+            if (exBtn) {
+              e.stopPropagation();
+              if (exBtn.dataset.action === 'ex-open') this.openInCardView(exBtn.dataset.id);
+              else this.excerptToPermanent(card.id, Number(exBtn.dataset.idx) || 0);
+              return;
             }
             const cp = e.target.closest('[data-action="copy-code"]');
             if (cp) {
