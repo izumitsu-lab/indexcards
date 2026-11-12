@@ -1172,6 +1172,11 @@
     .bar-btn { display: inline-flex; align-items: center; justify-content: center; gap: 2px; flex-shrink: 0; min-width: 32px; height: 32px; padding: 0 6px; border-radius: 8px; color: #48484A; transition: background 0.12s, color 0.12s; }
     .bar-btn:hover, .bar-btn.is-open { background: rgba(0, 0, 0, 0.06); color: #1D1D1F; }
     .bar-sep { flex-shrink: 0; width: 1px; height: 18px; margin: 0 6px; background: rgba(0, 0, 0, 0.12); }
+    html:not(.ui-phone) .card-wide-btn { display: inline-flex; }
+    html:not(.ui-phone) .card-wide-sep { display: inline-block; width: 1px; height: 18px; background: rgba(0, 0, 0, 0.12); margin: 0 6px 0 2px; }
+    html:not(.ui-phone).dark .card-wide-sep { background: rgba(255, 255, 255, 0.16); }
+    html:not(.ui-phone) body.notes-layout .is-wide .card-head-row { padding-left: 10px; }
+    html.ui-phone .card-wide-btn, html.ui-phone .card-wide-sep { display: none !important; }
     .bar-flip { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; height: 32px; padding: 0 5px 0 10px; border-radius: 9px; font-size: 13px; font-weight: 700; white-space: nowrap; color: #007AFF; background: rgba(0, 122, 255, 0.11); transition: background 0.12s; }
     .bar-flip:hover { background: rgba(0, 122, 255, 0.18); }
     .bar-flip .ff-count { height: 22px; padding: 0 7px; }
@@ -1192,6 +1197,94 @@
     .dark .bar-sep { background: rgba(255, 255, 255, 0.16); }
     .dark .bar-flip, .dark .inline-actions .ia-link { color: #4DA3FF; background: rgba(77, 163, 255, 0.16); }
     .dark .bar-edit { background: #0A84FF; }
+
+    /* ===== 端末の種類ごとの作り（ui-desktop／ui-pad／ui-phone。幅では切り替えない） ===== */
+    /* 幅が足りないとき（iPad の縦・狭めたパソコンの窓）：一覧はカードの上に重ねて出す */
+    #listDrawerBack { display: none; }
+    html.ui-drawer body.notes-layout #notesSidebar { display: none; position: absolute; z-index: 46; left: 0; top: 0; bottom: 0; width: min(320px, 86vw); box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 18px 0 44px -18px rgba(0, 0, 0, 0.35); }
+    html.ui-drawer body.notes-layout.list-drawer-open:not(.link-view) #notesSidebar { display: flex; }
+    html.ui-drawer body.notes-layout.list-drawer-open:not(.link-view) #listDrawerBack { display: block; position: absolute; inset: 0; z-index: 45; background: rgba(0, 0, 0, 0.22); }
+    /* 狭めたパソコンの窓：帯は「一覧・状態 … ／ 裏返す・編集」だけにして、残りは「…」へ */
+    html.ui-tight .card-tools [data-action="pin"], html.ui-tight .card-tools [data-action="copy-menu"], html.ui-tight .card-head-row .card-areas, html.ui-tight .bar-flip .bf-label { display: none !important; }
+    html.ui-tight .bar-flip { padding-left: 8px; }
+    html.ui-tight #gridCardsContainer, html.ui-tight #linkCardsContainer { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    /* 狭めたパソコンの窓で書くとき：1段目に操作、2段目に書式 */
+    html.ui-desktop.ui-drawer .inline-editing .card-head-row { flex-wrap: wrap; height: auto; row-gap: 2px; }
+    html.ui-desktop.ui-drawer .inline-editing .card-head-row #rtToolbar { order: 5; flex: 1 1 100%; flex-wrap: wrap; }
+
+    /* iPad：指で押せる大きさ（44px）にする */
+    html.ui-pad .card-head-row { min-height: 56px; }
+    html.ui-pad .bar-btn { min-width: 44px; height: 44px; border-radius: 10px; }
+    html.ui-pad .bar-btn svg { width: 20px; height: 20px; }
+    html.ui-pad .copy-menu-btn svg + svg { width: 10px; height: 10px; }
+    html.ui-pad .bar-flip, html.ui-pad .bar-edit, html.ui-pad .inline-actions .ia-link, html.ui-pad .inline-actions .ia-done { height: 40px; border-radius: 20px; font-size: 15px; }
+    html.ui-pad .bar-flip { padding: 0 6px 0 12px; }
+    html.ui-pad .bar-flip .ff-count { height: 28px; border-radius: 14px; padding: 0 9px; font-size: 13px; }
+    html.ui-pad .bar-edit, html.ui-pad .inline-actions .ia-done { padding: 0 20px; }
+    html.ui-pad .inline-actions .ia-link { padding: 0 14px; }
+    html.ui-pad .inline-actions .ia-cancel { height: 44px; padding: 0 10px; font-size: 17px; font-weight: 500; color: #007AFF; background: transparent; }
+    html.ui-pad.dark .inline-actions .ia-cancel { color: #4DA3FF; }
+    html.ui-touch .card-more-menu { width: 240px; }
+    html.ui-touch .card-more-menu button { min-height: 44px; padding: 0 12px; font-size: 15px; }
+    /* iPad で書くとき：アプリの帯はしまい、上に「キャンセル … リンク・完了」、書式は下（キーボードのすぐ上）に1列 */
+    html.ui-pad body.is-inline-editing > header { display: none !important; }
+    html.ui-pad body.is-inline-editing { padding-top: env(safe-area-inset-top); }
+    html.ui-pad body.m-kbfit { position: fixed !important; left: 0; right: 0; width: 100%; }
+    html.ui-pad .inline-editing .card-head-row > .inline-actions { display: contents; }
+    html.ui-pad .inline-editing .card-head-row > * { order: 1; }
+    html.ui-pad .inline-editing .card-head-row .inline-actions > * { order: 2; flex-shrink: 0; }
+    html.ui-pad .inline-editing .card-head-row .inline-actions > .ia-cancel { order: 0; margin-right: auto; }
+    html.ui-pad .inline-editing .card-head-row .inline-actions > .bar-sep { display: none; }
+    html.ui-pad .inline-editing .card-head-row { gap: 6px; padding-left: 6px !important; }
+    html.ui-pad body.is-inline-editing #inlineBar { position: static; order: 2; flex-shrink: 0; }
+    html.ui-pad #inlineBar { left: 0; right: 0; width: auto; max-width: none; padding: 4px 8px; border-radius: 0; box-shadow: none; border-top: 1px solid rgba(0, 0, 0, 0.14); background: #F7F7F8; -webkit-backdrop-filter: none; backdrop-filter: none; overflow: visible; transform: none !important; }
+    html.ui-pad.dark #inlineBar { background: #2C2C2E; box-shadow: none; border-top-color: rgba(255, 255, 255, 0.12); }
+    html.ui-pad #inlineBar.m-nokb { padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+    html.ui-pad #inlineBar #rtToolbar { width: 100%; flex-wrap: nowrap; justify-content: space-between; gap: 0; }
+    html.ui-pad #inlineBar #rtToolbar .rt-grp { display: contents; }
+    html.ui-pad #inlineBar #rtToolbar .rt-sep { display: block; flex-shrink: 0; }
+    html.ui-pad #inlineBar #rtToolbar > .rt-btn, html.ui-pad #inlineBar #rtToolbar > .rt-grp > .rt-btn, html.ui-pad #inlineBar .rt-menu-btn { flex: 0 1 40px; min-width: 30px; width: auto; height: 44px; border-radius: 10px; color: #3A3A3C; }
+    html.ui-pad.dark #inlineBar #rtToolbar .rt-btn, html.ui-pad.dark #inlineBar .rt-menu-btn { color: #E5E5EA; }
+    html.ui-pad #inlineBar #rtToolbar > .rt-btn svg, html.ui-pad #inlineBar #rtToolbar > .rt-grp > .rt-btn svg { width: 20px; height: 20px; }
+    html.ui-pad #inlineBar #rtToolbar .rt-btn.is-active { background: rgba(0, 122, 255, 0.14); color: #007AFF; }
+    html.ui-pad #inlineBar .rt-btn[data-rt="mkbd"] { display: inline-flex !important; order: 99; }
+    html.ui-pad #inlineBar .rt-menu { display: inline-flex; position: relative; flex: 0 1 48px; min-width: 36px; }
+    html.ui-pad #inlineBar .rt-menu-btn { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex: 1 1 auto; font-size: 16px; }
+    html.ui-pad #inlineBar .rt-menu.is-open > .rt-menu-btn { background: rgba(0, 0, 0, 0.08); }
+    html.ui-pad #inlineBar .rt-menu:has(.rt-btn.is-active) > .rt-menu-btn { color: #007AFF; }
+    html.ui-pad #inlineBar .rt-pop { display: none; position: absolute; z-index: 40; bottom: calc(100% + 10px); left: 0; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(0, 0, 0, 0.12); }
+    html.ui-pad.dark #inlineBar .rt-pop { background: #2C2C30; box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(255, 255, 255, 0.12); }
+    html.ui-pad #inlineBar .rt-menu.is-open > .rt-pop { display: flex; }
+    html.ui-pad #inlineBar .rt-menu > .rt-pop.rt-pop-list { left: auto; right: 0; }
+    html.ui-pad #inlineBar .rt-pop-row { gap: 4px; }
+    html.ui-pad #inlineBar .rt-pop-row .rt-btn { width: auto; min-width: 44px; height: 44px; padding: 0 10px; }
+    html.ui-pad #inlineBar .rt-pop-list { flex-direction: column; width: 220px; }
+    html.ui-pad #inlineBar #rtToolbar .rt-pop-list .rt-btn { display: flex; width: 100%; height: 44px; justify-content: flex-start; gap: 12px; padding: 0 12px; font-size: 15px; white-space: nowrap; }
+    html.ui-pad #inlineBar .rt-pop-list .rt-btn[data-label]::after { content: attr(data-label); font-weight: 500; }
+
+    /* iPhone：カードを開いたときの帯（‹ 一覧 … ／ 裏返す ／ 編集）と、書くときの帯（キャンセル … ／ リンク ／ 完了） */
+    #mNav .mn-icon.mn-dots { color: #48484A; }
+    .dark #mNav .mn-icon.mn-dots { color: #D4D4D4; }
+    #mNav .mn-pill { height: 36px; margin-left: 6px; padding: 0 16px; border-radius: 18px; background: #007AFF; color: #fff; font-size: 16px; font-weight: 700; }
+    #mNav .mn-link { gap: 6px; height: 36px; padding: 0 12px; border-radius: 18px; background: rgba(0, 122, 255, 0.11); color: #007AFF; font-size: 15px; font-weight: 700; }
+    .dark #mNav .mn-link { background: rgba(77, 163, 255, 0.16); color: #4DA3FF; }
+    #mEdLinkCount:empty { display: none; }
+    #mNav #flipFabCount svg { display: none; }
+    /* 「…」のシート：よく使う順の一覧。ゴミ箱は離して置く */
+    .ms-title { padding: 10px 4px 8px; font-size: 13px; font-weight: 600; color: #636366; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dark .ms-title { color: #AEAEB2; }
+    .ms-list { border-radius: 14px; background: #fff; overflow: hidden; }
+    .dark .ms-list { background: #2C2C2E; }
+    .ms-list + .ms-list { margin-top: 10px; }
+    .ms-row { display: flex; align-items: center; gap: 12px; width: 100%; height: 52px; padding: 0 14px; font-size: 16px; text-align: left; color: inherit; }
+    .ms-row + .ms-row { border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    .dark .ms-row + .ms-row { border-top-color: rgba(255, 255, 255, 0.1); }
+    .ms-row > svg:first-child { flex-shrink: 0; color: #636366; }
+    .dark .ms-row > svg:first-child { color: #AEAEB2; }
+    .ms-row > span { flex: 1; min-width: 0; }
+    .ms-row > i { font-style: normal; font-size: 15px; color: #636366; font-variant-numeric: tabular-nums; }
+    .ms-row.is-danger, .ms-row.is-danger > svg:first-child { color: #D70015; }
+    .dark .ms-row.is-danger, .dark .ms-row.is-danger > svg:first-child { color: #FF453A; }
     /* 「裏返す」はカードの帯に置く（iPhone では、カードを開いたときの帯にある） */
     @media (min-width: 640px) { header #flipFabWrap { display: none !important; } }
     @media (max-width: 639px) { .link-back { display: none !important; } }
@@ -2139,6 +2232,70 @@
   </script>
   <style id="tailwind-css">/* Tailwind CSS v3（このファイルで使うクラスだけを書き出したもの） */
 *,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.\!visible{visibility:visible!important}.visible{visibility:visible}.collapse{visibility:collapse}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.bottom-2{bottom:.5rem}.left-4{left:1rem}.left-\[2px\]{left:2px}.right-4{right:1rem}.right-\[5px\]{right:5px}.top-1\/2{top:50%}.top-\[2px\]{top:2px}.top-\[5px\]{top:5px}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-50{z-index:50}.col-span-2{grid-column:span 2/span 2}.col-span-full{grid-column:1/-1}.-mx-1{margin-left:-.25rem;margin-right:-.25rem}.mx-3{margin-left:.75rem;margin-right:.75rem}.mx-auto{margin-left:auto;margin-right:auto}.-ml-1{margin-left:-.25rem}.-ml-1\.5{margin-left:-.375rem}.-mt-2{margin-top:-.5rem}.-mt-3{margin-top:-.75rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-3\.5{margin-bottom:.875rem}.ml-1{margin-left:.25rem}.mr-0\.5{margin-right:.125rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.line-clamp-1{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1}.\!block{display:block!important}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.\!table{display:table!important}.table{display:table}.grid{display:grid}.contents{display:contents}.hidden{display:none}.\!h-8{height:2rem!important}.\!h-\[18px\]{height:18px!important}.\!h-\[34px\]{height:34px!important}.h-11{height:2.75rem}.h-14{height:3.5rem}.h-2{height:.5rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-\[17px\]{height:17px}.h-\[18px\]{height:18px}.h-\[21px\]{height:21px}.h-\[22px\]{height:22px}.h-\[25px\]{height:25px}.h-\[30px\]{height:30px}.h-\[34px\]{height:34px}.h-full{height:100%}.h-px{height:1px}.max-h-\[260px\]{max-height:260px}.max-h-\[48vh\]{max-height:48vh}.max-h-\[86vh\]{max-height:86vh}.max-h-\[92vh\]{max-height:92vh}.min-h-\[120px\]{min-height:120px}.min-h-\[240px\]{min-height:240px}.\!w-8{width:2rem!important}.\!w-\[18px\]{width:18px!important}.\!w-\[34px\]{width:34px!important}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-2{width:.5rem}.w-24{width:6rem}.w-3\.5{width:.875rem}.w-36{width:9rem}.w-4{width:1rem}.w-40{width:10rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-\[17px\]{width:17px}.w-\[18px\]{width:18px}.w-\[21px\]{width:21px}.w-\[22px\]{width:22px}.w-\[42px\]{width:42px}.w-full{width:100%}.w-px{width:1px}.min-w-0{min-width:0}.max-w-\[1800px\]{max-width:1800px}.max-w-\[420px\]{max-width:420px}.max-w-\[55\%\]{max-width:55%}.max-w-\[96vw\]{max-width:96vw}.max-w-full{max-width:100%}.max-w-lg{max-width:32rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.flex-shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-y-1\/2{--tw-translate-y:-50%}.-translate-y-1\/2,.scale-100{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.scale-100{--tw-scale-x:1;--tw-scale-y:1}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95}.scale-95,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.cursor-text{cursor:text}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize{resize:both}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-\[1px\]{gap:1px}.gap-\[3px\]{gap:3px}.space-x-2>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.5rem*var(--tw-space-x-reverse));margin-left:calc(.5rem*(1 - var(--tw-space-x-reverse)))}.space-y-0\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.125rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.125rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.\!rounded-\[10px\]{border-radius:10px!important}.\!rounded-\[5px\]{border-radius:5px!important}.\!rounded-\[9px\]{border-radius:9px!important}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-4xl{border-radius:2rem}.rounded-\[10px\]{border-radius:10px}.rounded-\[5px\]{border-radius:5px}.rounded-\[9px\]{border-radius:9px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-appleBlue{--tw-border-opacity:1;border-color:rgb(0 122 255/var(--tw-border-opacity,1))}.border-appleBlue\/30{border-color:rgba(0,122,255,.3)}.border-black\/10{border-color:rgba(0,0,0,.1)}.border-black\/5{border-color:rgba(0,0,0,.05)}.border-black\/\[0\.06\]{border-color:rgba(0,0,0,.06)}.border-black\/\[0\.07\]{border-color:rgba(0,0,0,.07)}.border-blue-500\/20{border-color:rgba(59,130,246,.2)}.border-indigo-500\/20{border-color:rgba(99,102,241,.2)}.border-neutral-400{--tw-border-opacity:1;border-color:rgb(163 163 163/var(--tw-border-opacity,1))}.border-purple-500\/20{border-color:rgba(168,85,247,.2)}.border-teal-500\/20{border-color:rgba(20,184,166,.2)}.border-transparent{border-color:transparent}.border-white\/40{border-color:hsla(0,0%,100%,.4)}.border-white\/50{border-color:hsla(0,0%,100%,.5)}.border-white\/60{border-color:hsla(0,0%,100%,.6)}.bg-\[\#EDEDF0\]{--tw-bg-opacity:1;background-color:rgb(237 237 240/var(--tw-bg-opacity,1))}.bg-\[\#F2F2F7\]{--tw-bg-opacity:1;background-color:rgb(242 242 247/var(--tw-bg-opacity,1))}.bg-\[rgba\(162\2c 132\2c 94\2c 0\.04\)\]{background-color:rgba(162,132,94,.04)}.bg-appleBlue{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.bg-appleBlue\/10{background-color:rgba(0,122,255,.1)}.bg-appleBlue\/\[0\.05\]{background-color:rgba(0,122,255,.05)}.bg-appleIndigo{--tw-bg-opacity:1;background-color:rgb(88 86 214/var(--tw-bg-opacity,1))}.bg-applePurple{--tw-bg-opacity:1;background-color:rgb(175 82 222/var(--tw-bg-opacity,1))}.bg-appleTeal{--tw-bg-opacity:1;background-color:rgb(48 176 199/var(--tw-bg-opacity,1))}.bg-black\/10{background-color:rgba(0,0,0,.1)}.bg-black\/40{background-color:rgba(0,0,0,.4)}.bg-black\/5{background-color:rgba(0,0,0,.05)}.bg-black\/\[0\.035\]{background-color:rgba(0,0,0,.035)}.bg-black\/\[0\.04\]{background-color:rgba(0,0,0,.04)}.bg-black\/\[0\.055\]{background-color:rgba(0,0,0,.055)}.bg-black\/\[0\.05\]{background-color:rgba(0,0,0,.05)}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-blue-500\/10{background-color:rgba(59,130,246,.1)}.bg-indigo-500\/10{background-color:rgba(99,102,241,.1)}.bg-neutral-200{--tw-bg-opacity:1;background-color:rgb(229 229 229/var(--tw-bg-opacity,1))}.bg-neutral-300{--tw-bg-opacity:1;background-color:rgb(212 212 212/var(--tw-bg-opacity,1))}.bg-neutral-400\/70{background-color:hsla(0,0%,64%,.7)}.bg-neutral-900\/90{background-color:hsla(0,0%,9%,.9)}.bg-purple-500\/10{background-color:rgba(168,85,247,.1)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68/var(--tw-bg-opacity,1))}.bg-red-500\/10{background-color:rgba(239,68,68,.1)}.bg-teal-500\/10{background-color:rgba(20,184,166,.1)}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/50{background-color:hsla(0,0%,100%,.5)}.bg-white\/70{background-color:hsla(0,0%,100%,.7)}.bg-white\/80{background-color:hsla(0,0%,100%,.8)}.bg-white\/85{background-color:hsla(0,0%,100%,.85)}.bg-white\/95{background-color:hsla(0,0%,100%,.95)}.bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-stops))}.from-transparent{--tw-gradient-from:transparent var(--tw-gradient-from-position);--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.via-black\/10{--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgba(0,0,0,.1) var(--tw-gradient-via-position),var(--tw-gradient-to)}.to-transparent{--tw-gradient-to:transparent var(--tw-gradient-to-position)}.p-0\.5{padding:.125rem}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-7{padding-left:1.75rem;padding-right:1.75rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-\[7px\]{padding-top:7px;padding-bottom:7px}.pb-1\.5{padding-bottom:.375rem}.pb-2{padding-bottom:.5rem}.pb-20{padding-bottom:5rem}.pb-3{padding-bottom:.75rem}.pb-5{padding-bottom:1.25rem}.pb-6{padding-bottom:1.5rem}.pl-1{padding-left:.25rem}.pr-0\.5{padding-right:.125rem}.pr-1\.5{padding-right:.375rem}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-2\.5{padding-top:.625rem}.pt-3{padding-top:.75rem}.pt-5{padding-top:1.25rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13px\]{font-size:13px}.text-\[14px\]{font-size:14px}.text-\[15px\]{font-size:15px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}.leading-snug{line-height:1.375}.tracking-normal{letter-spacing:0}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.tracking-widest{letter-spacing:.1em}.text-\[\#1D1D1F\]{--tw-text-opacity:1;color:rgb(29 29 31/var(--tw-text-opacity,1))}.text-appleBlue{--tw-text-opacity:1;color:rgb(0 122 255/var(--tw-text-opacity,1))}.text-appleIndigo{--tw-text-opacity:1;color:rgb(88 86 214/var(--tw-text-opacity,1))}.text-applePurple{--tw-text-opacity:1;color:rgb(175 82 222/var(--tw-text-opacity,1))}.text-appleTeal{--tw-text-opacity:1;color:rgb(48 176 199/var(--tw-text-opacity,1))}.text-neutral-300{--tw-text-opacity:1;color:rgb(212 212 212/var(--tw-text-opacity,1))}.text-neutral-400{--tw-text-opacity:1;color:rgb(163 163 163/var(--tw-text-opacity,1))}.text-neutral-500{--tw-text-opacity:1;color:rgb(115 115 115/var(--tw-text-opacity,1))}.text-neutral-600{--tw-text-opacity:1;color:rgb(82 82 82/var(--tw-text-opacity,1))}.text-neutral-700{--tw-text-opacity:1;color:rgb(64 64 64/var(--tw-text-opacity,1))}.text-neutral-800{--tw-text-opacity:1;color:rgb(38 38 38/var(--tw-text-opacity,1))}.text-neutral-900{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.placeholder-neutral-400::-moz-placeholder{--tw-placeholder-opacity:1;color:rgb(163 163 163/var(--tw-placeholder-opacity,1))}.placeholder-neutral-400::placeholder{--tw-placeholder-opacity:1;color:rgb(163 163 163/var(--tw-placeholder-opacity,1))}.accent-appleBlue{accent-color:#007aff}.opacity-0{opacity:0}.opacity-70{opacity:.7}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-apple-float{--tw-shadow:0 30px 60px -12px rgba(0,0,0,.14),0 18px 36px -18px rgba(0,0,0,.1),0 0 0 1px hsla(0,0%,100%,.4);--tw-shadow-colored:0 30px 60px -12px var(--tw-shadow-color),0 18px 36px -18px var(--tw-shadow-color),0 0 0 1px var(--tw-shadow-color)}.shadow-apple-float,.shadow-apple-soft{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-apple-soft{--tw-shadow:0 20px 40px -15px rgba(0,0,0,.07),0 0 1px 1px rgba(0,0,0,.04);--tw-shadow-colored:0 20px 40px -15px var(--tw-shadow-color),0 0 1px 1px var(--tw-shadow-color)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-appleBlue\/30{--tw-shadow-color:rgba(0,122,255,.3);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.outline{outline-style:solid}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-2,.ring-\[1\.5px\]{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-\[1\.5px\]{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1.5px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-neutral-400{--tw-ring-opacity:1;--tw-ring-color:rgb(163 163 163/var(--tw-ring-opacity,1))}.ring-white{--tw-ring-opacity:1;--tw-ring-color:rgb(255 255 255/var(--tw-ring-opacity,1))}.ring-offset-2{--tw-ring-offset-width:2px}.blur{--tw-blur:blur(8px)}.blur,.drop-shadow{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px rgba(0,0,0,.1)) drop-shadow(0 1px 1px rgba(0,0,0,.06))}.grayscale{--tw-grayscale:grayscale(100%)}.filter,.grayscale{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-2xl{--tw-backdrop-blur:blur(40px)}.backdrop-blur-2xl,.backdrop-blur-3xl{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-3xl{--tw-backdrop-blur:blur(64px)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px)}.backdrop-blur-md,.backdrop-blur-xl{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.selection\:bg-appleBlue ::-moz-selection{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.selection\:bg-appleBlue ::selection{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.selection\:text-white ::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:text-white ::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:bg-appleBlue::-moz-selection{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.selection\:bg-appleBlue::selection{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.selection\:text-white::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.focus-within\:border-appleBlue\/50:focus-within{border-color:rgba(0,122,255,.5)}.focus-within\:bg-white:focus-within{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.focus-within\:ring-\[3px\]:focus-within{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus-within\:ring-appleBlue\/15:focus-within{--tw-ring-color:rgba(0,122,255,.15)}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-neutral-300:hover{--tw-border-opacity:1;border-color:rgb(212 212 212/var(--tw-border-opacity,1))}.hover\:bg-appleBlue\/10:hover{background-color:rgba(0,122,255,.1)}.hover\:bg-black\/5:hover{background-color:rgba(0,0,0,.05)}.hover\:bg-black\/\[0\.08\]:hover{background-color:rgba(0,0,0,.08)}.hover\:bg-blue-600:hover{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.hover\:bg-neutral-50:hover{--tw-bg-opacity:1;background-color:rgb(250 250 250/var(--tw-bg-opacity,1))}.hover\:bg-red-500\/10:hover{background-color:rgba(239,68,68,.1)}.hover\:bg-red-500\/15:hover{background-color:rgba(239,68,68,.15)}.hover\:\!text-red-500:hover{--tw-text-opacity:1!important;color:rgb(239 68 68/var(--tw-text-opacity,1))!important}.hover\:text-black:hover{--tw-text-opacity:1;color:rgb(0 0 0/var(--tw-text-opacity,1))}.hover\:text-neutral-800:hover{--tw-text-opacity:1;color:rgb(38 38 38/var(--tw-text-opacity,1))}.hover\:text-neutral-900:hover{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.hover\:underline:hover{text-decoration-line:underline}.hover\:shadow-xl:hover{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.focus\:border-appleBlue:focus{--tw-border-opacity:1;border-color:rgb(0 122 255/var(--tw-border-opacity,1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.disabled\:pointer-events-none:disabled{pointer-events:none}.disabled\:no-underline:disabled{text-decoration-line:none}.disabled\:opacity-30:disabled{opacity:.3}.disabled\:opacity-40:disabled{opacity:.4}.peer:checked~.peer-checked\:translate-x-\[17px\]{--tw-translate-x:17px;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.peer:checked~.peer-checked\:bg-\[\#34C759\]{--tw-bg-opacity:1;background-color:rgb(52 199 89/var(--tw-bg-opacity,1))}.dark\:border-white\/10:is(.dark *){border-color:hsla(0,0%,100%,.1)}.dark\:border-white\/5:is(.dark *){border-color:hsla(0,0%,100%,.05)}.dark\:border-white\/\[0\.08\]:is(.dark *){border-color:hsla(0,0%,100%,.08)}.dark\:bg-\[\#0E0E10\]:is(.dark *){--tw-bg-opacity:1;background-color:rgb(14 14 16/var(--tw-bg-opacity,1))}.dark\:bg-\[\#151518\]:is(.dark *){--tw-bg-opacity:1;background-color:rgb(21 21 24/var(--tw-bg-opacity,1))}.dark\:bg-\[\#1E1E22\]\/95:is(.dark *){background-color:rgba(30,30,34,.95)}.dark\:bg-\[\#1E1E24\]\/85:is(.dark *){background-color:rgba(30,30,36,.85)}.dark\:bg-\[\#1E1E24\]\/95:is(.dark *){background-color:rgba(30,30,36,.95)}.dark\:bg-black\/40:is(.dark *){background-color:rgba(0,0,0,.4)}.dark\:bg-blue-950\/40:is(.dark *){background-color:rgba(23,37,84,.4)}.dark\:bg-neutral-600:is(.dark *){--tw-bg-opacity:1;background-color:rgb(82 82 82/var(--tw-bg-opacity,1))}.dark\:bg-neutral-800:is(.dark *){--tw-bg-opacity:1;background-color:rgb(38 38 38/var(--tw-bg-opacity,1))}.dark\:bg-neutral-800\/50:is(.dark *){background-color:rgba(38,38,38,.5)}.dark\:bg-neutral-800\/80:is(.dark *){background-color:rgba(38,38,38,.8)}.dark\:bg-white\/10:is(.dark *){background-color:hsla(0,0%,100%,.1)}.dark\:bg-white\/15:is(.dark *){background-color:hsla(0,0%,100%,.15)}.dark\:bg-white\/5:is(.dark *){background-color:hsla(0,0%,100%,.05)}.dark\:bg-white\/90:is(.dark *){background-color:hsla(0,0%,100%,.9)}.dark\:bg-white\/\[0\.04\]:is(.dark *){background-color:hsla(0,0%,100%,.04)}.dark\:bg-white\/\[0\.05\]:is(.dark *){background-color:hsla(0,0%,100%,.05)}.dark\:bg-white\/\[0\.07\]:is(.dark *){background-color:hsla(0,0%,100%,.07)}.dark\:bg-white\/\[0\.08\]:is(.dark *){background-color:hsla(0,0%,100%,.08)}.dark\:via-white\/10:is(.dark *){--tw-gradient-to:hsla(0,0%,100%,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),hsla(0,0%,100%,.1) var(--tw-gradient-via-position),var(--tw-gradient-to)}.dark\:text-\[\#F5F5F7\]:is(.dark *){--tw-text-opacity:1;color:rgb(245 245 247/var(--tw-text-opacity,1))}.dark\:text-neutral-100:is(.dark *){--tw-text-opacity:1;color:rgb(245 245 245/var(--tw-text-opacity,1))}.dark\:text-neutral-200:is(.dark *){--tw-text-opacity:1;color:rgb(229 229 229/var(--tw-text-opacity,1))}.dark\:text-neutral-300:is(.dark *){--tw-text-opacity:1;color:rgb(212 212 212/var(--tw-text-opacity,1))}.dark\:text-neutral-400:is(.dark *){--tw-text-opacity:1;color:rgb(163 163 163/var(--tw-text-opacity,1))}.dark\:text-neutral-600:is(.dark *){--tw-text-opacity:1;color:rgb(82 82 82/var(--tw-text-opacity,1))}.dark\:text-neutral-900:is(.dark *){--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.dark\:text-red-400:is(.dark *){--tw-text-opacity:1;color:rgb(248 113 113/var(--tw-text-opacity,1))}.dark\:text-white:is(.dark *){--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.dark\:shadow-apple-dark-float:is(.dark *){--tw-shadow:0 30px 60px -12px rgba(0,0,0,.5),0 0 0 1px hsla(0,0%,100%,.08);--tw-shadow-colored:0 30px 60px -12px var(--tw-shadow-color),0 0 0 1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.dark\:ring-neutral-900:is(.dark *){--tw-ring-opacity:1;--tw-ring-color:rgb(23 23 23/var(--tw-ring-opacity,1))}.dark\:ring-offset-neutral-800:is(.dark *){--tw-ring-offset-color:#262626}.dark\:focus-within\:bg-neutral-900:focus-within:is(.dark *){--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.dark\:hover\:bg-neutral-700:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(64 64 64/var(--tw-bg-opacity,1))}.dark\:hover\:bg-white\/10:hover:is(.dark *){background-color:hsla(0,0%,100%,.1)}.dark\:hover\:bg-white\/5:hover:is(.dark *){background-color:hsla(0,0%,100%,.05)}.dark\:hover\:bg-white\/\[0\.12\]:hover:is(.dark *){background-color:hsla(0,0%,100%,.12)}.dark\:hover\:text-neutral-200:hover:is(.dark *){--tw-text-opacity:1;color:rgb(229 229 229/var(--tw-text-opacity,1))}.dark\:hover\:text-white:hover:is(.dark *){--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:inline{display:inline}.sm\:p-4{padding:1rem}}@media (min-width:768px){.md\:flex{display:flex}.md\:gap-4{gap:1rem}.md\:rounded-3xl{border-radius:1.5rem}.md\:p-6{padding:1.5rem}}@media (min-width:1024px){.lg\:left-8{left:2rem}.lg\:right-8{right:2rem}.lg\:rounded-4xl{border-radius:2rem}.lg\:p-8{padding:2rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pb-4{padding-bottom:1rem}.lg\:pt-6{padding-top:1.5rem}.lg\:text-3xl{font-size:1.875rem;line-height:2.25rem}}</style>
+  <script>
+  // 画面の作りは「窓の幅」ではなく「端末の種類」で決める（パソコンの窓を狭めても iPhone の形にはしない。iPad は iPad の形）
+  (function () {
+    var KEY = 'aerocards_config_final_v5';
+    var root = document.documentElement;
+    var rules = null;
+    function kind() {
+      try { var k = (JSON.parse(localStorage.getItem(KEY) || '{}') || {}).screenKind; return k === 'desktop' || k === 'pad' || k === 'phone' ? k : 'auto'; } catch (e) { return 'auto'; }
+    }
+    function isTouchDevice() {
+      var n = navigator, ua = n.userAgent || '';
+      if (/iPad|iPhone|iPod|Android/.test(ua)) return true;
+      if (n.platform === 'MacIntel' && n.maxTouchPoints > 1) return true; // iPad は Mac と名乗る
+      return n.maxTouchPoints > 0 && window.matchMedia('(pointer: coarse)').matches;
+    }
+    // 幅だけの条件（min-width / max-width）を、指定した幅で判定する。ほかの条件が混ざっていれば null
+    function test(text, w) {
+      var parts = text.replace(/^\s*(only\s+)?screen\s+and\s+/, '').split(/\s+and\s+/), ok = true;
+      for (var i = 0; i < parts.length; i++) {
+        var m = /^\(\s*(min|max)-width\s*:\s*([\d.]+)px\s*\)$/.exec(parts[i].trim());
+        if (!m) return null;
+        var v = parseFloat(m[2]);
+        if (m[1] === 'min' ? w < v : w > v) ok = false;
+      }
+      return ok;
+    }
+    function collect() {
+      rules = [];
+      var walk = function (list) {
+        for (var i = 0; i < list.length; i++) {
+          var r = list[i];
+          if (r.media && r.cssRules) {
+            var t = r.media.mediaText;
+            if (t.indexOf(',') < 0 && test(t, 0) !== null) rules.push({ rule: r, text: t });
+          }
+          if (r.cssRules && r.cssRules.length) walk(r.cssRules);
+        }
+      };
+      for (var i = 0; i < document.styleSheets.length; i++) {
+        try { walk(document.styleSheets[i].cssRules); } catch (e) {}
+      }
+    }
+    function update() {
+      var k = kind(), w = window.innerWidth;
+      var mode = k !== 'auto' ? k : isTouchDevice() ? (w < 640 ? 'phone' : 'pad') : 'desktop';
+      // スタイルは「iPhone の幅」「それ以外の幅」で書かれているので、種類に合う幅として読ませる
+      var vw = mode === 'phone' ? Math.min(w, 639) : Math.max(w, 640);
+      if (!rules) collect();
+      for (var i = 0; i < rules.length; i++) {
+        var r = rules[i], want = test(r.text, vw), now = test(r.text, w);
+        var text = want === now ? r.text : want ? 'all' : 'not all';
+        if (r.rule.media.mediaText !== text) r.rule.media.mediaText = text;
+      }
+      var drawer = mode !== 'phone' && w < 900, tight = mode !== 'phone' && w < 600;
+      var c = root.classList;
+      c.toggle('ui-phone', mode === 'phone'); c.toggle('ui-pad', mode === 'pad'); c.toggle('ui-desktop', mode === 'desktop');
+      c.toggle('ui-touch', mode !== 'desktop'); c.toggle('ui-drawer', drawer); c.toggle('ui-tight', tight);
+      api.mode = mode; api.drawer = drawer; api.tight = tight;
+      api.sig = mode + (drawer ? 'd' : '') + (tight ? 't' : '');
+    }
+    var api = window.IC_UI = { update: update, mode: 'desktop', drawer: false, tight: false, sig: '' };
+    update();
+  })();
+  </script>
 </head>
 
 <body class="h-full bg-[#EDEDF0] dark:bg-[#0E0E10] text-[#1D1D1F] dark:text-[#F5F5F7] overflow-hidden flex flex-col antialiased selection:bg-appleBlue selection:text-white">
@@ -2250,11 +2407,11 @@
     <button type="button" id="mEdCancel" class="mn-back m-nav-edit" style="padding-left:10px">キャンセル</button>
     <button type="button" id="mBackBtn" class="mn-back"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span id="mBackLabel">一覧</span></button>
     <span class="mn-gap"></span>
+    <button type="button" id="mMoreBtn" class="mn-icon mn-dots m-nav-card" aria-label="そのほかの操作" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button>
     <span id="mFlipSlot"></span>
-    <button type="button" id="mMoreBtn" class="mn-icon m-nav-card" aria-label="そのほかの操作"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="7.5" cy="12" r="0.6" fill="currentColor"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/><circle cx="16.5" cy="12" r="0.6" fill="currentColor"/></svg></button>
-    <button type="button" id="mEditBtn" class="mn-text m-nav-card">編集</button>
-    <button type="button" id="mEdDelete" class="mn-icon m-nav-edit" aria-label="このカードを削除"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-    <button type="button" id="mEdLink" class="mn-icon m-nav-edit" aria-label="リンクを追加・削除"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+    <button type="button" id="mEditBtn" class="mn-pill m-nav-card">編集</button>
+    <button type="button" id="mEdDelete" class="mn-icon mn-dots m-nav-edit" aria-label="そのほかの操作（ゴミ箱に移す）" aria-haspopup="menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button>
+    <button type="button" id="mEdLink" class="mn-link m-nav-edit" aria-label="リンクを追加・外す"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/></svg>リンク<span id="mEdLinkCount"></span></button>
     <button type="button" id="mEdDone" class="m-nav-edit mn-done">完了</button>
   </div>
 
@@ -2486,6 +2643,9 @@
         <div class="set-group">
           <div class="set-row"><span class="set-text"><b>テーマ <span class="set-tag">この端末だけ</span></b><small>「自動」は Mac・iPhone の外観の設定に合わせます</small></span>
             <div id="settingThemeSeg" class="src-seg" role="group" aria-label="テーマ"><button type="button" data-val="light">ライト</button><button type="button" data-val="dark">ダーク</button><button type="button" data-val="auto">自動</button></div>
+          </div>
+          <div class="set-row"><span class="set-text"><b>画面の種類 <span class="set-tag">この端末だけ</span></b><small>「自動」は端末で決まります。合わないときだけ選んでください</small></span>
+            <div id="settingScreenSeg" class="src-seg" role="group" aria-label="画面の種類"><button type="button" data-val="auto">自動</button><button type="button" data-val="desktop">パソコン</button><button type="button" data-val="pad">iPad</button><button type="button" data-val="phone">iPhone</button></div>
           </div>
           <label class="set-row"><span class="set-text"><b>カードを裏返すアニメーション</b><small>表と裏（リンク）を切り替えるときに、カードが回転します</small></span><span class="set-sw"><input id="settingFlipInput" type="checkbox"><i></i></span></label>
         </div>
@@ -2852,6 +3012,7 @@
       gridColumns: 4, // デフォルト4列
       accentTheme: 'appleBlue',
       flipAnimation: true,  // カード ⇄ リンク の裏返しアニメーション
+      screenKind: 'auto',   // 画面の種類（auto / desktop / pad / phone）。この端末だけ
       copyWithSource: true, // コピーに引用元を付ける
       listHidden: false,    // リストビューの左の一覧を隠している
       tagSort: 'custom',    // タグの並び：custom（任意の順）/ name（名前順）/ count（よく使う順）
@@ -4863,6 +5024,7 @@
       pick('accentTheme', Object.keys(CARD_ACCENT_HEX));
       pick('sortOrder', Object.keys(SORT_ORDERS));
       pick('mdLayout', ['area', 'flat', 'single']);
+      pick('screenKind', ['auto', 'desktop', 'pad', 'phone']);
       pick('tagSort', ['custom', 'name', 'count']);
       pick('tagMatch', ['all', 'any']);
       c.tagOrder = Array.isArray(c.tagOrder) ? c.tagOrder.filter(t => typeof t === 'string') : [];
@@ -6094,7 +6256,7 @@
             return;
           }
           // W：横いっぱい ⇄ 設定通りの大きさ（カードビューのみ）
-          if (!mod && !e.altKey && (e.key === 'w' || e.key === 'W') && this.currentView === 'single' && window.innerWidth >= 768) {
+          if (!mod && !e.altKey && (e.key === 'w' || e.key === 'W') && this.currentView === 'single' && !this.isPhone()) {
             e.preventDefault();
             this.toggleWide();
             return;
@@ -8574,13 +8736,15 @@
 
         // 書式は右側の上端の帯に入れて、削除・リンク・キャンセル・完了と1本にする
         // iPhone はキーボードのすぐ上に出す（指が届く場所）
-        this.inlineHome.docked = !this.isPhone();
+        this.inlineHome.docked = !this.isTouchUi();
         if (this.inlineHome.docked) {
           const row = wrap.querySelector('.card-head-row');
           row.insertBefore(this.rtToolbar, row.querySelector('.inline-actions'));
         } else {
           bar.appendChild(this.rtToolbar);
         }
+        document.getElementById('mEdLinkCount').textContent = this.getLinkedCards(card).length || '';
+        document.body.classList.remove('list-drawer-open');
         wrap.classList.add('inline-editing');
         document.body.classList.add('is-inline-editing');
         this.fitWideCards();
@@ -9435,15 +9599,26 @@
       }
 
       // ツールバーをカードの真上に置く（上に余白がなければ、カードの上端に重ねる）
-      isPhone() {
-        return window.matchMedia('(max-width: 639px)').matches;
+      isPhone() { return window.IC_UI.mode === 'phone'; }
+      isPad() { return window.IC_UI.mode === 'pad'; }
+      isTouchUi() { return window.IC_UI.mode !== 'desktop'; } // 書式の帯をキーボードの上に出す端末
+      isDrawer() { return window.IC_UI.drawer; }               // 一覧をカードの上に重ねて出す幅
+
+      // 端末の種類・幅の区分が変わったとき（窓の幅を変えた・iPad を回した・設定で選び直した）
+      onUiChange() {
+        document.body.classList.remove('list-drawer-open');
+        this.closeCardMore();
+        if (!this.applyPhoneLayout()) { if (!this.inlineEditId) { this.fitWideCards(); } return; }
+        this.closeMSheet();
+        this.closeMFormat(false);
+        if (!this.inlineEditId) this.renderAll();
       }
 
       placeInlineBar() {
         const bar = document.getElementById('inlineBar');
         if (!this.inlineEditId || !this.inlineHome || this.inlineHome.docked) return;
-        // iPhone：画面の下、キーボードが出ていればそのすぐ上
-        if (this.isPhone()) {
+        // iPhone・iPad：画面の下、キーボードが出ていればそのすぐ上
+        if (this.isTouchUi()) {
           // アプリ全体を、キーボードを除いた「見えている範囲」にぴったり合わせる。
           // 上の帯・本文・書式の帯は縦に並んでいるので、書式の帯はいつもキーボードのすぐ上に来て、本文とは重ならない
           const vv = window.visualViewport;
@@ -9454,6 +9629,7 @@
           b.style.top = `${vv ? Math.round(vv.offsetTop) : 0}px`;
           b.style.height = `${vv ? Math.round(vv.height) : window.innerHeight}px`;
           bar.classList.toggle('m-nokb', !kb && !pOpen);
+          if (!this.isPhone()) this.fitWideCards();
           this.keepCaretVisible();
           return;
         }
@@ -10553,14 +10729,15 @@
 
       bindPhoneChrome() {
         this.applyPhoneLayout();
-        const mq = window.matchMedia('(max-width: 639px)');
-        const onChange = () => {
-          if (!this.applyPhoneLayout()) return;
-          this.closeMSheet();
-          this.closeMFormat(false);
-          if (!this.inlineEditId) this.renderAll();
-        };
-        if (mq.addEventListener) mq.addEventListener('change', onChange); else if (mq.addListener) mq.addListener(onChange);
+        window.addEventListener('resize', () => {
+          const before = window.IC_UI.sig;
+          window.IC_UI.update();
+          if (window.IC_UI.sig !== before) this.onUiChange();
+        });
+        const back = document.createElement('div');
+        back.id = 'listDrawerBack';
+        document.getElementById('notesSidebar').parentNode.appendChild(back);
+        back.addEventListener('click', () => this.toggleWide());
         document.getElementById('mBackBtn').addEventListener('click', () => this.mGoBack());
         document.getElementById('mEditBtn').addEventListener('click', () => {
           const id = this.currentCardId();
@@ -10571,7 +10748,7 @@
         ['mEdCancel', 'mEdDone', 'mEdDelete', 'mEdLink'].forEach(id => keep(document.getElementById(id)));
         document.getElementById('mEdCancel').addEventListener('click', () => this.finishInlineEdit(false));
         document.getElementById('mEdDone').addEventListener('click', () => this.finishInlineEdit(true));
-        document.getElementById('mEdDelete').addEventListener('click', () => this.deleteInlineCard());
+        document.getElementById('mEdDelete').addEventListener('click', (e) => { if (!this.inlineEditId) return; this.isCardMoreOpen() ? this.closeCardMore() : this.openCardMore(this.inlineEditId, e.currentTarget, true); });
         document.getElementById('mEdLink').addEventListener('click', () => { if (this.inlineEditId) this.showLinkPicker(this.inlineEditId); });
         document.querySelectorAll('#mBar [data-mview]').forEach(b => b.addEventListener('click', () => {
           ({ grid: this.gridModeBtn, graph: this.graphModeBtn }[b.dataset.mview] || this.listModeBtn).click();
@@ -10738,7 +10915,7 @@
 
       // ---------- 編集中：本文の下端を書式の帯の上に合わせ、カーソルをいつも見える位置に ----------
       keepCaretVisible() {
-        if (!this.isPhone() || !this.inlineEditId) return;
+        if (!this.isTouchUi() || !this.inlineEditId) return;
         const ed = this.editCardBody;
         const sel = window.getSelection();
         if (!sel.rangeCount || !ed.contains(sel.anchorNode)) return;
@@ -10750,7 +10927,7 @@
           rect = (n.nodeType === 1 ? n : n.parentElement).getBoundingClientRect();
         }
         // 送るのはカード全体（1枚の紙）。書式の帯はその下に並んでいるので、紙の下端より下に入らなければ見えている
-        const scroller = ed.closest('.is-wide') || ed;
+        const scroller = this.isPhone() ? (ed.closest('.is-wide') || ed) : ed;
         const box = scroller.getBoundingClientRect();
         if (rect.bottom > box.bottom - 12) scroller.scrollTop += rect.bottom - box.bottom + 36;
         else if (rect.top < box.top + 4) scroller.scrollTop -= box.top - rect.top + 12;
@@ -10762,15 +10939,18 @@
         const card = this.cards.find(c => c.id === id);
         if (!card) return;
         const ico = (d) => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+        const hist = CARD_HIST.counts.get(id) || 0;
+        const row = (act, icon, label, tail = '', cls = '') => `<button type="button" class="ms-row${cls}" data-ms="${act}">${icon}<span>${label}</span>${tail}</button>`;
+        const chev = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
         const html = `<span class="ms-grab"></span>
-          <div class="ms-head"><span></span><b>${this.escapeHtml(card.title || '無題のカード')}</b><span></span></div>
-          <div class="ms-acts">
-            <button type="button" class="ms-act" data-ms="pin">${pinIconSvg(22, !!card.pinnedAt)}${card.pinnedAt ? 'ピンを外す' : 'ピン留め'}</button>
-            <button type="button" class="ms-act" data-ms="copy">${ico('<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>')}コピー</button>
-            <button type="button" class="ms-act" data-ms="link">${ico('<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>')}リンク</button>
-            <button type="button" class="ms-act is-danger" data-ms="delete">${ico('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>')}削除</button>
-            ${CARD_HIST.counts.get(id) ? `<button type="button" class="ms-act" data-ms="history">${ico('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>')}前の版</button>` : ''}
+          <div class="ms-title">${this.escapeHtml(card.title || '無題のカード')}</div>
+          <div class="ms-list">
+            ${row('pin', pinIconSvg(22, !!card.pinnedAt), card.pinnedAt ? 'ピンを外す' : 'ピン留め')}
+            ${row('copy', ico('<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'), 'コピー', chev)}
+            ${row('link', ico('<rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/>'), 'リンクを追加・外す')}
+            ${hist ? row('history', ico('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'), '前の版を見る', `<i>${hist}</i>`) : ''}
           </div>
+          <div class="ms-list">${row('delete', ico('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'), 'ゴミ箱に移す', '', ' is-danger')}</div>
           <button type="button" class="ms-cancel" data-ms="cancel">キャンセル</button>`;
         this.openMSheet(html, (b) => {
           const act = b.dataset.ms;
@@ -10817,7 +10997,7 @@
         });
         document.addEventListener('selectionchange', () => {
           if (this.isMFormatOpen()) this.updateMFormatState();
-          if (this.inlineEditId && this.isPhone() && document.activeElement === this.editCardBody) { clearTimeout(this._caretTimer); this._caretTimer = setTimeout(() => this.keepCaretVisible(), 60); }
+          if (this.inlineEditId && this.isTouchUi() && document.activeElement === this.editCardBody) { clearTimeout(this._caretTimer); this._caretTimer = setTimeout(() => this.keepCaretVisible(), 60); }
         });
       }
 
@@ -10893,7 +11073,7 @@
         if (window.visualViewport) {
           // キーボードは動きながら出てくるので、出終わったころにもう一度合わせる
           const follow = () => {
-            if (!this.inlineEditId || !this.isPhone()) return;
+            if (!this.inlineEditId || !this.isTouchUi()) return;
             this.placeInlineBar();
             clearTimeout(this._kbTimer);
             this._kbTimer = setTimeout(() => this.placeInlineBar(), 350);
@@ -11265,7 +11445,7 @@
                   </button>
                   <button type="button" data-action="more" class="bar-btn" title="そのほかの操作（リンク・前の版・ゴミ箱）" aria-label="そのほかの操作" aria-haspopup="menu"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
                   <span class="bar-sep" aria-hidden="true"></span>
-                  <button type="button" data-action="flip" class="bar-flip" title="カードを裏返して、リンクを見る (L)" aria-keyshortcuts="L"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/><path d="m16.5 12 3.5 3.5 3.5-3.5"/></svg>裏返す<span class="ff-count${linkCount ? '' : ' is-zero'}">リンク ${linkCount}</span></button>
+                  <button type="button" data-action="flip" class="bar-flip" title="カードを裏返して、リンクを見る (L)" aria-keyshortcuts="L"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/><path d="m16.5 12 3.5 3.5 3.5-3.5"/></svg><span class="bf-label">裏返す</span><span class="ff-count${linkCount ? '' : ' is-zero'}">リンク ${linkCount}</span></button>
                   <button type="button" data-action="edit" data-id="${rtEscape(card.id)}" class="bar-edit" title="カードを編集（本文のダブルクリックでも）">編集</button>
               </div>` : ''}
             </div>
@@ -11323,9 +11503,11 @@
           m.addEventListener('click', (e) => {
             const b = e.target.closest('[data-more]');
             if (!b) return;
-            const { id, editing } = this._cardMore;
+            const { id, editing, anchor } = this._cardMore;
             this.closeCardMore();
             if (b.dataset.more === 'link') this.showLinkPicker(id);
+            else if (b.dataset.more === 'pin') { const c = this.cards.find(x => x.id === id); if (c) this.setPinned([id], !c.pinnedAt); }
+            else if (b.dataset.more === 'copy') setTimeout(() => this.openCopyMenu(id, anchor), 0);
             else if (b.dataset.more === 'history') this.showHistory(id);
             else if (editing) this.deleteInlineCard();
             else this.deleteCard(id);
@@ -11343,8 +11525,11 @@
         const m = this.cardMore;
         const hist = CARD_HIST.counts.get(cardId) || 0;
         const trash = `<button type="button" class="danger" role="menuitem" data-more="trash">${editing && this.inlineIsNew ? 'このカードを破棄' : 'ゴミ箱に移す'}</button>`;
+        const cardNow = this.cards.find(c => c.id === cardId);
+        const folded = !editing && window.IC_UI.tight
+          ? `<button type="button" role="menuitem" data-more="pin">${cardNow && cardNow.pinnedAt ? 'ピンを外す' : 'ピン留め'}</button><button type="button" role="menuitem" data-more="copy">コピー…</button>` : '';
         m.innerHTML = editing ? trash
-          : `<button type="button" role="menuitem" data-more="link">リンクを追加・外す…</button>`
+          : folded + `<button type="button" role="menuitem" data-more="link">リンクを追加・外す…</button>`
             + (hist ? `<button type="button" role="menuitem" data-more="history">前の版を見る<kbd>${hist}</kbd></button>` : '')
             + '<hr>' + trash;
         this._cardMore = { id: cardId, anchor, editing };
@@ -11627,6 +11812,11 @@
 
       toggleWide() {
         if (this.currentView !== 'single') return;
+        if (this.isDrawer()) { // 幅が足りないとき：一覧はカードの上に重ねて出し入れする（設定は変えない）
+          this.closeCopyMenu(); this.closeCardMore();
+          document.body.classList.toggle('list-drawer-open');
+          return;
+        }
         if (this.inlineEditId) this.finishInlineEdit(true, { noRender: true });
         this.closeCopyMenu();
         this.config.listHidden = !this.config.listHidden; // 左の一覧を隠す・出す
@@ -11716,6 +11906,7 @@
         const b = document.body, v = this.currentView;
         b.classList.toggle('notes-layout', this.isListLayout());
         b.classList.toggle('notes-list-hidden', !!this.config.listHidden);
+        if (v !== 'single') b.classList.remove('list-drawer-open');
         this.gridModeBtn.classList.toggle('is-on', v === 'grid');
         if (this.graphModeBtn) this.graphModeBtn.classList.toggle('is-on', v === 'graph');
         this.listModeBtn.classList.toggle('is-on', v === 'single');
@@ -11777,6 +11968,7 @@
       // 一覧の行を押したとき
       openNote(id) {
         this._detailFrom = 'list';
+        document.body.classList.remove('list-drawer-open');
         this.setNotesDetail(true);
         let edited = false;
         if (this.inlineEditId) {
@@ -12045,6 +12237,7 @@
           const card = this.cards.find(c => c.id === this.inlineEditId);
           const badge = this.inlineHome.wrap.querySelector('.ia-link .link-count');
           if (badge && card) badge.textContent = this.getLinkedCards(card).length || '';
+          if (card) document.getElementById('mEdLinkCount').textContent = this.getLinkedCards(card).length || '';
         }
       }
 
@@ -13459,6 +13652,7 @@
           const n = card ? this.getLinkedCards(card).length : 0;
           const badge = this.inlineHome && this.inlineHome.wrap.querySelector('.ia-link .link-count');
           if (badge) badge.textContent = n || '';
+          document.getElementById('mEdLinkCount').textContent = n || '';
           this.showToast(n ? `リンク ${n}件` : 'リンクをすべて外しました');
           if (this.editCardBody) this.editCardBody.focus({ preventScroll: true });
           return;
@@ -13664,6 +13858,7 @@
           if (after) after();
         };
         seg('settingThemeSeg', pick('theme', () => this.applyTheme()));
+        seg('settingScreenSeg', pick('screenKind', () => { window.IC_UI.update(); this.onUiChange(); this.applyListLayout(); }));
         seg('settingImageSizeSeg', pick('imageSize'));
         seg('settingImageDisplaySeg', pick('imageDisplay'));
         seg('settingColumnsSeg', (v) => pick('gridColumns', () => this.renderAll())(parseInt(v, 10)));
@@ -13829,6 +14024,7 @@
         });
         // 外観
         segOn('settingThemeSeg', this.themeMode());
+        segOn('settingScreenSeg', this.config.screenKind || 'auto');
         $('settingFlipInput').checked = this.config.flipAnimation !== false;
         document.querySelectorAll('#settingAccentSws [data-theme]').forEach(b => {
           const on = b.dataset.theme === (this.config.accentTheme || 'appleBlue');
@@ -13873,7 +14069,7 @@
 
       resetSettingsSection(sec) {
         const keys = {
-          look: ['theme', 'flipAnimation', 'accentTheme', 'statusColors'],
+          look: ['theme', 'screenKind', 'flipAnimation', 'accentTheme', 'statusColors'],
           type: ['wideFontPx', 'cardTitlePx', 'rtH1', 'rtH2', 'rtH3', 'codeWrap'],
           gallery: ['gridColumns', 'charsPerLine', 'linesCount'],
           image: ['imageSize', 'imageDisplay', 'imageScreenshotBoost'],
@@ -13885,6 +14081,7 @@
         this.applyTheme();
         this.syncSettingsControls();
         if (sec === 'copy') this.renderMdExportPanel();
+        if (sec === 'look') { window.IC_UI.update(); this.onUiChange(); this.applyListLayout(); }
         this.renderAll();
         this.showToast('初期値に戻しました');
       }
