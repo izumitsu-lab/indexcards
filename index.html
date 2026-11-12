@@ -4479,6 +4479,36 @@
     }
 
     // クリップボード用HTML: data-color を実際の色指定に置き換え、Notion・メモ帳が解釈しやすい形に
+    // 貼り付け：抜き書きを元に戻す。コピーのときに末尾へ足した「 (p.5)」を外す。
+    // 印のない引用でも、最後が「(p.5)」「（p.12-13）」なら抜き書きにする（Markdown の読み込みと同じ）
+    function rtRestoreExcerpts(html) {
+      if (!/<blockquote/i.test(html)) return html;
+      const tpl = document.createElement('template');
+      tpl.innerHTML = html;
+      const PAGE = /\s*[(（]\s*p\.\s*([^)）]{1,20}?)\s*[)）]\s*$/;
+      tpl.content.querySelectorAll('blockquote').forEach(bq => {
+        if (bq.querySelector('blockquote')) return;
+        const tw = document.createTreeWalker(bq, NodeFilter.SHOW_TEXT);
+        let last = null;
+        while (tw.nextNode()) if (tw.currentNode.nodeValue.trim()) last = tw.currentNode;
+        const m = last && last.nodeValue.match(PAGE);
+        if (m) {
+          last.nodeValue = last.nodeValue.slice(0, m.index);
+          bq.setAttribute('data-excerpt', '1');
+          bq.setAttribute('data-page', m[1]);
+          // 足した文字だけが入っていた行が空になったら消す
+          const holder = last.parentElement;
+          if (!last.nodeValue) {
+            if (holder !== bq && !holder.textContent.trim() && !holder.querySelector('img')) holder.remove();
+            else last.remove();
+          }
+        }
+      });
+      const box = document.createElement('div');
+      box.appendChild(tpl.content);
+      return box.innerHTML;
+    }
+
     function rtToClipboardHtml(html) {
       const tpl = document.createElement('template');
       tpl.innerHTML = rtSanitize(html);
@@ -4518,7 +4548,7 @@
       tpl.content.querySelectorAll('blockquote[data-excerpt]').forEach(bq => {
         const pg = bq.getAttribute('data-page');
         if (pg) bq.appendChild(document.createTextNode(` (p.${pg})`));
-        ['data-excerpt', 'data-page'].forEach(k => bq.removeAttribute(k));
+        // 印（data-excerpt・data-page）は残す：ほかのアプリは無視し、このアプリに貼り戻すと抜き書きに戻る
       });
       // コールアウト：アプリ間で通じる「引用＋絵文字の見出し」に
       tpl.content.querySelectorAll('aside[data-callout]').forEach(a => {
@@ -6015,7 +6045,7 @@
               if (this.undo()) { this.record('op'); document.execCommand('insertText', false, text); this.updateEditorMeta(); }
             });
           } else if (html) {
-            document.execCommand('insertHTML', false, rtSanitize(html));
+            document.execCommand('insertHTML', false, rtSanitize(rtRestoreExcerpts(html)));
             this.afterStructureChange();
           } else if (text) {
             document.execCommand('insertText', false, text);
@@ -8128,9 +8158,11 @@
         }
         if (blk && host.contains(blk) && !box.querySelector('h1, h2, h3, li, blockquote, div')) {
           const tag = blk.tagName.toLowerCase();
+          const exAttr = tag === 'blockquote' && blk.hasAttribute('data-excerpt')
+            ? ` data-excerpt="1"${blk.getAttribute('data-page') ? ` data-page="${rtEscape(blk.getAttribute('data-page'))}"` : ''}` : '';
           html = tag === 'li'
             ? `<${blk.parentNode.tagName.toLowerCase()}><li>${html}</li></${blk.parentNode.tagName.toLowerCase()}>`
-            : `<${tag}>${html}</${tag}>`;
+            : `<${tag}${exAttr}>${html}</${tag}>`;
         }
         const clean = rtSanitize(html);
         e.clipboardData.setData('text/html', rtToClipboardHtml(clean));
