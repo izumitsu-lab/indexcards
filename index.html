@@ -1197,6 +1197,28 @@
     @media (max-width: 639px) { .link-back { display: none !important; } }
 
 
+    /* ===== 裏面：左に「このカード」、右に「リンクしているカード」 ===== */
+    .lv-split { display: flex; align-items: flex-start; gap: 24px; margin-top: 6px; }
+    .lv-self { position: sticky; top: 4px; flex-shrink: 0; width: clamp(260px, 27%, 380px); }
+    .lv-main { flex: 1; min-width: 0; }
+    .lv-label { display: flex; align-items: center; gap: 8px; margin: 0 2px 8px; font-size: 12px; font-weight: 700; color: #48484A; }
+    .lv-label span { font-weight: 600; color: #6E6E73; font-variant-numeric: tabular-nums; }
+    .lv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+    @media (min-width: 1500px) { .lv-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 1000px) { .lv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .lv-unlink { position: absolute; top: 8px; right: 8px; z-index: 15; height: 24px; padding: 0 9px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #55555A; background: rgba(255, 255, 255, 0.92); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1); transition: color 0.12s, background 0.12s; }
+    .lv-unlink:hover { color: #fff; background: #D70015; box-shadow: none; }
+    button.link-add-tile { width: 100%; background: transparent; }
+    .dark .lv-label { color: #C7C7CC; }
+    .dark .lv-label span { color: #A1A1A6; }
+    .dark .lv-unlink { color: #D4D4D4; background: rgba(44, 44, 48, 0.92); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); }
+    @media (max-width: 639px) {
+      .lv-split { flex-direction: column; gap: 16px; }
+      .lv-self { position: static; width: 100%; }
+      .lv-grid { grid-template-columns: minmax(0, 1fr); }
+      .lv-unlink { height: 32px; padding: 0 12px; font-size: 12px; }
+    }
+
     /* ===== 設定の部品（まとまり・行・スイッチ・−／＋・プレビュー） ===== */
     .set-lead { font-size: 12px; color: #6E6E73; margin: -4px 0 14px; }
     .set-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #6E6E73; margin: 16px 4px 6px; }
@@ -1733,7 +1755,6 @@
     .pin-btn.is-on { color: #E5342A !important; }
     .dark .pin-btn.is-on { color: #FF6961 !important; }
     .mini-pin { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; color: #E5342A; }
-    .mini-pin:hover { background: rgba(255, 59, 48, 0.1); }
     .dark .mini-pin { color: #FF6961; }
     .pin-pill { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px 0 6px; border-radius: 9999px; font-size: 10.5px; font-weight: 600; background: rgba(255, 59, 48, 0.1); color: #D70015; }
     .dark .pin-pill { background: rgba(255, 105, 97, 0.18); color: #FF6961; }
@@ -11226,7 +11247,7 @@
               ${!isMini ? `<button type="button" data-action="wide" class="card-wide-btn bar-btn inline-hide" title="${this.config.listHidden ? '一覧を表示 (W)' : '一覧を隠す (W)'}" aria-label="${this.config.listHidden ? '一覧を表示' : '一覧を隠す'}"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg></button><span class="card-wide-sep inline-hide" aria-hidden="true"></span>` : ''}
               <div class="card-lead flex items-center gap-2 inline-hide">
                 ${this.statusPillHtml(card, { button: !isMini })}
-                ${isMini && card.pinnedAt ? `<button type="button" class="mini-pin" data-action="unpin" data-id="${rtEscape(card.id)}" title="ピン留めを外す">${pinIconSvg(13, true)}</button>` : ''}
+                ${isMini && card.pinnedAt ? `<span class="mini-pin" role="img" aria-label="ピン留め中" title="ピン留め中">${pinIconSvg(13, true)}</span>` : ''}
                 ${!isMini ? this.cardAreasHtml(card) : ''}
               </div>
               ${!isMini ? `<div class="inline-actions ml-auto">
@@ -11282,7 +11303,7 @@
               <div class="min-w-0 flex-1">${this.hasSource(card.source) ? this.sourceRowHtml(card, true) : ''}</div>
               <div class="shrink-0 flex items-center gap-1.5">
               ${this.areaBadgesHtml(card)}
-              <button type="button" class="mini-flip${linkCount ? '' : ' is-zero'}" data-action="mini-flip" title="${linkCount ? `裏返して、リンク ${linkCount}件を見る` : '裏返して、リンクを追加する'}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="link-count">${linkCount}</span></button>
+              <button type="button" class="mini-flip${linkCount ? '' : ' is-zero'}" data-action="mini-flip" title="${linkCount ? `裏返して、リンク ${linkCount}件を見る` : '裏返して、リンクを追加する'}"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/></svg><span class="link-count">${linkCount}</span></button>
               </div>
             </div>` : ''}
         `;
@@ -11835,7 +11856,7 @@
         document.getElementById('nlTitle').textContent = area ? area.name : 'すべて';
         document.getElementById('nlCount').textContent = `${list.length}枚`;
         const showArea = this.currentArea === ALL_AREAS;
-        const linkIco = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+        const linkIco = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/></svg>`;
         const grouped = this.isGrouped();
         const counts = new Map();
         list.forEach(c => { const l = this.noteGroupLabel(c); counts.set(l, (counts.get(l) || 0) + 1); });
@@ -12526,7 +12547,7 @@
         if (srcBtn) {
           srcBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.onSourceClick(card.id);
+            this.onSourceClick(card.id, true); // 並んだカードでは、いつも「同じ引用元を集める」
           });
         }
         // リンク数を押すと、そのカードの裏面へ（⌘・Shift を押しながらなら、カードを選ぶ操作のまま）
@@ -12557,8 +12578,10 @@
           }
         });
         const tile = container.querySelector('.link-add-tile');
-        const first = container.querySelector('.grid-cell');
-        if (tile && first) tile.style.height = `${first.offsetHeight}px`;
+        if (tile) {
+          const sib = tile.parentElement.querySelector('.grid-cell'); // 隣のリンク先のカードと同じ高さに
+          tile.style.height = sib ? `${sib.offsetHeight}px` : '160px';
+        }
       }
 
       // ============================================================
@@ -12658,16 +12681,16 @@
         } else {
           inner = `<span class="src-main truncate">${esc(src.text)}</span>`;
         }
-        const title = t === 'web' && src.url ? 'ページを開く' : '同じ引用元のカードを集める';
+        const title = !isMini && t === 'web' && src.url ? 'ページを開く' : '同じ引用元のカードを集める';
         return `<div class="src-row src-click inline-flex max-w-full items-center gap-2 ${isMini ? 'text-[11px] -ml-1 px-1 py-0.5' : 'text-[12px] -ml-1.5 px-1.5 py-1'}" data-action="source" data-id="${rtEscape(card.id)}" title="${title}">${ico}${inner}</div>`;
       }
 
       // 引用元を押したとき：Webはページを開く、それ以外は同じ引用元で絞り込む
-      onSourceClick(cardId) {
+      onSourceClick(cardId, collect = false) {
         const card = this.cards.find(c => c.id === cardId);
         if (!card || !this.hasSource(card.source)) return;
         const src = card.source;
-        if (src.type === 'web' && /^https?:/i.test(src.url || '')) {
+        if (!collect && src.type === 'web' && /^https?:/i.test(src.url || '')) {
           window.open(src.url, '_blank', 'noopener');
           return;
         }
@@ -13144,11 +13167,11 @@
         this.saveCards();
       }
 
+      // 裏面：左に「このカード」、右に「リンクしているカード」と「リンクの候補」
       renderLinkView() {
         const container = this.linkCardsContainer;
         container.innerHTML = '';
-        const cols = this.config.gridColumns || 4;
-        container.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+        container.style.gridTemplateColumns = 'minmax(0, 1fr)';
 
         const focus = this.cards.find(c => c.id === this.linkFocusId);
         if (!focus) {
@@ -13159,48 +13182,71 @@
         const linked = this.getLinkedCards(focus);
         this.updatePaginationAndCounter(linked.length);
         const numberOf = (c) => this.cards.indexOf(c);
+        const name = (c) => c.title || '無題のカード';
+        const toOther = this.linkReturn === 'grid' || this.linkReturn === 'graph';
 
         const bar = document.createElement('div');
-        bar.className = 'link-bar col-span-full';
+        bar.className = 'link-bar';
         bar.innerHTML = `
           <span class="link-side-chip">裏面</span>
-          <span class="link-bar-title">「<b>${this.escapeHtml(focus.title || '無題のカード')}</b>」のリンク ${linked.length}件</span>
-          <button type="button" class="link-edit" data-act="edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>リンクを編集</button>
-          <button type="button" class="link-edit link-back" data-act="back" title="${this.linkReturn === 'grid' || this.linkReturn === 'graph' ? '元の画面に戻る (L / esc)' : 'カードを表に戻す (L / esc)'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/><path d="m16.5 12 3.5 3.5 3.5-3.5"/></svg>${this.linkReturn === 'grid' || this.linkReturn === 'graph' ? '戻る' : '表に戻す'}</button>`;
-        bar.querySelector('[data-act="edit"]').addEventListener('click', () => this.showLinkPicker(focus.id));
+          <span class="link-bar-title">「<b>${this.escapeHtml(name(focus))}</b>」とつながっているカード</span>
+          <button type="button" class="link-edit link-back" data-act="back" title="${toOther ? '元の画面に戻る (L / esc)' : 'カードを表に戻す (L / esc)'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="12" height="13" rx="2"/><path d="M8 3h8a4 4 0 0 1 4 4v8"/><path d="m16.5 12 3.5 3.5 3.5-3.5"/></svg>${toOther ? '戻る' : '表に戻す'}</button>`;
         bar.querySelector('[data-act="back"]').addEventListener('click', () => this.flipBack());
         container.appendChild(bar);
 
-        // 中心のカード：押すとカードビューで開く
+        const split = document.createElement('div');
+        split.className = 'lv-split';
+        const self = document.createElement('div');
+        self.className = 'lv-self';
+        self.innerHTML = '<div class="lv-label">このカード</div>';
+        const main = document.createElement('div');
+        main.className = 'lv-main';
+        main.innerHTML = `<div class="lv-label">リンクしているカード<span>${linked.length}</span></div>`;
+        split.appendChild(self);
+        split.appendChild(main);
+        container.appendChild(split);
+
+        // このカード：押すと開く（表）
         const focusCell = this.createMiniCell(focus, numberOf(focus));
         focusCell.classList.add('link-focus-cell');
-        const flag = document.createElement('span');
-        flag.className = 'link-focus-flag';
-        flag.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>中心のカード`;
-        // ラベルを枠の外にはみ出させるため、外側にもう1枚ラッパーを置く
-        const focusWrap = document.createElement('div');
-        focusWrap.className = 'relative';
-        focusWrap.appendChild(focusCell);
-        focusWrap.appendChild(flag);
         focusCell.title = 'このカードを開く';
         focusCell.addEventListener('click', () => this.openInCardView(focus.id));
-        container.appendChild(focusWrap);
+        self.appendChild(focusCell);
 
-        // リンクされたカード：押すとそのカードをカードビューで開く
+        // リンクしているカード：押すと開く。右下の札でそのカードの裏へ。右上で、このカードとのリンクを外す
+        const grid = document.createElement('div');
+        grid.className = 'lv-grid';
+        main.appendChild(grid);
         linked.forEach(card => {
           const cell = this.createMiniCell(card, numberOf(card));
           cell.title = 'このカードを開く';
           cell.addEventListener('click', () => this.openInCardView(card.id));
-          container.appendChild(cell);
+          const off = document.createElement('button');
+          off.type = 'button';
+          off.className = 'lv-unlink';
+          off.textContent = 'リンクを外す';
+          off.title = `「${name(focus)}」とのリンクを外す`;
+          off.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.setLinks(focus.id, (focus.links || []).filter(id => id !== card.id));
+            this.renderAll();
+            this.showToast(`「${name(card)}」とのリンクを外しました`, '元に戻す', () => {
+              const f = this.cards.find(c => c.id === focus.id);
+              if (f && this.cards.some(c => c.id === card.id)) { this.setLinks(f.id, [...(f.links || []), card.id]); this.renderAll(); }
+            });
+          });
+          cell.appendChild(off);
+          grid.appendChild(cell);
         });
 
-        const add = document.createElement('div');
+        const add = document.createElement('button');
+        add.type = 'button';
         add.className = 'link-add-tile';
-        add.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>リンクを追加</span>`;
+        add.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg><span>カードを選んでリンク</span>`;
         add.addEventListener('click', () => this.showLinkPicker(focus.id));
-        container.appendChild(add);
+        grid.appendChild(add);
 
-        this.renderLinkCandidates(container, focus);
+        this.renderLinkCandidates(main, focus);
         this.updateGridCardScales(container);
       }
 
@@ -13256,7 +13302,7 @@
         if (!list.length) return;
         const shown = this.config.linkSuggest !== false;
         const bar = document.createElement('div');
-        bar.className = 'cand-bar col-span-full';
+        bar.className = 'cand-bar';
         bar.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.800 1-2.300A7 7 0 0 0 12 2z"/></svg>
           <b>リンクの候補 ${total}件</b><span class="cand-sub">${shown ? `まだリンクしていない、関係がありそうなカード${total > list.length ? `（上から${list.length}件）` : ''}` : ''}</span><i></i>
           <button type="button">${shown ? '候補を隠す' : '候補を表示'}</button>`;
@@ -13267,6 +13313,9 @@
         });
         container.appendChild(bar);
         if (!shown) return;
+        const grid = document.createElement('div');
+        grid.className = 'lv-grid';
+        container.appendChild(grid);
         list.forEach(({ card, why, hit }) => {
           const el = document.createElement('div');
           el.className = 'cand-card';
@@ -13294,7 +13343,7 @@
             this.dismissLinkCandidate(focus.id, card.id);
             this.renderLinkView();
           });
-          container.appendChild(el);
+          grid.appendChild(el);
         });
       }
 
