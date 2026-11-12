@@ -1166,6 +1166,76 @@
       .settings-body { padding: 16px 16px 24px; }
     }
 
+
+    /* ===== 設定の部品（まとまり・行・スイッチ・−／＋・プレビュー） ===== */
+    .set-lead { font-size: 12px; color: #6E6E73; margin: -4px 0 14px; }
+    .set-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #6E6E73; margin: 16px 4px 6px; }
+    .set-group { background: rgba(0, 0, 0, 0.035); border-radius: 12px; padding: 0 14px; font-size: 13px; }
+    .set-group + .set-group { margin-top: 14px; }
+    .set-group.set-pad { padding: 12px 14px; font-size: 12px; }
+    .set-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; width: 100%; min-height: 52px; padding: 8px 0; box-sizing: border-box; border-top: 1px solid rgba(0, 0, 0, 0.07); text-align: left; }
+    .set-group > .set-row:first-child { border-top: 0; }
+    label.set-row { cursor: pointer; }
+    .set-text { flex: 1 1 120px; min-width: 0; }
+    .set-text b { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-weight: 600; }
+    .set-text small { display: block; margin-top: 1px; font-size: 11.5px; font-weight: 400; line-height: 1.5; color: #6E6E73; }
+    .set-tag { font-size: 10.5px; font-weight: 600; color: #55555A; background: rgba(0, 0, 0, 0.07); border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
+    .set-note { font-size: 11.5px; color: #6E6E73; margin: 6px 4px 0; line-height: 1.6; }
+    .set-val { display: inline-flex; align-items: center; gap: 6px; color: #6E6E73; font-variant-numeric: tabular-nums; }
+    button.set-row:hover b { color: #007AFF; }
+    .set-sw { position: relative; flex: none; width: 44px; height: 26px; }
+    .set-sw input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+    .set-sw i { display: block; width: 100%; height: 100%; border-radius: 13px; background: #C7C7CC; transition: background 0.15s; }
+    .set-sw i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); transition: transform 0.15s; }
+    .set-sw input:checked + i { background: #34C759; }
+    .set-sw input:checked + i::after { transform: translateX(18px); }
+    .set-sw input:focus-visible + i { outline: 2px solid #007AFF; outline-offset: 2px; }
+    .set-step { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+    .set-step button { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 32px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.14); background: #fff; font-size: 16px; font-weight: 600; color: #1D1D1F; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+    .set-step button:hover { background: #F2F2F7; }
+    .set-step button:active { background: #E5E5EA; }
+    .set-step output { min-width: 68px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .settings-sec .src-seg { flex-wrap: wrap; }
+    .settings-sec .src-seg button { font-size: 12.5px; padding: 5px 12px; }
+    .settings-sec .src-seg button.is-on { color: #007AFF; }
+    .set-sws { display: flex; gap: 10px; }
+    .set-swatch { width: 26px; height: 26px; border-radius: 50%; }
+    .set-swatch.is-on { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #007AFF; }
+    .sc-pick { display: inline-flex; align-items: center; gap: 8px; }
+    .sc-pick .sc-sw { display: inline-block; width: 16px; height: 16px; }
+    .sc-pick select { height: 30px; padding: 0 8px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.14); background: #fff; font-size: 12.5px; color: #1D1D1F; }
+    .set-preview { position: relative; height: 176px; box-sizing: border-box; padding: 16px 20px; margin-bottom: 14px; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 12px; background: #fff; color: #1D1D1F; -webkit-user-select: none; user-select: none; }
+    .set-preview-tag { position: absolute; top: 8px; right: 10px; z-index: 1; }
+    .tp-title { font-size: var(--card-title, 24px); font-weight: 700; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 70px; }
+    .tp-body { margin-top: 6px; line-height: 1.75; }
+    .set-preview.is-gallery { height: 190px; padding: 14px; background: rgba(0, 0, 0, 0.035); }
+    .gp-grid { display: grid; gap: 8px; --gp-line: #C7C7CC; }
+    .gp-card { display: flex; flex-direction: column; box-sizing: border-box; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); background: #fff; }
+    .gp-card i { display: block; flex: none; width: 60%; border-radius: 2px; background: #8E8E93; }
+    .gp-card span { flex: 1; min-height: 0; }
+    .set-details { margin-top: 8px; }
+    .set-details summary { cursor: pointer; padding: 6px 4px; font-size: 12px; font-weight: 600; color: #007AFF; }
+    .set-details .set-group { margin-top: 4px; }
+    .dark .set-lead, .dark .set-head, .dark .set-note, .dark .set-text small, .dark .set-val { color: #A1A1A6; }
+    .dark .set-group { background: rgba(255, 255, 255, 0.05); }
+    .dark .set-row { border-top-color: rgba(255, 255, 255, 0.08); }
+    .dark .set-tag { color: #C7C7CC; background: rgba(255, 255, 255, 0.1); }
+    .dark .set-sw i { background: #48484A; }
+    .dark .set-sw input:checked + i { background: #30D158; }
+    .dark .set-step button { background: #2C2C30; border-color: rgba(255, 255, 255, 0.14); color: #F5F5F7; }
+    .dark .set-step button:hover { background: #3A3A3F; }
+    .dark .settings-sec .src-seg button.is-on, .dark .set-details summary, .dark button.set-row:hover b { color: #4DA3FF; }
+    .dark .set-swatch.is-on { box-shadow: 0 0 0 2px #1E1E22, 0 0 0 4px #0A84FF; }
+    .dark .sc-pick select { background: #2C2C30; border-color: rgba(255, 255, 255, 0.14); color: #F5F5F7; }
+    .dark .set-preview { background: #1C1C1E; border-color: rgba(255, 255, 255, 0.14); color: #F5F5F7; }
+    .dark .set-preview.is-gallery { background: rgba(255, 255, 255, 0.05); }
+    .dark .gp-grid { --gp-line: #636366; }
+    .dark .gp-card { background: #2C2C30; border-color: rgba(255, 255, 255, 0.14); }
+    @media (max-width: 639px) {
+      .set-step button { width: 44px; height: 40px; }
+      .settings-sec .src-seg button { padding: 8px 12px; }
+    }
+
     /* ===== 画像 ===== */
     .img-size-choice { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 4px; border-radius: 12px; border: 1px solid transparent; background: rgba(0, 0, 0, 0.05); color: #404040; }
     .dark .img-size-choice { background: rgba(255, 255, 255, 0.05); color: #D4D4D4; }
@@ -1296,7 +1366,6 @@
       #inlineBar { left: 8px; right: 8px; max-width: none; transform: translateY(4px); padding: 5px 6px; border-radius: 16px; }
       #inlineBar.open { transform: none; }
       #inlineBar #rtToolbar .rt-btn { height: 34px; min-width: 34px; }
-      #settingImageSizeSeg { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     }
 
     /* ===== リストビュー（Mac のメモのように、左に一覧・右に開いたカード） ===== */
@@ -2310,34 +2379,44 @@
     </div>
   </div>
 
-  <!-- Settings Modal：分類（表示・カード・操作・コピー・データ）ごとに分けた設定。変更はその場で反映・保存 -->
+  <!-- Settings Modal：効く場所ごと（外観・文字・ギャラリー・画像・整理・コピーと書き出し・同期とバックアップ）に分けた設定。変更はその場で反映・保存 -->
   <div id="settingsModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
     <div id="settingsShell" class="settings-shell bg-white/95 dark:bg-[#1E1E22]/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/40 dark:border-white/10 transform scale-95 transition-transform duration-200">
       <nav class="settings-nav" aria-label="設定の分類">
         <div class="settings-nav-title">設定</div>
-        <button type="button" class="settings-nav-item" data-sec="view">
-          <span class="settings-nav-ico" style="background:#007AFF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></span>
-          <span class="flex-1 text-left">表示</span>
+        <button type="button" class="settings-nav-item" data-sec="look">
+          <span class="settings-nav-ico" style="background:#007AFF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+          <span class="flex-1 text-left">外観</span>
           <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
-        <button type="button" class="settings-nav-item" data-sec="card">
-          <span class="settings-nav-ico" style="background:#5856D6"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6"/><path d="M7 13h10"/></svg></span>
-          <span class="flex-1 text-left">カード</span>
+        <button type="button" class="settings-nav-item" data-sec="type">
+          <span class="settings-nav-ico" style="background:#5856D6"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></span>
+          <span class="flex-1 text-left">文字</span>
           <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
-        <button type="button" class="settings-nav-item" data-sec="action">
-          <span class="settings-nav-ico" style="background:#34C759"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></span>
-          <span class="flex-1 text-left">操作</span>
+        <button type="button" class="settings-nav-item" data-sec="gallery">
+          <span class="settings-nav-ico" style="background:#30B0C7"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span>
+          <span class="flex-1 text-left">ギャラリー</span>
+          <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button type="button" class="settings-nav-item" data-sec="image">
+          <span class="settings-nav-ico" style="background:#FF9500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></span>
+          <span class="flex-1 text-left">画像</span>
+          <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <button type="button" class="settings-nav-item" data-sec="tidy">
+          <span class="settings-nav-ico" style="background:#34C759"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg></span>
+          <span class="flex-1 text-left">整理</span>
           <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
         <button type="button" class="settings-nav-item" data-sec="copy">
-          <span class="settings-nav-ico" style="background:#FF9500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
-          <span class="flex-1 text-left">コピー</span>
+          <span class="settings-nav-ico" style="background:#AF52DE"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span>
+          <span class="flex-1 text-left">コピーと書き出し</span>
           <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
-        <button type="button" class="settings-nav-item" data-sec="data">
-          <span class="settings-nav-ico" style="background:#8E8E93"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></span>
-          <span class="flex-1 text-left">データ</span>
+        <button type="button" class="settings-nav-item" data-sec="sync">
+          <span class="settings-nav-ico" style="background:#8E8E93"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></span>
+          <span class="flex-1 text-left">同期とバックアップ</span>
           <svg class="settings-nav-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </nav>
@@ -2346,277 +2425,148 @@
           <button id="settingsBackBtn" type="button" class="settings-back" aria-label="分類の一覧へ戻る">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>設定
           </button>
-          <h2 id="settingsTitle" class="text-base font-bold">表示</h2>
+          <h2 id="settingsTitle" class="text-base font-bold">外観</h2>
           <button id="closeSettingsBtn" class="w-7 h-7 rounded-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-neutral-500 hover:text-black dark:hover:text-white transition shrink-0" aria-label="閉じる">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
         <div id="settingsBody" class="settings-body">
-      <section class="settings-sec" data-sec="view" aria-label="表示">
-        <div class="space-y-4 text-xs">
-        <!-- 外観（ライト／ダーク／自動） -->
-        <div>
-          <div class="flex items-center justify-between gap-3 font-medium mb-1.5">
-            <span>外観</span>
-            <div id="settingThemeSeg" class="src-seg">
-              <button type="button" data-val="light">ライト</button>
-              <button type="button" data-val="dark">ダーク</button>
-              <button type="button" data-val="auto">自動</button>
+      <section class="settings-sec" data-sec="look" aria-label="外観">
+        <p class="set-lead">テーマと色、動き</p>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>テーマ <span class="set-tag">この端末だけ</span></b><small>「自動」は Mac・iPhone の外観の設定に合わせます</small></span>
+            <div id="settingThemeSeg" class="src-seg" role="group" aria-label="テーマ"><button type="button" data-val="light">ライト</button><button type="button" data-val="dark">ダーク</button><button type="button" data-val="auto">自動</button></div>
+          </div>
+          <label class="set-row"><span class="set-text"><b>カードを裏返すアニメーション</b><small>表と裏（リンク）を切り替えるときに、カードが回転します</small></span><span class="set-sw"><input id="settingFlipInput" type="checkbox"><i></i></span></label>
+        </div>
+        <div class="set-head">色</div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>新しいカードのタグの色</b><small>すでにあるカードは変わりません</small></span>
+            <div id="settingAccentSws" class="set-sws" role="group" aria-label="タグの色">
+              <button type="button" class="set-swatch" data-theme="appleBlue" style="background:#007AFF" title="クラシック" aria-label="クラシック"></button>
+              <button type="button" class="set-swatch" data-theme="appleIndigo" style="background:#5856D6" title="インディゴ" aria-label="インディゴ"></button>
+              <button type="button" class="set-swatch" data-theme="applePurple" style="background:#AF52DE" title="パープル" aria-label="パープル"></button>
+              <button type="button" class="set-swatch" data-theme="appleTeal" style="background:#30B0C7" title="ティール" aria-label="ティール"></button>
             </div>
           </div>
-          <p class="text-[11px] text-neutral-400">※「自動」は Mac・iPhone の外観の設定に合わせて、ライトとダークが切り替わります。</p>
+          <div id="settingStatusColors"></div>
         </div>
-
-<!-- テーマカラー -->
-        <div class="pt-1">
-          <label class="block font-medium mb-1">カードのアクセントカラー</label>
-          <p class="text-[11px] text-neutral-400 mb-2">※ 新しく作るカードのタグの色です。</p>
-          <div class="grid grid-cols-4 gap-2">
-            <button class="theme-choice-btn p-2 rounded-xl border border-appleBlue bg-blue-50 dark:bg-blue-950/40 text-appleBlue flex flex-col items-center gap-1 font-medium" data-theme="appleBlue">
-              <span class="w-4 h-4 rounded-full bg-appleBlue"></span>
-              <span class="text-[10px]">クラシック</span>
-            </button>
-            <button class="theme-choice-btn p-2 rounded-xl border border-transparent bg-black/5 dark:bg-white/5 hover:border-neutral-300 text-neutral-700 dark:text-neutral-300 flex flex-col items-center gap-1 font-medium" data-theme="appleIndigo">
-              <span class="w-4 h-4 rounded-full bg-appleIndigo"></span>
-              <span class="text-[10px]">インディゴ</span>
-            </button>
-            <button class="theme-choice-btn p-2 rounded-xl border border-transparent bg-black/5 dark:bg-white/5 hover:border-neutral-300 text-neutral-700 dark:text-neutral-300 flex flex-col items-center gap-1 font-medium" data-theme="applePurple">
-              <span class="w-4 h-4 rounded-full bg-applePurple"></span>
-              <span class="text-[10px]">パープル</span>
-            </button>
-            <button class="theme-choice-btn p-2 rounded-xl border border-transparent bg-black/5 dark:bg-white/5 hover:border-neutral-300 text-neutral-700 dark:text-neutral-300 flex flex-col items-center gap-1 font-medium" data-theme="appleTeal">
-              <span class="w-4 h-4 rounded-full bg-appleTeal"></span>
-              <span class="text-[10px]">ティール</span>
-            </button>
-          </div>
-        </div>
-
-<!-- 状態の色 -->
-        <div class="pt-3 border-t border-black/5 dark:border-white/10">
-          <div class="font-medium mb-1">状態の色</div>
-          <p class="text-[11px] text-neutral-400 mb-2.5">※ カードの枠の色です。「なし」は今までどおり、「グレー」はカードを少し薄く表示します。</p>
-          <div id="settingStatusColors" class="space-y-3"></div>
-        </div>
-        </div>
-        <button type="button" class="settings-reset" data-reset="view">この分類を初期値に戻す</button>
+        <p class="set-note">状態の色は、カードの枠の色です。「なし」は枠に色を付けず、「グレー」はカードを少し薄く表示します。</p>
+        <button type="button" class="settings-reset" data-reset="look">この分類を初期値に戻す</button>
       </section>
-      <section class="settings-sec" data-sec="card" aria-label="カード">
-        <div class="space-y-4 text-xs">
-<!-- 現在の仕様（旧サイドバーから移動） -->
-        <div class="grid grid-cols-4 gap-2 text-center">
-          <div class="rounded-xl bg-black/[0.035] dark:bg-white/[0.05] py-2">
-            <div id="sumChars" class="font-mono font-bold text-sm text-appleBlue">26</div>
-            <div class="text-[10px] text-neutral-400 mt-0.5">字 / 行</div>
-          </div>
-          <div class="rounded-xl bg-black/[0.035] dark:bg-white/[0.05] py-2">
-            <div id="sumLines" class="font-mono font-bold text-sm text-appleBlue">12</div>
-            <div class="text-[10px] text-neutral-400 mt-0.5">行</div>
-          </div>
-          <div class="rounded-xl bg-black/[0.035] dark:bg-white/[0.05] py-2">
-            <div id="sumCapacity" class="font-mono font-bold text-sm text-neutral-700 dark:text-neutral-200">312</div>
-            <div class="text-[10px] text-neutral-400 mt-0.5">総収容 (字)</div>
-          </div>
-          <div class="rounded-xl bg-black/[0.035] dark:bg-white/[0.05] py-2">
-            <div id="sumColumns" class="font-mono font-bold text-sm text-appleBlue">4</div>
-            <div class="text-[10px] text-neutral-400 mt-0.5">ギャラリー列</div>
+      <section class="settings-sec" data-sec="type" aria-label="文字">
+        <p class="set-lead">開いたカードを読む・書くときの文字の大きさ</p>
+        <div class="set-preview" aria-hidden="true">
+          <span class="set-tag set-preview-tag">プレビュー</span>
+          <div class="tp-title">思考の整理学 ノート</div>
+          <div id="typePreviewBody" class="rich tp-body"><h2>見出し2：寝かせる</h2><div>考えをすぐに形にしようとせず、しばらく寝かせておく。時間がたつと、余分なものが落ちて大事なところだけが残る。</div></div>
+        </div>
+        <div class="set-head">文字の大きさ <span class="set-tag">この端末だけ</span></div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>本文</b></span><div class="set-step" data-key="wideFontPx" data-min="12" data-max="28" data-step="0.5" data-unit="px"><button type="button" data-d="-1" aria-label="本文を減らす"><span style="font-size:12px">A</span></button><output></output><button type="button" data-d="1" aria-label="本文を増やす"><span style="font-size:17px">A</span></button></div></div>
+          <div class="set-row"><span class="set-text"><b>タイトル</b></span><div class="set-step" data-key="cardTitlePx" data-min="16" data-max="40" data-step="1" data-unit="px"><button type="button" data-d="-1" aria-label="タイトルを減らす"><span style="font-size:12px">A</span></button><output></output><button type="button" data-d="1" aria-label="タイトルを増やす"><span style="font-size:17px">A</span></button></div></div>
+          <div class="set-row"><span class="set-text"><b>本文の中の見出し</b><small id="headingNote"></small></span>
+            <div id="settingHeadingSeg" class="src-seg" role="group" aria-label="見出しの大きさ"><button type="button" data-val="small">控えめ</button><button type="button" data-val="std">標準</button><button type="button" data-val="large">大きめ</button></div>
           </div>
         </div>
-
-<!-- 1行の文字数 -->
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>ギャラリーの横の文字数</span>
-            <span id="settingCharsDisplay" class="font-bold text-appleBlue font-mono">26 文字</span>
+        <details class="set-details">
+          <summary>見出しを個別に調整</summary>
+          <div class="set-group">
+            <div class="set-row"><span class="set-text"><b>見出し1（H1）</b></span><div class="set-step" data-key="rtH1" data-min="1" data-max="3" data-step="0.05" data-unit="倍"><button type="button" data-d="-1" aria-label="見出し1（H1）を減らす">−</button><output></output><button type="button" data-d="1" aria-label="見出し1（H1）を増やす">＋</button></div></div>
+            <div class="set-row"><span class="set-text"><b>見出し2（H2）</b></span><div class="set-step" data-key="rtH2" data-min="1" data-max="3" data-step="0.05" data-unit="倍"><button type="button" data-d="-1" aria-label="見出し2（H2）を減らす">−</button><output></output><button type="button" data-d="1" aria-label="見出し2（H2）を増やす">＋</button></div></div>
+            <div class="set-row"><span class="set-text"><b>見出し3（H3）</b></span><div class="set-step" data-key="rtH3" data-min="1" data-max="3" data-step="0.05" data-unit="倍"><button type="button" data-d="-1" aria-label="見出し3（H3）を減らす">−</button><output></output><button type="button" data-d="1" aria-label="見出し3（H3）を増やす">＋</button></div></div>
           </div>
-          <input id="settingCharsInput" type="range" min="16" max="36" step="1" value="26" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリーと裏面に並ぶカードの、全角文字を基準とした幅です（デフォルト: 26文字）。</p>
+          <p class="set-note">見出しは本文に対する倍率です。本文の大きさを変えても釣り合いが保たれ、ギャラリーのカードにも同じ比率で効きます。</p>
+        </details>
+        <div class="set-head">コード</div>
+        <div class="set-group">
+          <label class="set-row"><span class="set-text"><b>コードブロックを端で折り返す</b><small>長い行を横にスクロールせず、次の行に折り返します。ブロックごとに、右上の「折り返し」でも切り替えられます</small></span><span class="set-sw"><input id="settingCodeWrapInput" type="checkbox"><i></i></span></label>
         </div>
-
-<!-- 縦の行数 -->
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>ギャラリーの縦の行数</span>
-            <span id="settingLinesDisplay" class="font-bold text-appleBlue font-mono">12 行</span>
+        <button type="button" class="settings-reset" data-reset="type">この分類を初期値に戻す</button>
+      </section>
+      <section class="settings-sec" data-sec="gallery" aria-label="ギャラリー">
+        <p class="set-lead">カードを並べて見渡すときの、並べ方と1枚の大きさ</p>
+        <div class="set-preview is-gallery" aria-hidden="true">
+          <span class="set-tag set-preview-tag">プレビュー</span>
+          <div id="galleryPreview" class="gp-grid"></div>
+        </div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>列の数 <span class="set-tag">この端末だけ</span></b></span>
+            <div id="settingColumnsSeg" class="src-seg" role="group" aria-label="列の数"><button type="button" data-val="2">2</button><button type="button" data-val="3">3</button><button type="button" data-val="4">4</button><button type="button" data-val="5">5</button><button type="button" data-val="6">6</button></div>
           </div>
-          <input id="settingLinesInput" type="range" min="8" max="25" step="1" value="12" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリーと裏面に並ぶカードの本文の行数です（デフォルト: 12行）。</p>
         </div>
-
-<!-- 一覧の列数設定（新機能） -->
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>ギャラリーの列数</span>
-            <span id="settingColumnsDisplay" class="font-bold text-appleBlue font-mono">4 列</span>
+        <div class="set-head">カード1枚に見せる量</div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>1行の文字数</b><small>多いほど、文字が小さくなります</small></span><div class="set-step" data-key="charsPerLine" data-min="16" data-max="36" data-step="1" data-unit="文字"><button type="button" data-d="-1" aria-label="1行の文字数を減らす">−</button><output></output><button type="button" data-d="1" aria-label="1行の文字数を増やす">＋</button></div></div>
+          <div class="set-row"><span class="set-text"><b>行数</b><small>多いほど、カードが縦に長くなります</small></span><div class="set-step" data-key="linesCount" data-min="8" data-max="25" data-step="1" data-unit="行"><button type="button" data-d="-1" aria-label="行数を減らす">−</button><output></output><button type="button" data-d="1" aria-label="行数を増やす">＋</button></div></div>
+        </div>
+        <p class="set-note">ギャラリーと裏面に並ぶ小さなカードだけに効きます。開いたカードの文字の大きさは「文字」で決めます。</p>
+        <button type="button" class="settings-reset" data-reset="gallery">この分類を初期値に戻す</button>
+      </section>
+      <section class="settings-sec" data-sec="image" aria-label="画像">
+        <p class="set-lead">画像を入れるときの画質と表示</p>
+        <div class="set-head" style="margin-top:0">保存するとき</div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>最初に選ばれている画質</b><small id="imageSizeNote"></small></span>
+            <div id="settingImageSizeSeg" class="src-seg" role="group" aria-label="画質"><button type="button" data-val="small">小さめ</button><button type="button" data-val="standard">標準</button><button type="button" data-val="large">大きめ</button><button type="button" data-val="high">高画質</button></div>
           </div>
-          <input id="settingColumnsInput" type="range" min="2" max="6" step="1" value="4" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ ギャラリービューのカードの並び列数（2〜6列で調整可能）。</p>
+          <label class="set-row"><span class="set-text"><b>スクリーンショットは少し大きく残す</b><small>文字の多い画像（PNG）は、にじまないよう容量の上限を2倍までゆるめます</small></span><span class="set-sw"><input id="settingImageShotInput" type="checkbox"><i></i></span></label>
         </div>
-
-<!-- 本文の文字の大きさ -->
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>本文の文字の大きさ</span>
-            <span id="settingWideFontDisplay" class="font-bold text-appleBlue font-mono">18.5 px</span>
+        <p class="set-note">画像を入れるたびに画質を選ぶ画面が出ます。ここで選んだものが最初から選ばれています。すでに入れた画像は変わりません（Markdown などの読み込みでは、ここの画質を使います）。</p>
+        <div class="set-head">カードの中で</div>
+        <div class="set-group">
+          <div class="set-row"><span class="set-text"><b>入れたときの表示の大きさ</b><small>1枚ずつ、編集中に画像を押して変えられます</small></span>
+            <div id="settingImageDisplaySeg" class="src-seg" role="group" aria-label="表示の大きさ"><button type="button" data-val="s">小</button><button type="button" data-val="m">中</button><button type="button" data-val="l">幅いっぱい</button></div>
           </div>
-          <input id="settingWideFontInput" type="range" min="12" max="28" step="0.5" value="18.5" class="w-full accent-appleBlue cursor-pointer">
-          <p class="text-[11px] text-neutral-400 mt-1">※ 右側に開いたカードの本文の大きさです（初期値は18.5px）。小さくすると1画面に多く入ります。</p>
         </div>
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>タイトルの大きさ</span>
-            <span id="settingTitlePxDisplay" class="font-bold text-appleBlue font-mono"></span>
-          </div>
-          <input id="settingTitlePxInput" type="range" min="16" max="40" step="1" value="24" class="w-full accent-appleBlue cursor-pointer">
+        <button type="button" class="settings-reset" data-reset="image">この分類を初期値に戻す</button>
+      </section>
+      <section class="settings-sec" data-sec="tidy" aria-label="整理">
+        <p class="set-lead">自動アーカイブ、エリア、ゴミ箱</p>
+        <div class="set-group">
+          <label class="set-row"><span class="set-text"><b>Fleeting を自動でアーカイブする</b><small>編集しないまま日数がたった Fleeting のカードを、Archive に移します。状態を変えただけでは「編集」に数えません</small></span><span class="set-sw"><input id="settingAutoArchiveInput" type="checkbox"><i></i></span></label>
+          <div class="set-row" id="autoArchiveDaysRow"><span class="set-text"><b>最後の編集からの日数</b><small id="autoArchiveInfo"></small></span><div class="set-step" data-key="autoArchiveDays" data-min="1" data-max="365" data-step="1" data-unit="日"><button type="button" data-d="-1" aria-label="最後の編集からの日数を減らす">−</button><output></output><button type="button" data-d="1" aria-label="最後の編集からの日数を増やす">＋</button></div></div>
         </div>
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>見出し1（H1）の大きさ</span>
-            <span id="settingH1Display" class="font-bold text-appleBlue font-mono"></span>
-          </div>
-          <input id="settingH1Input" type="range" min="1" max="3" step="0.05" value="1.5" class="w-full accent-appleBlue cursor-pointer">
+        <div class="set-group">
+          <button id="settingsEditAreasBtn" type="button" class="set-row"><span class="set-text"><b>エリアを編集</b></span><span class="set-val"><span id="settingsAreaCount"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></button>
+          <button id="settingsOpenTrashBtn" type="button" class="set-row"><span class="set-text"><b>ゴミ箱</b></span><span class="set-val"><span id="settingsTrashCount"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span></button>
         </div>
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>見出し2（H2）の大きさ</span>
-            <span id="settingH2Display" class="font-bold text-appleBlue font-mono"></span>
-          </div>
-          <input id="settingH2Input" type="range" min="1" max="3" step="0.05" value="1.28" class="w-full accent-appleBlue cursor-pointer">
+        <button type="button" class="settings-reset" data-reset="tidy">この分類を初期値に戻す</button>
+      </section>
+      <section class="settings-sec" data-sec="copy" aria-label="コピーと書き出し">
+        <p class="set-lead">ほかのアプリへ持っていくときの形</p>
+        <div class="set-head" style="margin-top:0">コピー</div>
+        <div class="set-group">
+          <label class="set-row"><span class="set-text"><b>引用元を付ける</b><small>本文をコピーするとき、末尾に「（思考の整理学、p.91）」のように添えます</small></span><span class="set-sw"><input id="settingCopySourceInput" type="checkbox"><i></i></span></label>
         </div>
-        <div>
-          <div class="flex justify-between font-medium mb-1.5">
-            <span>見出し3（H3）の大きさ</span>
-            <span id="settingH3Display" class="font-bold text-appleBlue font-mono"></span>
-          </div>
-          <input id="settingH3Input" type="range" min="1" max="3" step="0.05" value="1.1" class="w-full accent-appleBlue cursor-pointer">
+        <div class="set-head">Markdown（コピーと書き出しの両方）</div>
+        <div class="set-group">
+          <label class="set-row"><span class="set-text"><b>段落の中の改行に「\」を付ける</b><small>1行ずつ改行した文を、GitHub など改行1つでは改行しないアプリでも見たとおりに表示します。Obsidian だけで使うなら不要です</small></span><span class="set-sw"><input id="mdHardBreakInput" type="checkbox"><i></i></span></label>
         </div>
-        <p class="text-[11px] text-neutral-400 -mt-2">※ 見出しは本文に対する倍率です。本文の大きさを変えても釣り合いが保たれ、ギャラリーのカードにも同じ比率で効きます。</p>
-
-        <!-- コードブロック -->
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none pt-3 border-t border-black/5 dark:border-white/10">
-          <span>
-            <span class="block font-medium">コードブロックを端で折り返す</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">長い行を横にスクロールせず、次の行に折り返して表示します（最初の状態）。ブロックごとに、右上の「折り返し」で切り替えられます。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="settingCodeWrapInput" type="checkbox" class="peer sr-only">
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
-
-        <!-- 画像 -->
-        <div class="pt-3 border-t border-black/5 dark:border-white/10">
-          <div class="font-medium mb-1.5">画像の画質（最初に選ばれているもの）</div>
-          <div id="settingImageSizeSeg" class="grid grid-cols-4 gap-2">
-            <button type="button" data-val="small" class="img-size-choice"><b>小さめ</b><span>600px・50KB</span></button>
-            <button type="button" data-val="standard" class="img-size-choice"><b>標準</b><span>800px・80KB</span></button>
-            <button type="button" data-val="large" class="img-size-choice"><b>大きめ</b><span>1200px・150KB</span></button>
-            <button type="button" data-val="high" class="img-size-choice"><b>高画質</b><span>1600px・300KB</span></button>
-          </div>
-          <p class="text-[11px] text-neutral-400 mt-1.5">※ 画像を入れるたびに画質を選ぶ画面が出ます。ここで選んだものが最初から選ばれています。長い辺と容量がその大きさに収まるよう自動で縮めます。すでに入れた画像は変わりません（Markdownなどの読み込みでは、ここの画質を使います）。</p>
-        </div>
-        <div>
-          <div class="flex items-center justify-between gap-3 font-medium mb-1.5">
-            <span>画像を入れたときの表示</span>
-            <div id="settingImageDisplaySeg" class="src-seg">
-              <button type="button" data-val="s">小</button>
-              <button type="button" data-val="m">中</button>
-              <button type="button" data-val="l">幅いっぱい</button>
+        <div class="set-head">Markdownで書き出す</div>
+        <div class="set-group set-pad">
+          <p class="text-[11px] text-neutral-400 mb-2.5">1枚が1つの .md ファイルになります。タグ・エリア・引用元・リンクは先頭の front matter に入るので、Obsidian ではそのままプロパティとして読めます。</p>
+            <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mb-1">書き出す範囲</div>
+            <div id="mdRangeSeg" class="src-seg flex-wrap mb-2.5"></div>
+            <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mb-1">ファイルの分け方</div>
+            <div class="grid gap-1.5 mb-3 text-[12px]">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="area" class="accent-appleBlue">エリアごとのフォルダに分ける（.zip）</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="flat" class="accent-appleBlue">1つのフォルダにまとめる（.zip）</label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="single" class="accent-appleBlue">全カードを1つのファイルにつなげる（.md）</label>
             </div>
-          </div>
-          <p class="text-[11px] text-neutral-400">※ カードの中での見た目の大きさです。1枚ずつ、編集中に画像を押して変えられます。</p>
-        </div>
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-          <span>
-            <span class="block font-medium">スクリーンショットは少し大きく残す</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">文字の多い画像（PNG のスクリーンショット）は、文字がにじまないよう容量の上限を2倍までゆるめます。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="settingImageShotInput" type="checkbox" class="peer sr-only" checked>
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
-        </div>
-        <button type="button" class="settings-reset" data-reset="card">この分類を初期値に戻す</button>
-      </section>
-      <section class="settings-sec" data-sec="action" aria-label="操作">
-        <div class="space-y-4 text-xs">
-<!-- 裏返しアニメーション -->
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-          <span>
-            <span class="block font-medium">カードを裏返すアニメーション</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">カードとリンクを切り替えるときに、カードがくるっと回転します。オフにするとそのまま開きます。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="settingFlipInput" type="checkbox" class="peer sr-only" checked>
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
-
-<!-- Fleeting の自動アーカイブ -->
-        <div class="pt-3 border-t border-black/5 dark:border-white/10">
-          <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-            <span>
-              <span class="block font-medium">Fleeting を自動でアーカイブする</span>
-              <span class="block text-[11px] text-neutral-400 mt-0.5">最後に編集してから決めた日数がたった Fleeting のカードを、Archive に移します。状態を変えただけでは「編集」に数えません。</span>
-            </span>
-            <span class="relative shrink-0">
-              <input id="settingAutoArchiveInput" type="checkbox" class="peer sr-only" checked>
-              <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-              <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-            </span>
-          </label>
-          <div id="autoArchiveDaysRow" class="flex items-center justify-between gap-3 mt-2.5">
-            <span class="text-neutral-500 dark:text-neutral-400">最後の編集から</span>
-            <span class="flex items-center gap-1.5">
-              <input id="settingAutoArchiveDays" type="number" min="1" max="365" step="1" value="30" inputmode="numeric" class="w-[64px] h-8 px-2 rounded-lg bg-black/[0.04] dark:bg-white/[0.07] border border-transparent focus:border-appleBlue outline-none text-right font-mono text-[13px] font-semibold text-neutral-900 dark:text-white">
-              <span>日</span>
-            </span>
-          </div>
-          <p id="autoArchiveInfo" class="text-[11px] text-neutral-400 mt-1.5"></p>
-        </div>
-        </div>
-        <button type="button" class="settings-reset" data-reset="action">この分類を初期値に戻す</button>
-      </section>
-      <section class="settings-sec" data-sec="copy" aria-label="コピー">
-        <div class="space-y-4 text-xs">
-<!-- コピーに引用元 -->
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-          <span>
-            <span class="block font-medium">コピーに引用元を付ける</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">本文をコピーするとき、末尾に「（思考の整理学、p.91）」のように引用元を添えます。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="settingCopySourceInput" type="checkbox" class="peer sr-only" checked>
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
-
-        <label class="flex items-center justify-between gap-4 cursor-pointer select-none">
-          <span>
-            <span class="block font-medium">Markdownで、段落の中の改行に「\」を付ける</span>
-            <span class="block text-[11px] text-neutral-400 mt-0.5">詩のように1行ずつ改行した文を、GitHub など改行1つでは改行しないアプリでも見たとおりに表示します。「Markdownでコピー」と「Markdownで書き出す」の両方に効きます。Obsidian だけで使うなら不要です。</span>
-          </span>
-          <span class="relative shrink-0">
-            <input id="mdHardBreakInput" type="checkbox" class="peer sr-only">
-            <span class="block w-[42px] h-[25px] rounded-full bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-[#34C759] transition-colors"></span>
-            <span class="absolute top-[2px] left-[2px] w-[21px] h-[21px] rounded-full bg-white shadow transition-transform peer-checked:translate-x-[17px]"></span>
-          </span>
-        </label>
+            <button id="mdExportBtn" type="button" class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-black/5 dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold transition">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+              <span>書き出す</span>
+            </button>
         </div>
         <button type="button" class="settings-reset" data-reset="copy">この分類を初期値に戻す</button>
       </section>
-      <section class="settings-sec" data-sec="data" aria-label="データ">
-        <div class="space-y-4 text-xs">
-<!-- 複数の端末で同期 -->
-        <div id="syncPanel"></div>
-<!-- データのバックアップ -->
-        <div>
-          <div class="font-medium mb-1">データのバックアップ</div>
-          <p class="text-[11px] text-neutral-400 mb-2.5">カードは今このブラウザの中（localStorage）だけに保存されています。ブラウザのデータを消すと失われるので、ときどきエクスポートしておくと安心です。</p>
+      <section class="settings-sec" data-sec="sync" aria-label="同期とバックアップ">
+        <p class="set-lead">ほかの端末との同期と、控えのファイル</p>
+        <div class="text-xs"><div id="syncPanel"></div></div>
+        <div class="set-head">バックアップ</div>
+        <div class="set-group set-pad">
+          <p class="text-[11px] text-neutral-400 mb-2.5">カードはこのブラウザの中（localStorage）に保存されています。ブラウザのデータを消すと失われるので、ときどきエクスポートしておくと安心です。</p>
           <div class="flex gap-2">
             <button id="exportDataBtn" type="button" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-black/5 dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold transition">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -2649,44 +2599,6 @@
             </div>
             <button id="importCancelBtn" type="button" class="w-full mt-2 py-1.5 text-[11px] text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200">やめる</button>
           </div>
-
-          <!-- Markdown で書き出す -->
-          <div class="mt-4 rounded-2xl border border-black/[0.07] dark:border-white/10 p-3">
-            <div class="flex items-center gap-1.5 font-medium">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 15V9l3 3 3-3v6"/><path d="M17 9v6"/><path d="m15 13 2 2 2-2"/></svg>
-              Markdownで書き出す
-            </div>
-            <p class="text-[11px] text-neutral-400 mt-1 mb-2.5">1枚が1つの .md ファイルになります。タグ・エリア・引用元・リンクは先頭の front matter に入るので、Obsidian ではそのままプロパティとして読めます。</p>
-            <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mb-1">書き出す範囲</div>
-            <div id="mdRangeSeg" class="src-seg flex-wrap mb-2.5"></div>
-            <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mb-1">ファイルの分け方</div>
-            <div class="grid gap-1.5 mb-3 text-[12px]">
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="area" class="accent-appleBlue">エリアごとのフォルダに分ける（.zip）</label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="flat" class="accent-appleBlue">1つのフォルダにまとめる（.zip）</label>
-              <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="mdLayout" value="single" class="accent-appleBlue">全カードを1つのファイルにつなげる（.md）</label>
-            </div>
-            <button id="mdExportBtn" type="button" class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-black/5 dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold transition">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
-              <span>書き出す</span>
-            </button>
-          </div>
-
-        </div>
-
-        <!-- ゴミ箱・エリア -->
-        <div class="pt-3 border-t border-black/5 dark:border-white/10">
-          <div class="font-medium mb-2">整理</div>
-          <div class="flex gap-2">
-            <button id="settingsOpenTrashBtn" type="button" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-black/5 dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold transition">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              ゴミ箱を開く<span id="settingsTrashCount" class="text-neutral-400 font-normal"></span>
-            </button>
-            <button id="settingsEditAreasBtn" type="button" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-black/5 dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-xs font-semibold transition">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-              エリアを編集
-            </button>
-          </div>
-        </div>
         </div>
       </section>
         </div>
@@ -4951,7 +4863,7 @@
         // クラウド同期（ログインしていなければ何もしない）
         this.sync = new CloudSync(this);
         this.sync.init();
-        document.getElementById('syncBtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.showSettingsModal('data'); });
+        document.getElementById('syncBtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.showSettingsModal('sync'); });
         // カードの履歴：枚数を読み込む（「前の版を見る」は、次に描いたときから出る）
         CARD_HIST.init(new Set([...this.cards, ...this.trash].map(c => c.id)));
         // 保存容量が残り少なければ知らせる
@@ -5173,8 +5085,8 @@
           }
           const files = [...e.dataTransfer.files];
           if (!files.length) return;
-          if (this.settingsModal.classList.contains('pointer-events-none')) this.showSettingsModal('data');
-          else this.showSettingsSection('data', true);
+          if (this.settingsModal.classList.contains('pointer-events-none')) this.showSettingsModal('sync');
+          else this.showSettingsSection('sync', true);
           this.readImportFiles(files);
         });
         document.getElementById('importMergeBtn').addEventListener('click', () => this.applyImport('merge'));
@@ -6020,22 +5932,12 @@
         this.tagFilterBtn = document.getElementById('tagFilterBtn');
         this.tagFilterDot = document.getElementById('tagFilterDot');
 
-        this.sumChars = document.getElementById('sumChars');
-        this.sumLines = document.getElementById('sumLines');
-        this.sumCapacity = document.getElementById('sumCapacity');
-        this.sumColumns = document.getElementById('sumColumns');
 
         this.settingsModal = document.getElementById('settingsModal');
         this.openSettingsBtn = document.getElementById('openSettingsBtn');
         this.closeSettingsBtn = document.getElementById('closeSettingsBtn');
-        this.settingCharsInput = document.getElementById('settingCharsInput');
-        this.settingLinesInput = document.getElementById('settingLinesInput');
-        this.settingColumnsInput = document.getElementById('settingColumnsInput');
         this.settingFlipInput = document.getElementById('settingFlipInput');
         this.settingCopySourceInput = document.getElementById('settingCopySourceInput');
-        this.settingCharsDisplay = document.getElementById('settingCharsDisplay');
-        this.settingLinesDisplay = document.getElementById('settingLinesDisplay');
-        this.settingColumnsDisplay = document.getElementById('settingColumnsDisplay');
         this.addCardQuickBtn = document.getElementById('addCardQuickBtn');
         this.editCardBody = document.getElementById('editCardBody');
 
@@ -11607,17 +11509,6 @@
         r.setProperty('--rt-h3', `${this.config.rtH3}em`);
       }
 
-      // 「1.50倍（28px）」：倍率と、本文の大きさから計算した実際の大きさ
-      headingLabel(ratio, base = this.wideFontSize()) {
-        return `${ratio.toFixed(2)}倍（${Math.round(ratio * base)}px）`;
-      }
-
-      syncTypeLabels(base = this.wideFontSize()) {
-        [['settingH1', 'settingH1Input'], ['settingH2', 'settingH2Input'], ['settingH3', 'settingH3Input']].forEach(([id, input]) => {
-          document.getElementById(`${id}Display`).textContent = this.headingLabel(parseFloat(document.getElementById(input).value), base);
-        });
-      }
-
       wideFontSize() {
         const v = parseFloat(this.config.wideFontPx);
         return v >= 12 && v <= 28 ? v : 18.5;
@@ -13578,15 +13469,6 @@
         if (this.isTagPopoverOpen()) this.renderTagPopover();
       }
 
-      updateSettingsSummary() {
-        const chars = parseInt(this.settingCharsInput.value, 10);
-        const lines = parseInt(this.settingLinesInput.value, 10);
-        this.sumChars.textContent = chars;
-        this.sumLines.textContent = lines;
-        this.sumCapacity.textContent = chars * lines;
-        this.sumColumns.textContent = this.settingColumnsInput.value;
-      }
-
       resetFilters() {
         if (!['all', 'active'].includes(this.statusFilterKey())) { this.config.statusFilter = 'all'; this.saveConfig(); }
         this.searchQuery = '';
@@ -13615,7 +13497,7 @@
       // ============================================================
       bindSettings() {
         this.settingsShell = document.getElementById('settingsShell');
-        this.settingsSection = 'view';
+        this.settingsSection = 'look';
         const $ = (id) => document.getElementById(id);
         // 分類の切り替え（スマホでは一覧 → 中へ）
         this.settingsShell.querySelectorAll('.settings-nav-item').forEach(b => {
@@ -13624,94 +13506,61 @@
         $('settingsBackBtn').addEventListener('click', () => this.settingsShell.classList.remove('is-sub'));
         this.settingsModal.addEventListener('mousedown', (e) => { if (e.target === this.settingsModal) this.hideSettingsModal(); });
 
-        // 表示：外観・アクセントカラー・カードの見出し
-        $('settingThemeSeg').addEventListener('click', (e) => {
+        // いくつかから1つ選ぶもの
+        const seg = (id, fn) => $(id).addEventListener('click', (e) => {
           const b = e.target.closest('[data-val]');
-          if (!b) return;
-          this.config.theme = b.dataset.val;
+          if (b) fn(b.dataset.val);
+        });
+        const pick = (key, after) => (v) => {
+          this.config[key] = v;
           this.saveConfig();
-          this.applyTheme();
           this.syncSettingsControls();
-        });
-        document.querySelectorAll('.theme-choice-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            this.config.accentTheme = e.currentTarget.dataset.theme;
-            this.saveConfig();
-            this.syncSettingsControls();
-          });
-        });
-        $('settingStatusColors').addEventListener('click', (e) => {
-          const b = e.target.closest('[data-sc]');
-          if (!b) return;
-          this.config.statusColors = { ...DEFAULT_CONFIG.statusColors, ...(this.config.statusColors || {}), [b.dataset.st]: b.dataset.sc };
+          if (after) after();
+        };
+        seg('settingThemeSeg', pick('theme', () => this.applyTheme()));
+        seg('settingImageSizeSeg', pick('imageSize'));
+        seg('settingImageDisplaySeg', pick('imageDisplay'));
+        seg('settingColumnsSeg', (v) => pick('gridColumns', () => this.renderAll())(parseInt(v, 10)));
+        seg('settingHeadingSeg', (v) => {
+          const p = this.headingPresets()[v];
+          if (!p) return;
+          [this.config.rtH1, this.config.rtH2, this.config.rtH3] = p;
           this.saveConfig();
           this.syncSettingsControls();
           this.renderAll();
         });
-
-        // カード：スライダーは動かしている間は数字だけ、離したら反映
-        const slider = (el, key, parse, label) => {
-          el.addEventListener('input', () => { label(el.value); this.updateSettingsSummary(); });
-          el.addEventListener('change', () => {
-            this.config[key] = parse(el.value);
-            this.saveConfig();
-            this.renderAll();
-          });
-        };
-        slider(this.settingCharsInput, 'charsPerLine', v => parseInt(v, 10), v => { this.settingCharsDisplay.textContent = `${v} 文字`; });
-        slider(this.settingLinesInput, 'linesCount', v => parseInt(v, 10), v => { this.settingLinesDisplay.textContent = `${v} 行`; });
-        slider(this.settingColumnsInput, 'gridColumns', v => parseInt(v, 10), v => { this.settingColumnsDisplay.textContent = `${v} 列`; });
-        slider($('settingWideFontInput'), 'wideFontPx', v => parseFloat(v), v => { $('settingWideFontDisplay').textContent = `${v} px`; this.syncTypeLabels(parseFloat(v)); });
-        slider($('settingTitlePxInput'), 'cardTitlePx', v => parseInt(v, 10), v => { $('settingTitlePxDisplay').textContent = `${v} px`; document.documentElement.style.setProperty('--card-title', `${v}px`); });
-        // 見出しは、動かしている間も本文の見出しに反映する
-        [['settingH1', 'rtH1', '--rt-h1'], ['settingH2', 'rtH2', '--rt-h2'], ['settingH3', 'rtH3', '--rt-h3']].forEach(([id, key, cssVar]) => {
-          slider($(`${id}Input`), key, v => parseFloat(v), v => {
-            document.documentElement.style.setProperty(cssVar, `${v}em`);
-            $(`${id}Display`).textContent = this.headingLabel(parseFloat(v));
-          });
+        $('settingAccentSws').addEventListener('click', (e) => {
+          const b = e.target.closest('[data-theme]');
+          if (b) pick('accentTheme')(b.dataset.theme);
         });
-
-        // 画像
-        $('settingImageSizeSeg').addEventListener('click', (e) => {
-          const b = e.target.closest('[data-val]');
-          if (!b) return;
-          this.config.imageSize = b.dataset.val;
+        $('settingStatusColors').addEventListener('change', (e) => {
+          const sel = e.target.closest('select[data-st]');
+          if (!sel) return;
+          this.config.statusColors = { ...DEFAULT_CONFIG.statusColors, ...(this.config.statusColors || {}), [sel.dataset.st]: sel.value };
           this.saveConfig();
-          this.syncSettingsControls();
-        });
-        $('settingImageDisplaySeg').addEventListener('click', (e) => {
-          const b = e.target.closest('[data-val]');
-          if (!b) return;
-          this.config.imageDisplay = b.dataset.val;
-          this.saveConfig();
-          this.syncSettingsControls();
+          sel.previousElementSibling.className = `sc-sw sc-${sel.value}`;
+          this.renderAll();
         });
 
-        // 操作・コピー：スイッチ
+        // 数を決めるもの（−／＋。押し続けると続けて変わる）
+        this.settingsShell.querySelectorAll('.set-step').forEach(box => this.bindStepper(box));
+
+        // スイッチ
         const toggle = (el, key, after) => el.addEventListener('change', () => {
           this.config[key] = el.checked;
           this.saveConfig();
           if (after) after();
         });
-        toggle(this.settingFlipInput, 'flipAnimation');
-        toggle(this.settingCopySourceInput, 'copyWithSource');
+        toggle($('settingFlipInput'), 'flipAnimation');
+        toggle($('settingCopySourceInput'), 'copyWithSource');
         toggle($('settingImageShotInput'), 'imageScreenshotBoost');
         toggle($('settingCodeWrapInput'), 'codeWrap', () => this.applyCodeWrap());
         toggle($('settingAutoArchiveInput'), 'autoArchive', () => { this.syncSettingsControls(); this.runAutoArchive(); });
-        const daysEl = $('settingAutoArchiveDays');
-        daysEl.addEventListener('change', () => {
-          const v = Math.round(parseFloat(daysEl.value));
-          this.config.autoArchiveDays = v >= 1 && v <= 365 ? v : 30;
-          this.saveConfig();
-          this.syncSettingsControls();
-          this.runAutoArchive();
-        });
-        daysEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); daysEl.blur(); } });
 
         // 分類ごとに初期値へ
         this.settingsShell.querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => this.resetSettingsSection(b.dataset.reset)));
 
-        // データ：ゴミ箱・エリアの編集
+        // 整理：ゴミ箱・エリアの編集
         $('settingsOpenTrashBtn').addEventListener('click', () => { this.hideSettingsModal(); this.showTrash(); });
         $('settingsEditAreasBtn').addEventListener('click', () => { this.hideSettingsModal(); this.showAreaEditor(false); });
 
@@ -13721,6 +13570,85 @@
         if (this._darkMq.addEventListener) this._darkMq.addEventListener('change', onMq); else if (this._darkMq.addListener) this._darkMq.addListener(onMq);
         this.applyTheme();
         this.applyCodeWrap();
+      }
+
+      // 見出しの大きさの組み合わせ（H1・H2・H3 の、本文に対する倍率）
+      headingPresets() {
+        return { small: [1.3, 1.15, 1.05], std: [1.5, 1.28, 1.1], large: [1.8, 1.45, 1.2] };
+      }
+
+      // −／＋ のボタン：押している間は画面の表示だけを変え、離したら保存してカードに反映する
+      bindStepper(box) {
+        const key = box.dataset.key;
+        const min = parseFloat(box.dataset.min), max = parseFloat(box.dataset.max), step = parseFloat(box.dataset.step);
+        let timer = null, held = false;
+        const bump = (d) => {
+          let cur = parseFloat(this.config[key]);
+          if (!isFinite(cur)) cur = DEFAULT_CONFIG[key];
+          const next = Math.min(max, Math.max(min, Math.round((cur + d * step) * 100) / 100));
+          if (next === cur) return;
+          this.config[key] = next;
+          this.applySettingsLive();
+        };
+        const stop = () => {
+          clearTimeout(timer);
+          clearInterval(timer);
+          timer = null;
+          if (!held) return;
+          held = false;
+          this.commitSetting(key);
+        };
+        box.querySelectorAll('button').forEach(btn => {
+          const d = parseInt(btn.dataset.d, 10);
+          btn.addEventListener('pointerdown', (e) => {
+            if (e.button) return;
+            stop();
+            held = true;
+            bump(d);
+            timer = setTimeout(() => { timer = setInterval(() => bump(d), 70); }, 400);
+          });
+          ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => btn.addEventListener(t, stop));
+          // キーボード（Enter・スペース）で押したとき
+          btn.addEventListener('click', (e) => { if (e.detail === 0) { bump(d); this.commitSetting(key); } });
+        });
+      }
+
+      commitSetting(key) {
+        this.saveConfig();
+        if (key === 'autoArchiveDays') { this.syncSettingsControls(); this.runAutoArchive(); return; }
+        this.renderAll();
+      }
+
+      // 数字・プレビューなど、設定画面の中の表示を今の値に合わせる（軽い処理だけ）
+      applySettingsLive() {
+        const $ = (id) => document.getElementById(id);
+        this.applyTypeScale();
+        this.settingsShell.querySelectorAll('.set-step').forEach(box => {
+          const key = box.dataset.key;
+          const v = parseFloat(this.config[key]);
+          box.querySelector('output').textContent = /^rtH/.test(key) ? `${v.toFixed(2)}倍` : `${v} ${box.dataset.unit}`;
+        });
+        $('typePreviewBody').style.fontSize = `${this.wideFontSize()}px`;
+        const hs = [this.config.rtH1, this.config.rtH2, this.config.rtH3];
+        const preset = Object.entries(this.headingPresets()).find(([, p]) => p.every((x, i) => Math.abs(x - hs[i]) < 0.001));
+        document.querySelectorAll('#settingHeadingSeg [data-val]').forEach(x => x.classList.toggle('is-on', !!preset && x.dataset.val === preset[0]));
+        $('headingNote').textContent = `${preset ? '' : '個別に調整中：'}H1 ${hs[0].toFixed(2)}倍・H2 ${hs[1].toFixed(2)}倍・H3 ${hs[2].toFixed(2)}倍`;
+        this.renderGalleryPreview();
+      }
+
+      // ギャラリーの見え方の縮図（列の数と、カード1枚の縦横の比）
+      renderGalleryPreview() {
+        const box = document.getElementById('galleryPreview');
+        if (!box) return;
+        const cols = this.config.gridColumns || 4, chars = this.config.charsPerLine, lines = this.config.linesCount;
+        const W = box.clientWidth || 540;
+        const colW = (W - (cols - 1) * 8) / cols;
+        const k = colW / (chars * 15.5 + 80);
+        const h = Math.round((lines * 15.5 * 1.75 + 160) * k);
+        const pad = Math.max(3, Math.round(16 * k)), th = Math.max(2, Math.round(18 * k));
+        const lp = Math.max(2, 15.5 * 1.75 * k), lw = Math.max(1, lp * 0.32);
+        box.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+        box.innerHTML = `<div class="gp-card" style="height:${h}px;padding:${pad}px;gap:${pad}px"><i style="height:${th}px"></i><span style="background:repeating-linear-gradient(var(--gp-line) 0, var(--gp-line) ${lw.toFixed(2)}px, transparent ${lw.toFixed(2)}px, transparent ${lp.toFixed(2)}px)"></span></div>`.repeat(cols * 2);
       }
 
       themeMode() {
@@ -13734,69 +13662,61 @@
       }
 
       showSettingsSection(sec, fromNav) {
-        const titles = { view: '表示', card: 'カード', action: '操作', copy: 'コピー', data: 'データ' };
-        if (!titles[sec]) sec = 'view';
+        const titles = { look: '外観', type: '文字', gallery: 'ギャラリー', image: '画像', tidy: '整理', copy: 'コピーと書き出し', sync: '同期とバックアップ' };
+        if (!titles[sec]) sec = 'look';
         this.settingsSection = sec;
         this.settingsShell.querySelectorAll('.settings-nav-item').forEach(b => b.classList.toggle('is-on', b.dataset.sec === sec));
         this.settingsShell.querySelectorAll('.settings-sec').forEach(el => el.classList.toggle('is-on', el.dataset.sec === sec));
         document.getElementById('settingsTitle').textContent = titles[sec];
         document.getElementById('settingsBody').scrollTop = 0;
         if (fromNav) this.settingsShell.classList.add('is-sub');
+        if (sec === 'gallery') this.renderGalleryPreview(); // 見えてから幅を測る
       }
 
       // 画面の部品を、今の設定の値にそろえる
       syncSettingsControls() {
         const $ = (id) => document.getElementById(id);
-        const mode = this.themeMode();
-        document.querySelectorAll('#settingThemeSeg [data-val]').forEach(x => x.classList.toggle('is-on', x.dataset.val === mode));
-        document.querySelectorAll('.theme-choice-btn').forEach(b => {
-          const on = b.dataset.theme === (this.config.accentTheme || 'appleBlue');
-          b.classList.toggle('border-appleBlue', on);
-          b.classList.toggle('bg-blue-50', on);
-          b.classList.toggle('dark:bg-blue-950/40', on);
-          b.classList.toggle('text-appleBlue', on);
-          b.classList.toggle('border-transparent', !on);
-          b.classList.toggle('bg-black/5', !on);
-          b.classList.toggle('dark:bg-white/5', !on);
+        const segOn = (id, val) => document.querySelectorAll(`#${id} [data-val]`).forEach(x => {
+          const on = x.dataset.val === String(val);
+          x.classList.toggle('is-on', on);
+          x.setAttribute('aria-pressed', String(on));
         });
-        this.settingCharsInput.value = this.config.charsPerLine;
-        this.settingLinesInput.value = this.config.linesCount;
-        this.settingColumnsInput.value = this.config.gridColumns || 4;
-        this.settingCharsDisplay.textContent = `${this.config.charsPerLine} 文字`;
-        this.settingLinesDisplay.textContent = `${this.config.linesCount} 行`;
-        this.settingColumnsDisplay.textContent = `${this.config.gridColumns || 4} 列`;
-        $('settingWideFontInput').value = this.wideFontSize();
-        $('settingWideFontDisplay').textContent = `${this.wideFontSize()} px`;
-        $('settingTitlePxInput').value = this.config.cardTitlePx;
-        $('settingTitlePxDisplay').textContent = `${this.config.cardTitlePx} px`;
-        $('settingH1Input').value = this.config.rtH1;
-        $('settingH2Input').value = this.config.rtH2;
-        $('settingH3Input').value = this.config.rtH3;
-        this.syncTypeLabels();
-        this.updateSettingsSummary();
-        this.settingFlipInput.checked = this.config.flipAnimation !== false;
-        this.settingCopySourceInput.checked = this.config.copyWithSource !== false;
-        $('mdHardBreakInput').checked = !!this.config.mdHardBreak;
-        $('settingsTrashCount').textContent = this.trash.length ? `（${this.trash.length}）` : '';
-        const isz = IMG_SIZES[this.config.imageSize] ? this.config.imageSize : 'standard';
-        document.querySelectorAll('#settingImageSizeSeg [data-val]').forEach(x => x.classList.toggle('is-on', x.dataset.val === isz));
-        const idp = IMG_DISPLAY[this.config.imageDisplay] ? this.config.imageDisplay : 'm';
-        document.querySelectorAll('#settingImageDisplaySeg [data-val]').forEach(x => x.classList.toggle('is-on', x.dataset.val === idp));
-        $('settingImageShotInput').checked = this.config.imageScreenshotBoost !== false;
-        $('settingCodeWrapInput').checked = !!this.config.codeWrap;
+        // 外観
+        segOn('settingThemeSeg', this.themeMode());
+        $('settingFlipInput').checked = this.config.flipAnimation !== false;
+        document.querySelectorAll('#settingAccentSws [data-theme]').forEach(b => {
+          const on = b.dataset.theme === (this.config.accentTheme || 'appleBlue');
+          b.classList.toggle('is-on', on);
+          b.setAttribute('aria-pressed', String(on));
+        });
         $('settingStatusColors').innerHTML = STATUS_ORDER.map(st => {
           const cur = this.statusColor(st);
-          return `<div class="sc-row">${this.statusPillHtml({ status: st })}<div class="sc-sws" role="radiogroup" aria-label="${CARD_STATUS[st].label} の色">${Object.entries(STATUS_COLORS).map(([k, v]) => `<button type="button" class="sc-sw sc-${k}${k === cur ? ' on' : ''}" data-st="${st}" data-sc="${k}" title="${v}" aria-label="${v}" role="radio" aria-checked="${k === cur}"></button>`).join('')}</div></div>`;
+          const opts = Object.entries(STATUS_COLORS).map(([k, v]) => `<option value="${k}"${k === cur ? ' selected' : ''}>${v}</option>`).join('');
+          return `<div class="set-row"><span class="set-text">${this.statusPillHtml({ status: st })}</span><span class="sc-pick"><i class="sc-sw sc-${cur}" aria-hidden="true"></i><select data-st="${st}" aria-label="${CARD_STATUS[st].label} の枠の色">${opts}</select></span></div>`;
         }).join('');
-        $('settingAutoArchiveInput').checked = this.config.autoArchive !== false;
-        $('settingAutoArchiveDays').value = this.autoArchiveDays();
-        $('autoArchiveDaysRow').style.opacity = this.config.autoArchive !== false ? '' : '0.4';
-        {
-          const soon = this.cards.filter(c => this.cardStatus(c) === 'fleeting').length;
-          $('autoArchiveInfo').textContent = this.config.autoArchive !== false
-            ? `いまの Fleeting：${soon}枚。日付にカーソルを合わせると、アーカイブまでの残り日数が出ます。`
-            : 'オフのあいだは、Fleeting はそのまま残ります。';
-        }
+        // 文字・ギャラリー
+        $('settingCodeWrapInput').checked = !!this.config.codeWrap;
+        segOn('settingColumnsSeg', this.config.gridColumns || 4);
+        this.applySettingsLive();
+        // 画像
+        const isz = IMG_SIZES[this.config.imageSize] ? this.config.imageSize : 'standard';
+        segOn('settingImageSizeSeg', isz);
+        $('imageSizeNote').textContent = `${IMG_SIZES[isz].label}：長い辺 ${IMG_SIZES[isz].px}px・約${IMG_SIZES[isz].kb}KBまで`;
+        segOn('settingImageDisplaySeg', IMG_DISPLAY[this.config.imageDisplay] ? this.config.imageDisplay : 'm');
+        $('settingImageShotInput').checked = this.config.imageScreenshotBoost !== false;
+        // 整理
+        const autoOn = this.config.autoArchive !== false;
+        $('settingAutoArchiveInput').checked = autoOn;
+        $('autoArchiveDaysRow').style.opacity = autoOn ? '' : '0.4';
+        const fleeting = this.cards.filter(c => this.cardStatus(c) === 'fleeting').length;
+        $('autoArchiveInfo').textContent = autoOn
+          ? `いまの Fleeting：${fleeting}枚。カードの日付にカーソルを合わせると、残り日数が出ます`
+          : 'オフのあいだは、Fleeting はそのまま残ります';
+        $('settingsAreaCount').textContent = `${this.areas.length}つ`;
+        $('settingsTrashCount').textContent = this.trash.length ? `${this.trash.length}枚` : '空';
+        // コピーと書き出し
+        $('settingCopySourceInput').checked = this.config.copyWithSource !== false;
+        $('mdHardBreakInput').checked = !!this.config.mdHardBreak;
         this.applyCodeWrap();
         this.imageStats().then(st => {
           const el = $('imageStatsInfo');
@@ -13807,15 +13727,18 @@
 
       resetSettingsSection(sec) {
         const keys = {
-          view: ['theme', 'accentTheme', 'statusColors'],
-          card: ['charsPerLine', 'linesCount', 'gridColumns', 'wideFontPx', 'cardTitlePx', 'rtH1', 'rtH2', 'rtH3', 'imageSize', 'imageDisplay', 'imageScreenshotBoost', 'codeWrap'],
-          action: ['flipAnimation', 'autoArchive', 'autoArchiveDays'],
-          copy: ['copyWithSource', 'mdHardBreak']
+          look: ['theme', 'flipAnimation', 'accentTheme', 'statusColors'],
+          type: ['wideFontPx', 'cardTitlePx', 'rtH1', 'rtH2', 'rtH3', 'codeWrap'],
+          gallery: ['gridColumns', 'charsPerLine', 'linesCount'],
+          image: ['imageSize', 'imageDisplay', 'imageScreenshotBoost'],
+          tidy: ['autoArchive', 'autoArchiveDays'],
+          copy: ['copyWithSource', 'mdHardBreak', 'mdLayout']
         }[sec] || [];
         keys.forEach(k => { if (k === 'theme') delete this.config.theme; else this.config[k] = k === 'statusColors' ? { ...DEFAULT_CONFIG.statusColors } : DEFAULT_CONFIG[k]; });
         this.saveConfig();
         this.applyTheme();
         this.syncSettingsControls();
+        if (sec === 'copy') this.renderMdExportPanel();
         this.renderAll();
         this.showToast('初期値に戻しました');
       }
@@ -13830,7 +13753,7 @@
         this.closeSortMenu();
         this.closeAreaMenu();
         this.settingsShell.classList.remove('is-sub');
-        this.showSettingsSection(section || this.settingsSection || 'view', false);
+        this.showSettingsSection(section || this.settingsSection || 'look', false);
         if (section) this.settingsShell.classList.add('is-sub');
 
         this.settingsModal.classList.remove('opacity-0', 'pointer-events-none');
