@@ -178,6 +178,60 @@
     .cd-pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; display: none; flex-direction: column; gap: 3px; min-width: 176px; padding: 8px 12px; border-radius: 10px; background: #fff; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.28), 0 0 0 0.5px rgba(0, 0, 0, 0.1); font-size: 12px; font-weight: 500; color: #1D1D1F; font-variant-numeric: tabular-nums; }
     .cd-pop span { display: flex; justify-content: space-between; gap: 16px; }
     .cd-pop em { font-style: normal; font-weight: 400; color: #8E8E93; }
+    /* 日付から下の吹き出しへマウスを動かす途中で、吹き出しが消えないようにする */
+    .cd-pop::before { content: ''; position: absolute; left: 0; right: 0; top: -8px; height: 8px; }
+    .cd-pop .cd-hist { display: block; width: 100%; margin-top: 4px; padding: 5px 0 1px; border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.08); background: none; font: inherit; font-weight: 600; color: #007AFF; text-align: left; cursor: pointer; }
+    .cd-pop .cd-hist:hover { text-decoration: underline; }
+    .dark .cd-pop .cd-hist { border-top-color: rgba(255, 255, 255, 0.1); color: #4DA3FF; }
+    /* 設定：保存容量 */
+    .storage-info { margin-top: 6px; font-size: 11px; color: #A3A3A3; }
+    .storage-bar { height: 5px; border-radius: 3px; background: rgba(0, 0, 0, 0.07); overflow: hidden; margin: 5px 0 4px; }
+    .dark .storage-bar { background: rgba(255, 255, 255, 0.1); }
+    .storage-bar i { display: block; height: 100%; border-radius: 3px; background: #34C759; }
+    .storage-info.is-warn .storage-bar i { background: #FF9F0A; }
+    .storage-info.is-full .storage-bar i { background: #FF3B30; }
+    .storage-info.is-warn b, .storage-info.is-full b { color: #C93400; }
+    .dark .storage-info.is-warn b, .dark .storage-info.is-full b { color: #FFB340; }
+    /* カードの履歴 */
+    #histModal { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.4); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+    #histModal.open { display: flex; }
+    .hist-box { width: min(920px, calc(100vw - 32px)); height: min(640px, calc(100vh - 48px)); display: flex; flex-direction: column; border-radius: 20px; background: #fff; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.45); overflow: hidden; color: #1D1D1F; }
+    .dark .hist-box { background: #1C1C1E; color: #F2F2F7; }
+    .hist-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 12px 20px; border-bottom: 0.5px solid rgba(0, 0, 0, 0.1); }
+    .dark .hist-head { border-bottom-color: rgba(255, 255, 255, 0.12); }
+    .hist-head b { font-size: 15px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hist-head small { font-size: 11px; color: #8E8E93; font-weight: 500; }
+    .hist-close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.06); color: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .dark .hist-close { background: rgba(255, 255, 255, 0.1); }
+    .hist-main { flex: 1; min-height: 0; display: flex; }
+    .hist-list { width: 250px; flex-shrink: 0; overflow-y: auto; padding: 8px; border-right: 0.5px solid rgba(0, 0, 0, 0.1); background: rgba(0, 0, 0, 0.02); }
+    .dark .hist-list { border-right-color: rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.03); }
+    .hist-item { display: block; width: 100%; text-align: left; border: 0; background: none; font: inherit; color: inherit; padding: 9px 11px; border-radius: 10px; cursor: pointer; }
+    .hist-item:hover { background: rgba(0, 0, 0, 0.05); }
+    .dark .hist-item:hover { background: rgba(255, 255, 255, 0.07); }
+    .hist-item.is-on { background: rgba(0, 122, 255, 0.12); }
+    .hist-item b { display: block; font-size: 13px; font-weight: 700; }
+    .hist-item span { display: block; font-size: 11px; color: #8E8E93; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hist-item.is-now b { color: #8E8E93; }
+    .hist-view { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .hist-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 26px; }
+    .hist-body h4 { margin: 0 0 4px; font-size: 20px; font-weight: 800; }
+    .hist-body .hist-meta { font-size: 11px; color: #8E8E93; margin-bottom: 12px; }
+    .hist-body .rich { font-size: 14px; line-height: 1.75; }
+    .hist-foot { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 0.5px solid rgba(0, 0, 0, 0.1); font-size: 11px; color: #8E8E93; }
+    .dark .hist-foot { border-top-color: rgba(255, 255, 255, 0.12); }
+    .hist-foot span { flex: 1; }
+    .hist-restore { height: 32px; padding: 0 14px; border: 0; border-radius: 10px; background: #007AFF; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .hist-restore[disabled] { opacity: 0.35; cursor: default; }
+    .hist-empty { padding: 40px 20px; text-align: center; font-size: 13px; color: #8E8E93; }
+    @media (max-width: 639px) {
+      .hist-box { width: 100vw; height: 100dvh; border-radius: 0; }
+      .hist-main { flex-direction: column; }
+      .hist-list { width: auto; max-height: 32%; border-right: 0; border-bottom: 0.5px solid rgba(0, 0, 0, 0.1); display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 8px; }
+      .hist-item { width: auto; flex-shrink: 0; min-width: 132px; }
+      .hist-close { width: 44px; height: 44px; }
+      .hist-restore { height: 44px; }
+    }
     .cd-pop .cd-note { display: block; margin-top: 3px; padding-top: 5px; border-top: 0.5px solid rgba(0, 0, 0, 0.08); font-size: 11px; font-weight: 500; color: #B26500; }
     .dark .cd-pop .cd-note { border-top-color: rgba(255, 255, 255, 0.1); color: #FFB340; }
     .dark .cd-pop { background: #2C2C30; color: #F2F2F7; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.12); }
@@ -715,6 +769,37 @@
     .inline-actions .ia-link:hover { background: rgba(0, 122, 255, 0.1); color: #007AFF; }
     .inline-actions .ia-link .link-count:empty { display: none; }
     /* リンクビュー（カードの裏）の見出し */
+    /* 裏面：リンクの候補（まだリンクしていない、関係がありそうなカード） */
+    .cand-bar { display: flex; align-items: center; gap: 10px; margin-top: 18px; padding: 2px 2px 4px; font-size: 13px; color: #6E6E73; }
+    .cand-bar svg { color: #B26500; flex-shrink: 0; }
+    .cand-bar b { color: #1D1D1F; font-weight: 800; white-space: nowrap; }
+    .cand-bar .cand-sub { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cand-bar i { flex: 1; min-width: 12px; height: 1px; background: rgba(0, 0, 0, 0.1); }
+    .cand-bar button { flex-shrink: 0; height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; font: inherit; font-size: 12px; font-weight: 600; color: #6E6E73; cursor: pointer; }
+    .cand-bar button:hover { background: rgba(0, 0, 0, 0.06); color: #1D1D1F; }
+    .dark .cand-bar { color: #A1A1A6; }
+    .dark .cand-bar b { color: #F5F5F7; }
+    .dark .cand-bar svg { color: #FFB340; }
+    .dark .cand-bar i { background: rgba(255, 255, 255, 0.12); }
+    .dark .cand-bar button:hover { background: rgba(255, 255, 255, 0.1); color: #F5F5F7; }
+    .cand-card { box-sizing: border-box; display: flex; flex-direction: column; gap: 7px; padding: 13px 15px; border-radius: 18px; border: 1.5px dashed rgba(178, 101, 0, 0.45); background: rgba(255, 255, 255, 0.72); min-width: 0; }
+    .dark .cand-card { background: rgba(44, 44, 48, 0.7); border-color: rgba(255, 179, 64, 0.4); }
+    .cand-why { align-self: flex-start; max-width: 100%; box-sizing: border-box; font-size: 11px; font-weight: 700; color: #8A4B00; background: rgba(255, 159, 10, 0.16); border-radius: 8px; padding: 2px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dark .cand-why { color: #FFB340; background: rgba(255, 159, 10, 0.18); }
+    .cand-open { display: block; width: 100%; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+    .cand-open b { display: block; font-size: 14px; font-weight: 800; color: #1D1D1F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cand-open span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 4px; font-size: 12px; line-height: 1.7; color: #48484A; min-height: 3.4em; }
+    .cand-open mark { background: rgba(255, 204, 0, 0.4); color: inherit; font-weight: 700; border-radius: 2px; }
+    .cand-open:hover b { color: #007AFF; }
+    .dark .cand-open b { color: #F5F5F7; }
+    .dark .cand-open span { color: #C7C7CC; }
+    .cand-acts { display: flex; gap: 8px; margin-top: 2px; }
+    .cand-link { flex: 1; height: 32px; border: 0; border-radius: 10px; background: #007AFF; color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .cand-link:hover { background: #0A6FE0; }
+    .cand-no { width: 32px; height: 32px; border: 0; border-radius: 10px; background: rgba(0, 0, 0, 0.06); color: #48484A; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .cand-no:hover { background: rgba(0, 0, 0, 0.12); }
+    .dark .cand-no { background: rgba(255, 255, 255, 0.1); color: #D1D1D6; }
+    @media (max-width: 639px) { .cand-link, .cand-no { height: 44px; } .cand-no { width: 44px; } .cand-bar .cand-sub { display: none; } .cand-bar button { height: 44px; } }
     .link-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 2px 2px 6px; }
     .link-bar-title { min-width: 0; flex: 1; font-size: 13px; color: #6E6E73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .link-bar-title b { color: #1D1D1F; font-weight: 700; }
@@ -2545,6 +2630,7 @@
           </div>
           <div id="exportInfo" class="text-[11px] text-neutral-400 mt-2"></div>
           <div id="imageStatsInfo" class="text-[11px] text-neutral-400 mt-1"></div>
+          <div id="storageInfo" class="storage-info"></div>
           <p class="text-[11px] text-neutral-400 mt-1">インポートは JSON のほか、Markdown（.md）や、それをまとめた .zip（Obsidian のフォルダなど）も読み込めます。ファイルを画面にドラッグしても読み込めます。</p>
 
           <!-- インポートの確認 -->
@@ -2812,6 +2898,7 @@
       sortOrder: 'updated', // 並べ替え：updated / created / createdAsc / title
       mdLayout: 'area',     // Markdown書き出しの分け方：area / flat / single
       mdHardBreak: false,   // Markdownで、段落内の改行の行末に「\」を付ける（GitHub など向け）
+      linkSuggest: true,    // 裏面に、リンクの候補を出す
       wideFontPx: 18.5,     // 右側に開いたカードの本文の文字の大きさ（px）
       cardTitlePx: 24,      // 右側に開いたカードのタイトルの大きさ（px）
       rtH1: 1.5,            // 見出し1の大きさ（本文の何倍か）
@@ -3144,6 +3231,79 @@
     };
 
     // 表示用の URL（同じ画像は1つの URL を使い回す）
+    // カードの履歴：前の版を、この端末の中に数世代だけ残す（同期はしない。カード本体の保存領域は使わない）
+    const CARD_HIST = {
+      db: null, mem: [], failed: false, seq: 0, MAX: 20, GAP: 10 * 60 * 1000,
+      counts: new Map(), lastAt: new Map(),
+      open() {
+        if (this.db || this.failed) return Promise.resolve(this.db);
+        if (this._opening) return this._opening;
+        this._opening = new Promise(resolve => {
+          try {
+            const req = indexedDB.open('indexcards_history', 1);
+            req.onupgradeneeded = () => { req.result.createObjectStore('versions', { keyPath: 'key' }).createIndex('cid', 'cid'); };
+            req.onsuccess = () => { this.db = req.result; resolve(this.db); };
+            req.onerror = () => { this.failed = true; resolve(null); };
+          } catch (e) { this.failed = true; resolve(null); }
+        });
+        return this._opening;
+      },
+      req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+      async all() {
+        if (!(await this.open())) return [...this.mem];
+        return this.req(this.db.transaction('versions').objectStore('versions').getAll());
+      },
+      async list(cid) {
+        let rows;
+        if (!(await this.open())) rows = this.mem.filter(v => v.cid === cid);
+        else rows = await this.req(this.db.transaction('versions').objectStore('versions').index('cid').getAll(cid));
+        return rows.sort((a, b) => (a.at < b.at ? 1 : -1));
+      },
+      async delKeys(keys) {
+        if (!keys.length) return;
+        if (!(await this.open())) { this.mem = this.mem.filter(v => !keys.includes(v.key)); return; }
+        const db = this.db;
+        await new Promise((res, rej) => { const t = db.transaction('versions', 'readwrite'); keys.forEach(k => t.objectStore('versions').delete(k)); t.oncomplete = res; t.onerror = () => rej(t.error); });
+      },
+      // snap：{ cid, title, html, tags, source }　why：edit（編集の前）/ sync（同期の前）/ restore（戻す前）
+      // 続けて何度も編集したときは、最初の1つ（書き始める前の版）だけを残す
+      async add(snap, why) {
+        try {
+          const now = Date.now();
+          const last = this.lastAt.get(snap.cid) || 0;
+          if (why === 'edit' && now - last < this.GAP) return;
+          this.lastAt.set(snap.cid, now);
+          const rec = { ...snap, why, at: new Date(now).toISOString(), key: `${snap.cid}:${now}:${this.seq++}` };
+          this.counts.set(snap.cid, (this.counts.get(snap.cid) || 0) + 1);
+          if (!(await this.open())) this.mem.push(rec);
+          else {
+            const db = this.db;
+            await new Promise((res, rej) => { const t = db.transaction('versions', 'readwrite'); t.objectStore('versions').put(rec); t.oncomplete = res; t.onerror = () => rej(t.error); });
+          }
+          const rows = await this.list(snap.cid);
+          if (rows.length > this.MAX) {
+            await this.delKeys(rows.slice(this.MAX).map(v => v.key));
+            this.counts.set(snap.cid, this.MAX);
+          }
+        } catch (e) {}
+      },
+      // 起動時：枚数を数える。もうないカード（ゴミ箱からも消えたもの）の履歴は消す
+      async init(aliveIds) {
+        try {
+          const rows = await this.all();
+          const dead = [];
+          this.counts.clear();
+          rows.forEach(v => {
+            if (!aliveIds.has(v.cid)) { dead.push(v.key); return; }
+            this.counts.set(v.cid, (this.counts.get(v.cid) || 0) + 1);
+            const t = Date.parse(v.at) || 0;
+            if (t > (this.lastAt.get(v.cid) || 0)) this.lastAt.set(v.cid, t);
+          });
+          await this.delKeys(dead);
+        } catch (e) {}
+      }
+    };
+
     const IMG_URLS = new Map();
     async function imgUrl(id) {
       if (IMG_URLS.has(id)) return IMG_URLS.get(id);
@@ -4748,7 +4908,7 @@
       pick('imageSize', Object.keys(IMG_SIZES));
       pick('imageDisplay', Object.keys(IMG_DISPLAY));
       pick('statusFilter', ['all', 'active', ...STATUS_ORDER]);
-      ['flipAnimation', 'copyWithSource', 'listHidden', 'mdHardBreak', 'imageScreenshotBoost', 'codeWrap', 'autoArchive', 'groupByStatus']
+      ['flipAnimation', 'copyWithSource', 'listHidden', 'mdHardBreak', 'imageScreenshotBoost', 'codeWrap', 'autoArchive', 'groupByStatus', 'linkSuggest']
         .forEach(k => { c[k] = typeof c[k] === 'boolean' ? c[k] : !!DEFAULT_CONFIG[k]; });
       ['wideCard', 'listLayout', 'cardHeader', 'loopCards'].forEach(k => { delete c[k]; }); // カードビューと一緒になくなった設定
       const sc = c.statusColors && typeof c.statusColors === 'object' ? c.statusColors : {};
@@ -4792,6 +4952,10 @@
         this.sync = new CloudSync(this);
         this.sync.init();
         document.getElementById('syncBtn').addEventListener('click', (e) => { e.currentTarget.blur(); this.showSettingsModal('data'); });
+        // カードの履歴：枚数を読み込む（「前の版を見る」は、次に描いたときから出る）
+        CARD_HIST.init(new Set([...this.cards, ...this.trash].map(c => c.id)));
+        // 保存容量が残り少なければ知らせる
+        setTimeout(() => this.checkStorage(), 1500);
         // 開いたままでも、ときどき確かめる（画面に戻ってきたとき・1時間ごと）
         document.addEventListener('visibilitychange', () => { if (!document.hidden) this.runAutoArchive(); });
         setInterval(() => this.runAutoArchive(), 3600000);
@@ -4938,6 +5102,7 @@
         try {
           localStorage.setItem(key, JSON.stringify(value));
           if (this.sync) this.sync.schedule();
+          this.checkStorage();
           return true;
         } catch (e) {
           if (this.toastEl) {
@@ -5385,6 +5550,145 @@
         }
       }
 
+      // ---------- 保存容量 ----------
+      // カード・ゴミ箱・設定は、ブラウザの小さな保存領域（localStorage）に入る。上限はブラウザごとに違うが、
+      // いちばん小さいもの（約5MB。文字1つを2バイトと数える）を目安にする。画像は別の場所なので数えない
+      storageUsage() {
+        let chars = 0;
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            chars += k.length + (localStorage.getItem(k) || '').length;
+          }
+        } catch (e) { return null; }
+        const bytes = chars * 2, limit = 5 * 1024 * 1024;
+        return { bytes, limit, pct: Math.min(100, Math.round(bytes / limit * 100)) };
+      }
+
+      renderStorageInfo() {
+        const el = document.getElementById('storageInfo');
+        if (!el) return;
+        const u = this.storageUsage();
+        if (!u) { el.textContent = ''; return; }
+        const mb = (n) => (n / 1048576).toFixed(n < 104858 ? 2 : 1);
+        el.className = 'storage-info' + (u.pct >= 95 ? ' is-full' : u.pct >= 80 ? ' is-warn' : '');
+        const note = u.pct >= 95 ? '<b>もうすぐいっぱいです。</b>エクスポートして控えを取り、不要なカードやゴミ箱を整理してください。'
+          : u.pct >= 80 ? '<b>残りが少なくなっています。</b>エクスポートして控えを取っておくと安心です。'
+          : '画像は別の場所に保存しているので、ここには含みません。';
+        el.innerHTML = `カードの保存容量：約 ${mb(u.bytes)}MB ／ 目安 ${mb(u.limit)}MB（${u.pct}%）<div class="storage-bar"><i style="width:${Math.max(1, u.pct)}%"></i></div>${note}`;
+      }
+
+      // 8割・95% を超えたときに、1回ずつ知らせる
+      checkStorage() {
+        const u = this.storageUsage();
+        if (!u) return;
+        const level = u.pct >= 95 ? 2 : u.pct >= 80 ? 1 : 0;
+        const el = document.getElementById('storageInfo');
+        if (el && el.offsetParent) this.renderStorageInfo();
+        if (level > (this._storageWarned || 0) && this.toastEl) {
+          this._storageWarned = level;
+          this.showToast(level === 2 ? `保存容量がもうすぐいっぱいです（${u.pct}%）。控えを取ってください` : `保存容量の残りが少なくなっています（${u.pct}%）`, 'エクスポート', () => this.exportData(), 10000);
+        }
+        if (level < (this._storageWarned || 0)) this._storageWarned = level;
+      }
+
+      // ---------- カードの履歴 ----------
+      histSnapshot(card) {
+        return {
+          cid: card.id,
+          title: card.title || '',
+          html: typeof card.html === 'string' ? card.html : rtPlainToHtml(card.body || ''),
+          tags: [...(card.tags || [])],
+          source: card.source ? JSON.parse(JSON.stringify(card.source)) : null
+        };
+      }
+
+      isHistoryOpen() {
+        const m = document.getElementById('histModal');
+        return !!(m && m.classList.contains('open'));
+      }
+
+      closeHistory() {
+        const m = document.getElementById('histModal');
+        if (m) m.classList.remove('open');
+        this._hist = null;
+      }
+
+      async showHistory(cardId) {
+        const card = this.cards.find(c => c.id === cardId);
+        if (!card) return;
+        if (this.inlineEditId) this.finishInlineEdit(true);
+        let m = document.getElementById('histModal');
+        if (!m) {
+          m = document.createElement('div');
+          m.id = 'histModal';
+          m.setAttribute('role', 'dialog');
+          m.setAttribute('aria-label', 'カードの履歴');
+          document.body.appendChild(m);
+          m.addEventListener('mousedown', (e) => { if (e.target === m) this.closeHistory(); });
+          m.addEventListener('click', (e) => {
+            if (e.target.closest('.hist-close')) { this.closeHistory(); return; }
+            const it = e.target.closest('.hist-item');
+            if (it) { this._hist.sel = it.dataset.key; this.renderHistory(); return; }
+            if (e.target.closest('.hist-restore')) this.restoreHistory();
+          });
+        }
+        const rows = await CARD_HIST.list(cardId);
+        this._hist = { cardId, rows, sel: rows.length ? rows[0].key : 'now' };
+        m.classList.add('open');
+        this.renderHistory();
+      }
+
+      renderHistory() {
+        const h = this._hist, m = document.getElementById('histModal');
+        if (!h || !m) return;
+        const card = this.cards.find(c => c.id === h.cardId);
+        if (!card) { this.closeHistory(); return; }
+        const WHY = { edit: '編集する前', sync: '同期で変わる前', restore: '戻す前' };
+        const when = (iso) => {
+          const d = new Date(iso);
+          return `${fmtDotDate(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+        };
+        const plain = (v) => rtToPlain(rtSanitize(v.html || '')).replace(/\s+/g, ' ').trim().slice(0, 40);
+        const now = this.histSnapshot(card);
+        const cur = h.sel === 'now' ? null : h.rows.find(v => v.key === h.sel);
+        const shown = cur || now;
+        const list = `<button type="button" class="hist-item is-now${h.sel === 'now' ? ' is-on' : ''}" data-key="now"><b>今の内容</b><span>${this.escapeHtml(plain(now) || '（本文なし）')}</span></button>` +
+          h.rows.map(v => `<button type="button" class="hist-item${v.key === h.sel ? ' is-on' : ''}" data-key="${rtEscape(v.key)}"><b>${when(v.at)}</b><span>${WHY[v.why] || ''}・${this.escapeHtml(plain(v) || '（本文なし）')}</span></button>`).join('');
+        const tags = (shown.tags || []).length ? ` ・ ${shown.tags.map(t => '#' + this.escapeHtml(t)).join(' ')}` : '';
+        m.innerHTML = `<div class="hist-box">
+          <div class="hist-head"><b>履歴：${this.escapeHtml(card.title || '無題のカード')}</b><small>この端末に、1枚につき${CARD_HIST.MAX}件まで</small>
+            <button type="button" class="hist-close" aria-label="閉じる"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          ${h.rows.length ? `<div class="hist-main">
+            <div class="hist-list">${list}</div>
+            <div class="hist-view">
+              <div class="hist-body"><h4>${this.escapeHtml(shown.title || '無題のカード')}</h4><div class="hist-meta">${cur ? `${when(cur.at)} の時点（${WHY[cur.why] || ''}）` : '今の内容'}${tags}</div><div class="rich">${rtDecorate(rtSanitize(shown.html || ''), false)}</div></div>
+              <div class="hist-foot"><span>${cur ? '戻すと、今の内容も履歴に残ります。' : '左から前の版を選ぶと、中身を確かめて戻せます。'}</span><button type="button" class="hist-restore"${cur ? '' : ' disabled'}>この版に戻す</button></div>
+            </div>
+          </div>` : '<div class="hist-empty">このカードには、まだ前の版がありません。<br>編集したり、同期で内容が変わったりすると、その前の版がここに残ります。</div>'}
+        </div>`;
+        hydrateImages(m);
+      }
+
+      async restoreHistory() {
+        const h = this._hist;
+        if (!h) return;
+        const card = this.cards.find(c => c.id === h.cardId);
+        const v = h.rows.find(x => x.key === h.sel);
+        if (!card || !v) return;
+        await CARD_HIST.add(this.histSnapshot(card), 'restore');
+        card.title = v.title || '無題のカード';
+        card.html = rtSanitize(v.html || '');
+        card.body = rtToPlain(card.html);
+        card.tags = tagsWithParents([...(v.tags || [])]);
+        card.source = v.source ? JSON.parse(JSON.stringify(v.source)) : null;
+        this.touchCard(card);
+        this.saveCards();
+        this.closeHistory();
+        this.renderAll();
+        this.showToast('前の版に戻しました');
+      }
+
       renderExportInfo() {
         const el = document.getElementById('exportInfo');
         if (!el) return;
@@ -5787,6 +6091,7 @@
           if (e.key === 'Escape') {
             if (e.isComposing) return; // 変換中の esc は日本語入力に任せる
             if (this.closeRtMenus()) { e.preventDefault(); e.stopPropagation(); return; }
+            if (this.isHistoryOpen()) { e.preventDefault(); e.stopPropagation(); this.closeHistory(); return; }
             if (this.isStatusFilterOpen()) { e.preventDefault(); this.closeStatusFilter(); return; }
             if (this.isSortMenuOpen()) { e.preventDefault(); this.closeSortMenu(); return; }
             if (!this.settingsModal.classList.contains('pointer-events-none') && !this.isTrashOpen() && !this.isAreaEditorOpen()) {
@@ -9221,6 +9526,8 @@
         this.closeTagPick();
         const card = this.cards.find(c => c.id === id);
         let removeNew = false;
+        // 履歴：書き始める前の版
+        const histBase = save && card && !this.inlineIsNew ? this.histSnapshot(card) : null;
         if (save && card) {
           this.removeEmptyEditGaps(ed);
           const title = home.titleEl.textContent.replace(/\s+/g, ' ').trim();
@@ -9256,6 +9563,7 @@
               changed = true;
             }
             if (changed) this.touchCard(card);
+            if (changed && histBase && (histBase.title !== card.title || histBase.html !== card.html)) CARD_HIST.add(histBase, 'edit');
             if (changed || this.inlineIsNew) this.saveCards();
           }
         }
@@ -9640,6 +9948,14 @@
         window.addEventListener('resize', () => this.closeStatusMenu());
         // 日付：押す（iPhone ではタップ）と作成日と更新日を出す
         document.addEventListener('click', (e) => {
+          const hb = e.target.closest && e.target.closest('.cd-hist[data-action="history"]');
+          if (hb) {
+            e.stopPropagation();
+            e.preventDefault();
+            document.querySelectorAll('.card-date.is-open').forEach(x => x.classList.remove('is-open'));
+            this.showHistory(hb.dataset.id);
+            return;
+          }
           const d = e.target.closest && e.target.closest('.card-date[data-action="date"]');
           document.querySelectorAll('.card-date.is-open').forEach(x => { if (x !== d) x.classList.remove('is-open'); });
           if (d) { e.stopPropagation(); d.classList.toggle('is-open'); }
@@ -10178,16 +10494,18 @@
         return !this.settingsModal.classList.contains('pointer-events-none') || 
                this.isLinkPickerOpen() ||
                this.isAreaEditorOpen() ||
-               this.isTrashOpen();
+               this.isTrashOpen() ||
+               this.isHistoryOpen();
       }
 
       getFilteredCards() {
         const list = this.cards.filter(card => {
-          const matchQuery = !this.searchQuery || 
-            card.title.toLowerCase().includes(this.searchQuery) ||
-            card.body.toLowerCase().includes(this.searchQuery) ||
-            card.tags.some(t => t.toLowerCase().includes(this.searchQuery)) ||
-            this.sourceSearchText(card.source).includes(this.searchQuery);
+          // 空白（全角も）で区切った語を、全部含むカードを探す。語ごとに、タイトル・本文・タグ・引用元のどこにあってもよい
+          const matchQuery = !this.searchQuery || this.searchQuery.split(/[\s\u3000]+/).filter(Boolean).every(w =>
+            card.title.toLowerCase().includes(w) ||
+            card.body.toLowerCase().includes(w) ||
+            card.tags.some(t => t.toLowerCase().includes(w)) ||
+            this.sourceSearchText(card.source).includes(w));
           // 選んだタグをすべて含むカードに絞り込む
           const picked = [...this.selectedTags];
           const matchTag = !picked.length || (this.config.tagMatch === 'any' ? picked.some(t => card.tags.includes(t)) : picked.every(t => card.tags.includes(t)));
@@ -10488,11 +10806,13 @@
             <button type="button" class="ms-act" data-ms="copy">${ico('<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>')}コピー</button>
             <button type="button" class="ms-act" data-ms="link">${ico('<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>')}リンク</button>
             <button type="button" class="ms-act is-danger" data-ms="delete">${ico('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>')}削除</button>
+            ${CARD_HIST.counts.get(id) ? `<button type="button" class="ms-act" data-ms="history">${ico('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>')}前の版</button>` : ''}
           </div>
           <button type="button" class="ms-cancel" data-ms="cancel">キャンセル</button>`;
         this.openMSheet(html, (b) => {
           const act = b.dataset.ms;
           this.closeMSheet();
+          if (act === 'history') { this.showHistory(id); return; }
           if (act === 'pin') this.setPinned([id], !card.pinnedAt);
           else if (act === 'copy') setTimeout(() => this.openCopyMenu(id, document.getElementById('mMoreBtn')), 0);
           else if (act === 'link') this.showLinkPicker(id);
@@ -11068,7 +11388,7 @@
         const extra = left !== null
           ? `<span class="cd-note">${left <= 0 ? 'まもなく自動でアーカイブ' : `あと${left}日で自動アーカイブ`}</span>`
           : (this.cardStatus(card) === 'archive' && card.autoArchivedAt ? `<span class="cd-note">${fmtDotDate(new Date(card.autoArchivedAt))} に自動でアーカイブ</span>` : '');
-        return `<span class="card-date inline-hide" data-action="date" tabindex="0">${label}<span class="cd-pop" role="tooltip"><span><em>作成</em>${full(c)}</span>${edited ? `<span><em>更新</em>${full(u)}</span>` : ''}${extra}</span></span>`;
+        return `<span class="card-date inline-hide" data-action="date" tabindex="0">${label}<span class="cd-pop" role="tooltip"><span><em>作成</em>${full(c)}</span>${edited ? `<span><em>更新</em>${full(u)}</span>` : ''}${extra}${CARD_HIST.counts.get(card.id) ? `<button type="button" class="cd-hist" data-action="history" data-id="${rtEscape(card.id)}">前の版を見る（${CARD_HIST.counts.get(card.id)}）</button>` : ''}</span></span>`;
       }
 
       renderSingleDeck(opts = {}) {
@@ -12883,7 +13203,102 @@
         add.addEventListener('click', () => this.showLinkPicker(focus.id));
         container.appendChild(add);
 
+        this.renderLinkCandidates(container, focus);
         this.updateGridCardScales(container);
+      }
+
+      // ---------- リンクの候補 ----------
+      // 「出さない」にした組み合わせ（この端末に覚えておく）
+      linkDismissed() {
+        if (!this._linkNo) {
+          let arr = [];
+          try { arr = JSON.parse(localStorage.getItem('indexcards_link_dismiss_v1') || '[]'); } catch (e) {}
+          this._linkNo = new Set(Array.isArray(arr) ? arr : []);
+        }
+        return this._linkNo;
+      }
+
+      dismissLinkCandidate(aId, bId) {
+        const set = this.linkDismissed();
+        set.add([aId, bId].sort().join('|'));
+        try { localStorage.setItem('indexcards_link_dismiss_v1', JSON.stringify([...set].slice(-2000))); } catch (e) {}
+      }
+
+      // まだリンクしていない、関係がありそうなカード。理由は3つ：
+      //   本文にタイトルが出てくる（どちら向きでも）／同じ本から引いている／同じタグが2つ以上
+      // アーカイブのカードは出さない
+      linkCandidates(focus, max = 6) {
+        const linked = new Set(focus.links || []);
+        const no = this.linkDismissed();
+        const norm = (v) => String(v || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        const titleOf = (c) => { const t = norm(c.title); return t.length >= 2 && t !== '無題のカード' ? t : ''; };
+        // 親タグは数えない（子タグを付けると親も付くので、それだけで2つ一致になってしまう）
+        const leafTags = (c) => (c.tags || []).filter(t => !(c.tags || []).some(o => o !== t && o.startsWith(t + '/')));
+        const bookOf = (c) => c.source && c.source.type === 'book' ? norm(c.source.title) : '';
+        const fTitle = titleOf(focus), fBody = norm(focus.body), fTags = new Set(leafTags(focus)), fBook = bookOf(focus);
+        const out = [];
+        this.cards.forEach(c => {
+          if (c.id === focus.id || linked.has(c.id) || this.cardStatus(c) === 'archive') return;
+          if (no.has([focus.id, c.id].sort().join('|'))) return;
+          let score = 0, why = '', hit = '';
+          const cTitle = titleOf(c), cBody = norm(c.body);
+          if (fTitle && cBody.includes(fTitle)) { score += 3; why = `本文に「${focus.title.trim()}」が出てくる`; hit = fTitle; }
+          else if (cTitle && fBody.includes(cTitle)) { score += 3; why = `このカードの本文に「${c.title.trim()}」が出てくる`; }
+          const book = bookOf(c);
+          if (fBook && book === fBook) { score += 2; if (!why) why = `同じ本：${c.source.title.trim()}`; }
+          const shared = leafTags(c).filter(t => fTags.has(t));
+          if (shared.length >= 2) { score += Math.min(shared.length, 4) * 0.6; if (!why) why = `同じタグ：${shared.slice(0, 2).map(t => '#' + t).join(' ')}${shared.length > 2 ? ` ほか${shared.length - 2}` : ''}`; }
+          if (score) out.push({ card: c, score, why, hit });
+        });
+        out.sort((a, b) => b.score - a.score || String(b.card.updatedAt || '').localeCompare(String(a.card.updatedAt || '')));
+        return { list: out.slice(0, max), total: out.length };
+      }
+
+      renderLinkCandidates(container, focus) {
+        const { list, total } = this.linkCandidates(focus);
+        if (!list.length) return;
+        const shown = this.config.linkSuggest !== false;
+        const bar = document.createElement('div');
+        bar.className = 'cand-bar col-span-full';
+        bar.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.800 1-2.300A7 7 0 0 0 12 2z"/></svg>
+          <b>リンクの候補 ${total}件</b><span class="cand-sub">${shown ? `まだリンクしていない、関係がありそうなカード${total > list.length ? `（上から${list.length}件）` : ''}` : ''}</span><i></i>
+          <button type="button">${shown ? '候補を隠す' : '候補を表示'}</button>`;
+        bar.querySelector('button').addEventListener('click', () => {
+          this.config.linkSuggest = !shown;
+          this.saveConfig();
+          this.renderLinkView();
+        });
+        container.appendChild(bar);
+        if (!shown) return;
+        list.forEach(({ card, why, hit }) => {
+          const el = document.createElement('div');
+          el.className = 'cand-card';
+          // 本文の抜粋：タイトルが出てくる場所のまわりを見せる
+          const body = String(card.body || '').replace(/\s+/g, ' ').trim();
+          let snippet = this.escapeHtml(body.slice(0, 90));
+          const at = hit ? body.toLowerCase().indexOf(hit) : -1;
+          if (at >= 0) {
+            const from = Math.max(0, at - 24);
+            snippet = (from ? '…' : '') + this.escapeHtml(body.slice(from, at)) + `<mark>${this.escapeHtml(body.slice(at, at + hit.length))}</mark>` + this.escapeHtml(body.slice(at + hit.length, at + hit.length + 60));
+          }
+          el.innerHTML = `<span class="cand-why" title="${this.escapeHtml(why)}">${this.escapeHtml(why)}</span>
+            <button type="button" class="cand-open" title="このカードを開く"><b>${this.escapeHtml(card.title || '無題のカード')}</b><span>${snippet || '（本文なし）'}</span></button>
+            <div class="cand-acts"><button type="button" class="cand-link">リンクする</button><button type="button" class="cand-no" aria-label="この候補を出さない" title="この候補を出さない"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`;
+          el.querySelector('.cand-open').addEventListener('click', () => this.openInCardView(card.id));
+          el.querySelector('.cand-link').addEventListener('click', () => {
+            this.setLinks(focus.id, [...(focus.links || []), card.id]);
+            this.renderAll();
+            this.showToast(`「${card.title || '無題のカード'}」とリンクしました`, '元に戻す', () => {
+              const f = this.cards.find(c => c.id === focus.id);
+              if (f) { this.setLinks(f.id, (f.links || []).filter(id => id !== card.id)); this.renderAll(); }
+            });
+          });
+          el.querySelector('.cand-no').addEventListener('click', () => {
+            this.dismissLinkCandidate(focus.id, card.id);
+            this.renderLinkView();
+          });
+          container.appendChild(el);
+        });
       }
 
       // 指定のカードをカードビューで開く（絞り込みで隠れている場合は絞り込みを解除）
@@ -13400,6 +13815,7 @@
         this.syncSettingsControls();
         if (this.sync) this.sync.renderUi();
         this.renderExportInfo();
+        this.renderStorageInfo();
         this.renderMdExportPanel();
         if (this.importPanel) this.cancelImport();
         this.closeSortMenu();
@@ -14021,6 +14437,8 @@
             }
             if (takeRemote && this.hashOf(cur) !== rh) {
               if (cur) { (cur.tr ? ch.trash = true : ch.cards = true); }
+              // 履歴：ほかの端末の内容で置き換わる前の版を残す（タイトルか本文が変わるときだけ）
+              if (cur && !cur.tr && (!remote || remote.d.title !== cur.d.title || remote.d.html !== cur.d.html)) CARD_HIST.add(app.histSnapshot(cur.d), 'sync');
               cards.delete(cid);
               trash.delete(cid);
               if (remote) {
