@@ -10126,6 +10126,12 @@
           g.running = true;
           const step = (now) => {
             if (this.currentView !== 'graph') { g.running = false; return; }
+            // 大きさが測ったときと違っていたら測り直す（念のため。はじめて測れたときは全体が入るように合わせる）
+            if (g.stage.clientWidth && (g.stage.clientWidth !== g.W || g.stage.clientHeight !== g.H)) {
+              const first = !g.W;
+              this.gvResize();
+              if (first) this.gvFit(false);
+            }
             if (g.camAnim) { g.camAnim(now); g.dirty = true; }
             if (g.alpha > 0.021) { this.gvTick(); g.dirty = true; }
             if (g.dirty) { this.gvDraw(); g.dirty = false; }
@@ -10203,9 +10209,12 @@
 
       gvResize() {
         const g = this.gv;
-        const r = g.stage.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-        g.W = r.width; g.H = r.height;
-        g.cv.width = Math.max(1, Math.round(g.W * dpr)); g.cv.height = Math.max(1, Math.round(g.H * dpr));
+        // 置かれている大きさ（clientWidth）で測る。getBoundingClientRect は、裏返すアニメーションで
+        // 画面が変形している間は見かけの大きさ（幅がほぼ0）を返すので、図が横に引き伸ばされてしまう
+        const w = g.stage.clientWidth, h = g.stage.clientHeight, dpr = window.devicePixelRatio || 1;
+        if (!w || !h) return; // 隠れている間は測らない（出たときに測り直す）
+        g.W = w; g.H = h;
+        g.cv.width = Math.max(1, Math.round(w * dpr)); g.cv.height = Math.max(1, Math.round(h * dpr));
         g.dirty = true;
       }
 
