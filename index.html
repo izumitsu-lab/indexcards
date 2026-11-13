@@ -1213,6 +1213,25 @@
     html.ui-desktop.ui-drawer .inline-editing .card-head-row #rtToolbar { order: 5; flex: 1 1 100%; flex-wrap: wrap; }
 
     /* iPad：指で押せる大きさ（44px）にする */
+    /* いちばん上の帯（エリア・状態・表示の切り替え・検索・設定・新規カード）も 44px に。帯の高さ（56px）は変えない */
+    html.ui-pad header { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
+    html.ui-pad header .area-btn { height: 44px; padding: 0 12px 0 10px; border-radius: 12px; font-size: 15px; gap: 8px; }
+    html.ui-pad header #areaBtnName, html.ui-pad header #statusBtnName { display: block; max-width: 104px; }
+    html.ui-pad header #statusBtnCount { display: inline; }
+    html.ui-pad header #areaBtn > svg, html.ui-pad header #statusBtn > svg { display: block; }
+    html.ui-pad header #areaBtnIcon svg, html.ui-pad header #statusBtnIcon svg { width: 20px; height: 20px; }
+    html.ui-pad header > .w-px { display: none; }
+    html.ui-pad header .tb-seg-btn { height: 40px; min-width: 44px; justify-content: center; padding: 0 12px; border-radius: 9px; font-size: 14px; }
+    html.ui-pad header .tb-seg-btn svg { width: 19px; height: 19px; }
+    html.ui-pad header .tb-icon { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+    html.ui-pad header .tb-icon svg { width: 21px; height: 21px; }
+    html.ui-pad header #searchBox { height: 44px; border-radius: 12px; padding: 0 12px; }
+    html.ui-pad header #searchInput { font-size: 16px; }
+    html.ui-pad header #searchKbd { display: none; }
+    html.ui-pad header #addCardQuickBtn { height: 44px; min-width: 44px; justify-content: center; margin-left: 2px; padding: 0 14px; border-radius: 12px; font-size: 15px; }
+    html.ui-pad header #addCardQuickBtn svg { width: 19px; height: 19px; }
+    html.ui-pad body.m-search-open #searchWrap { background: #F8F8FA; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    html.ui-pad.dark body.m-search-open #searchWrap { background: #18181B; }
     html.ui-pad .card-head-row { min-height: 56px; }
     html.ui-pad .bar-btn { min-width: 44px; height: 44px; border-radius: 10px; }
     html.ui-pad .bar-btn svg { width: 20px; height: 20px; }
